@@ -1,6 +1,5 @@
 # General Configurations
 export ALLOW_MISSING_DEPENDENCIES=true
-export TARGET_ARCH="arm64"
 export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 export LC_ALL="C"
 export OF_MAINTAINER="TheDarkDeath788"
@@ -52,13 +51,9 @@ export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 export FOX_VARIANT="AOSP"
 export OF_FLASHLIGHT_ENABLE=1
 export FOX_NO_SAMSUNG_SPECIAL=2
-export FOX_PATCH_VBMETA_FLAG=1
 export OF_PATCH_AVB20=1
 export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 export OF_SCREEN_H=2400
-export PLATFORM_SECURITY_PATCH="2099-12-31"
-export TW_DEFAULT_LANGUAGE="en"
-export OF_USE_TWRP_SAR_DETECT=1
 
 # File Paths Configurations
 export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
