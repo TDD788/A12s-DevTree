@@ -57,7 +57,6 @@ export OF_SCREEN_H=2400
 
 # File Paths Configurations
 export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
-export OF_FL_PATH2="1"
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
 export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
 
