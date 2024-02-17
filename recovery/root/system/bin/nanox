@@ -1,0 +1,18 @@
+#!/system/bin/sh
+
+# Check if an argument is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <file>"
+    exit 1
+fi
+
+# Get the path of the file provided as argument
+file="$1"
+
+# Check if the file exists
+if [ ! -f "$file" ]; then
+    exit 1
+fi
+
+# Execute nano with the provided file
+/sbin/nano "$file"
