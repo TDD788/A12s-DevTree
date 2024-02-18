@@ -76,4 +76,4 @@ export OF_FL_PATH2=""
 export FOX_ENABLE_APP_MANAGER=1
 
 # Custom Binaries to SD Card Configuration
-#export FOX_CUSTOM_BINS_TO_SDCARD=1
+export FOX_CUSTOM_BINS_TO_SDCARD=1
