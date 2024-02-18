@@ -16,8 +16,8 @@ case $1 in
         ;;
     *)
         echo "SAMBOOT"
-        echo "The alternative Booting Option for the ported recoveries, powered by TWRP and TWRP-based Recoveries"
-        echo "Like PBRB/OrangeFox/SHRP"
+        echo "The alternative Booting Option for the ported recoveries, powered by TWRP-based Recoveries"
+        echo "Like OrangeFox"
         echo " "
         echo "=============================================="
         echo " "
@@ -27,11 +27,8 @@ case $1 in
         echo "--recovery             Boot again to recovery"
         echo "--download             Boot to Download Mode"
         echo "--system               Boot to System"
-        echo " "
-        echo "For FAQ, Visit: Exynos 850 Testing & Development:"
-        echo "https://t.me/a12schat"
         echo ""
-        echo "Made By SUFandom with LOVE"
+        echo "Made By TheDarkDeath788 with Like and Appreciation for You"
         echo ""
         ;;
 esac
