@@ -60,15 +60,15 @@ export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=1
 export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 export FOX_VARIANT="AOSP"
-export OF_FLASHLIGHT_ENABLE=1
 export FOX_NO_SAMSUNG_SPECIAL=2
 export OF_PATCH_AVB20=1
 export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 export OF_SCREEN_H=2400
 
 # File Paths Configurations
-export OF_FL_PATH1="/system/flashlight"
-export OF_FL_PATH2=""
+export OF_FL_PATH1="/system/flashlight/max_brightness"
+export OF_FL_PATH2="/system/flashlight/brightness"
+export OF_FLASHLIGHT_ENABLE=1
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
 #export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
 
