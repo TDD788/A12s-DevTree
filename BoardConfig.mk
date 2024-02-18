@@ -154,3 +154,12 @@ TARGET_ARCH := arm64
 TW_INCLUDE_REPACKTOOLS := true
 TW_EXTRA_LANGUAGES := true
 TW_USE_SAMSUNG_HAPTICS := true
+TW_USE_NEW_MINADBD := true
+TW_INCLUDE_FUSE_EXFAT := true
+TW_HAS_FASTBOOTD := true
+TW_HAS_FASTBOOT := true
+
+# System as root
+BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics prism
+BOARD_SUPPRESS_SECURE_ERASE := true
+
