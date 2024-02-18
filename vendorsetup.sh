@@ -70,10 +70,10 @@ export OF_SCREEN_H=2400
 export OF_FL_PATH1="/system/flashlight"
 export OF_FL_PATH2=""
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
-export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
+#export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
 
 # Applications Configurations
 export FOX_ENABLE_APP_MANAGER=1
 
 # Custom Binaries to SD Card Configuration
-export FOX_CUSTOM_BINS_TO_SDCARD=1
+#export FOX_CUSTOM_BINS_TO_SDCARD=1
