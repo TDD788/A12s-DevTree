@@ -9,9 +9,9 @@ on late-init
     setprop sys.usb.configfs 1
     setprop sys.usb.config adb
 
-on boot
+on fs
     export ANDROID_ROOT /system
-
+  
     wait /dev/block/platform/12100000.dwmmc0
     symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
     symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
