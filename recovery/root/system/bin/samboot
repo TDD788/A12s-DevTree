@@ -1,0 +1,39 @@
+#!/system/bin/sh 
+# THIS SCRIPT IS INTENDED TO WORK ON SAMSUNG DEVICES
+# OTHERS ARE UNTESTED
+# V1
+
+
+case $1 in
+    --recovery)
+        pkill recovery && recovery
+        ;;
+    --download)
+        reboot download
+        ;;
+    --system)
+        reboot system
+        ;;
+    *)
+        echo "SAMBOOT"
+        echo "The alternative Booting Option for the ported recoveries, powered by TWRP-based Recoveries"
+        echo "Like OrangeFox"
+        echo " "
+        echo "=============================================="
+        echo " "
+        echo "Usage: "
+        echo "# samboot [--recovery|--download|--system] "
+        echo " "
+        echo "--recovery             Boot again to recovery"
+        echo "--download             Boot to Download Mode"
+        echo "--system               Boot to System"
+        echo ""
+        echo "Made By TheDarkDeath788 with Like and Appreciation for You"
+        echo ""
+        ;;
+esac
+
+
+    
+    
+
