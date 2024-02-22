@@ -54,6 +54,15 @@ export OF_ENABLE_LPTOOLS=1
 export OF_ENABLE_FS_COMPRESSION=1
 export OF_FIX_DECRYPTION_ON_DATA_MEDIA=1
 
+# Newer Functions For Me Dark (TheDarkDeath788 )
+export OF_CHECK_OVERWRITE_ATTEMPTS=1
+export FOX_EXTREME_SIZE_REDUCTION=1
+export OF_SKIP_FBE_DECRYPTION=1
+export OF_VANILLA_BUILD=1
+export FOX_PORTS_TMP=1
+export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
+export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+
 # Specific Features Configurations
 export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
@@ -66,11 +75,10 @@ export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 export OF_SCREEN_H=2400
 
 # File Paths Configurations
-export OF_FL_PATH1="/system/flashlight/max_brightness"
-export OF_FL_PATH2="/system/flashlight/brightness"
+export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
 export OF_FLASHLIGHT_ENABLE=1
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
-#export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
+export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
 
 # Applications Configurations
 export FOX_ENABLE_APP_MANAGER=1
