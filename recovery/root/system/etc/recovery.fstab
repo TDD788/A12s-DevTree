@@ -22,6 +22,7 @@
 
 /boot   emmc    /dev/block/by-name/boot flags=display="Boot, also called Android Kernel"
 /recovery   emmc    /dev/block/by-name/recovery flags=display=recovery
+/dtbo	emmc	/dev/block/by-name/dtbo flags=display="DTBO";flashimg=1
 /metadata   ext4    /dev/block/by-name/metadata flags=display=metadata;wipeingui
 /data   f2fs    /dev/block/by-name/userdata flags=display="Device Data";wipeingui
 /cache  ext4    /dev/block/by-name/cache    flags=display=cache;wipeingui
