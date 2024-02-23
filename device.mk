@@ -39,7 +39,7 @@ TW_INCLUDE_PYTHON := true
 
 BOARD_USES_QCOM_FBE_DECRYPTION := true
 
-Properties
+# Properties
 TW_OVERRIDE_SYSTEM_PROPS := \
     "ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental"
 
