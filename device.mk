@@ -28,8 +28,6 @@ PRODUCT_SOONG_NAMESPACES += \
     vendor/qcom/opensource/commonsys-intf/display
 
 PRODUCT_PACKAGES += \
-    qcom_decrypt \
-    qcom_decrypt_fbe \
     fastbootd \
     android.hardware.fastboot@1.0-impl-mock.recovery \
     android.hardware.fastboot@1.0-impl-mock
@@ -57,5 +55,4 @@ VENDOR_SECURITY_PATCH := 2099-12-31
 PLATFORM_VERSION := 16.1.0
 PLATFORM_VERSION_LAST_STABLE := $(PLATFORM_VERSION)
 
-TARGET_RECOVERY_QCOM_RTC_FIX := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
