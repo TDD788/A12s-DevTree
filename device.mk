@@ -18,16 +18,25 @@
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-# fastbootd
-PRODUCT_PACKAGES += \
-    fastbootd
-
-PRODUCT_PACKAGES += \
-    android.hardware.fastboot@1.0-impl-mock \
-    android.hardware.fastboot@1.0-impl-mock.recovery
-
 # Apex Libraries
 PRODUCT_HOST_PACKAGES += \
     libandroidicu
 
 TW_EXCLUDE_APEX := true
+
+PRODUCT_SOONG_NAMESPACES += \
+    vendor/qcom/opensource/commonsys-intf/display
+
+PRODUCT_PACKAGES += \
+    qcom_decrypt \
+    qcom_decrypt_fbe \
+    fastbootd \
+    android.hardware.fastboot@1.0-impl-mock.recovery \
+    android.hardware.fastboot@1.0-impl-mock
+
+PRODUCT_SHIPPING_API_LEVEL := 33
+
+
+TW_INCLUDE_PYTHON := true
+
+BOARD_USES_QCOM_FBE_DECRYPTION := true
