@@ -24,9 +24,6 @@ PRODUCT_HOST_PACKAGES += \
 
 TW_EXCLUDE_APEX := true
 
-PRODUCT_SOONG_NAMESPACES += \
-    vendor/qcom/opensource/commonsys-intf/display
-
 PRODUCT_PACKAGES += \
     fastbootd \
     android.hardware.fastboot@1.0-impl-mock.recovery \
@@ -36,8 +33,6 @@ PRODUCT_SHIPPING_API_LEVEL := 32
 
 
 TW_INCLUDE_PYTHON := true
-
-BOARD_USES_QCOM_FBE_DECRYPTION := true
 
 # Properties
 TW_OVERRIDE_SYSTEM_PROPS := \
