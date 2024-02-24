@@ -89,6 +89,9 @@ BOARD_SYSTEMIMAGE_PARTITION_TYPE := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
+# Rsync error fix or Fixing trying to copy non-existance files
+TARGET_COPY_OUT_VENDOR := vendor
+
 BOARD_SUPER_PARTITION_SIZE := 9122611200
 BOARD_SUPER_PARTITION_GROUPS := google_dynamic_partitions
 BOARD_GOOGLE_DYNAMIC_PARTITIONS_SIZE := 9122611200
@@ -97,9 +100,6 @@ BOARD_GOOGLE_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     vendor \
     product \
     odm
-
-# Rsync error fix or Fixing trying to copy non-existance files
-TARGET_COPY_OUT_VENDOR := vendor 
 
 # Recovery
 BOARD_INCLUDE_RECOVERY_DTBO := true
