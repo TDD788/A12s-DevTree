@@ -16,6 +16,3 @@ on fs
     symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
     symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
     symlink /dev/block/platorm/12100000.dwmmc0/by-name/param /dev/block/param
-
-on post-fs
-    mount -o remount,rw /sys/devices/virtual/camera/flash/
