@@ -28,7 +28,11 @@ PRODUCT_PACKAGES += \
     fastbootd \
     android.hardware.fastboot@1.0-impl-mock.recovery \
     android.hardware.fastboot@1.0-impl-mock
-
+    
+PRODUCT_PROPERTY_OVERRIDES +=\
+	ro.fastbootd.available=true
+	ro.boot.dynamic_partitions=true    
+	
 #PRODUCT_SHIPPING_API_LEVEL := 32
 
 
@@ -50,6 +54,7 @@ VENDOR_SECURITY_PATCH := 2099-12-31
 PLATFORM_VERSION := 16.1.0
 
 #TWRP Flags
+TW_INCLUDE_FASTBOOTD := true
 TW_HAS_FASTBOOTD := true
 TW_HAS_FASTBOOT := true
 TWRP_INCLUDE_LOGCAT := true
