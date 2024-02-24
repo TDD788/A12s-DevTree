@@ -29,7 +29,7 @@ PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock.recovery \
     android.hardware.fastboot@1.0-impl-mock
 
-PRODUCT_SHIPPING_API_LEVEL := 32
+#PRODUCT_SHIPPING_API_LEVEL := 32
 
 
 TW_INCLUDE_PYTHON := true
