@@ -38,27 +38,10 @@ PRODUCT_PROPERTY_OVERRIDES +=\
 
 TW_INCLUDE_PYTHON := true
 
-# Properties
-#TW_OVERRIDE_SYSTEM_PROPS := \
-#    "ro.build.fingerprint=ro.system.build.fingerprint;ro.build.version.incremental"
-
-# Vibrator
-#TW_SUPPORT_INPUT_AIDL_HAPTICS := true
-
-# Crypto
-TW_INCLUDE_CRYPTO := false
-TW_INCLUDE_CRYPTO_FBE := false
-TW_INCLUDE_FBE_METADATA_DECRYPT := false
-PLATFORM_SECURITY_PATCH := 2099-12-31
-VENDOR_SECURITY_PATCH := 2099-12-31
-PLATFORM_VERSION := 16.1.0
-
 #TWRP Flags
 TW_INCLUDE_FASTBOOTD := true
 TW_HAS_FASTBOOTD := true
 TW_HAS_FASTBOOT := true
-#TWRP_INCLUDE_LOGCAT := true
-#TARGET_USES_LOGD := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 
 
