@@ -161,37 +161,3 @@ TW_HAS_EDL_MODE := true
 # System as root
 BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics prism
 BOARD_SUPPRESS_SECURE_ERASE := true
-
-# fastbootd
-PRODUCT_PACKAGES += \
-    fastbootd
-
-PRODUCT_PACKAGES += \
-    android.hardware.fastboot@1.0-impl-mock \
-    android.hardware.fastboot@1.0-impl-mock.recovery
-    
-# TWRP
-TW_INCLUDE_FASTBOOTD := true
-TW_HAS_FASTBOOTD := true
-    
-PRODUCT_PROPERTY_OVERRIDES +=\
-	ro.fastbootd.available=true
-	ro.boot.dynamic_partitions=true 
-	
-# TWRP
-TW_INCLUDE_FASTBOOTD := true
-TW_HAS_FASTBOOTD := true
-
-# Apex Libraries
-PRODUCT_HOST_PACKAGES += \
-    libandroidicu
-
-TW_EXCLUDE_APEX := true
-	
-PRODUCT_SHIPPING_API_LEVEL := 32
-
-#TWRP Flags
-
-TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_INCLUDE_PYTHON := true
-
