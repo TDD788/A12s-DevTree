@@ -162,9 +162,6 @@ TW_HAS_EDL_MODE := true
 BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics prism
 BOARD_SUPPRESS_SECURE_ERASE := true
 
-# Dynamic partitions
-PRODUCT_USE_DYNAMIC_PARTITIONS := true
-
 # fastbootd
 PRODUCT_PACKAGES += \
     fastbootd
