@@ -14,7 +14,7 @@ export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 export LC_ALL="C"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="In-Dev"
-export FOX_VERSION="Experimantal-(No-Oficial)"
+export FOX_VERSION="Experimantal-(No-Oficial)-Tester-Nur"
 export FOX_TARGET_DEVICES="SM-A127M, SM-A127F, a12s"
 export FOX_BUILD_DEVICE="a12s"
 export OF_CLASSIC_LEDS_FUNCTION=0
@@ -35,10 +35,10 @@ export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
 
 # Security Configurations
 export OF_ADVANCED_SECURITY=1
-export OF_KEEP_DM_VERITY=1
+#export OF_KEEP_DM_VERITY=1
 export OF_DISABLE_FORCED_ENCRYPTION=1
 export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
-export OF_USE_SYSTEM_FINGERPRINT=1
+#export OF_USE_SYSTEM_FINGERPRINT=1
 
 # Tools and Utilities Configurations
 export OF_USE_MAGISKBOOT=1
@@ -52,14 +52,13 @@ export FOX_USE_UNZIP_BINARY=1
 export FOX_USE_XZ_UTILS=1
 export OF_ENABLE_LPTOOLS=1
 export OF_ENABLE_FS_COMPRESSION=1
-export OF_FIX_DECRYPTION_ON_DATA_MEDIA=1
 export OF_USE_LOCKSCREEN_BUTTON=1
 
 # Newer Functions For Me Dark (TheDarkDeath788 )
 #export OF_CHECK_OVERWRITE_ATTEMPTS=1
 #export OF_SKIP_FBE_DECRYPTION=1
 export FOX_VANILLA_BUILD=1
-#export FOX_PORTS_TMP=1
+export FOX_PORTS_TMP=1
 export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
 export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 
@@ -75,8 +74,9 @@ export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 export OF_SCREEN_H=2400
 
 # File Paths Configurations
-export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
-#export OF_FL_PATH2="/system/flashlight/brightness"
+#export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
+export OF_FL_PATH1="/system/flashlight/brightness"
+export OF_FL_PATH2="/system/flashlight/max_brightness"
 export OF_FLASHLIGHT_ENABLE=1
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
 #export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
