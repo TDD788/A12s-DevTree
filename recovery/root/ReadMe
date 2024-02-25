@@ -1,0 +1,21 @@
+### README
+
+This repository, **A12s-DevTree**, contains the **Orange Fox Device Tree** for the Samsung Galaxy A12 Nacho (A12s), developed by the GoldenBird™ team.
+
+#### About the Orange Fox Device Tree
+The Orange Fox Device Tree enables the compilation of Orange Fox Recovery for the Samsung Galaxy A12 Nacho (A12s). Orange Fox Recovery is an advanced custom recovery for Android devices, known for its stability and enhanced functionality.
+
+#### Constant Support
+This Device Tree ensures constant support for issue resolution on the Samsung Galaxy A12 Nacho (A12s). Continuous work is undertaken to provide improvements and updates for an optimal user experience.
+
+### Contributions
+Contributions are welcome! If you wish to enhance this Device Tree or add new features, feel free to submit a pull request.
+
+### Credits
+- **SebaUbuntu**: For contributions to the Android development community and TWRPDTGen.
+- **Orange Fox Recovery Project**: For the base recovery repository.
+- **Team Win Recovery Project (TWRP)**: For pioneering custom recoveries in the Android community.
+
+### License
+This project is distributed under the **GoldenBird License**. Please refer to the LICENSE file for more details.
+
