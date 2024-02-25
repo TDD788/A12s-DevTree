@@ -18,30 +18,36 @@
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# fastbootd
+PRODUCT_PACKAGES += \
+    fastbootd
+
+PRODUCT_PACKAGES += \
+    android.hardware.fastboot@1.0-impl-mock \
+    android.hardware.fastboot@1.0-impl-mock.recovery
+    
+# TWRP
+TW_INCLUDE_FASTBOOTD := true
+TW_HAS_FASTBOOTD := true
+    
+PRODUCT_PROPERTY_OVERRIDES +=\
+	ro.fastbootd.available=true
+	ro.boot.dynamic_partitions=true 
+	
+# TWRP
+TW_INCLUDE_FASTBOOTD := true
+TW_HAS_FASTBOOTD := true
+
 # Apex Libraries
 PRODUCT_HOST_PACKAGES += \
     libandroidicu
 
 TW_EXCLUDE_APEX := true
-
-PRODUCT_PACKAGES += \
-    fastbootd \
-    android.hardware.fastboot@1.0-impl-mock.recovery \
-    android.hardware.fastboot@1.0-impl-mock
-    
-PRODUCT_PROPERTY_OVERRIDES +=\
-	ro.fastbootd.available=true
-	ro.boot.dynamic_partitions=true    
 	
-#PRODUCT_SHIPPING_API_LEVEL := 32
-
-
-TW_INCLUDE_PYTHON := true
+PRODUCT_SHIPPING_API_LEVEL := 32
 
 #TWRP Flags
-TW_INCLUDE_FASTBOOTD := true
-TW_HAS_FASTBOOTD := true
-TW_HAS_FASTBOOT := true
-TW_EXCLUDE_DEFAULT_USB_INIT := true
 
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_INCLUDE_PYTHON := true
 
