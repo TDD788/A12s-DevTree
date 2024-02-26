@@ -43,8 +43,6 @@ PRODUCT_HOST_PACKAGES += \
     libandroidicu
 
 TW_EXCLUDE_APEX := true
-	
-PRODUCT_SHIPPING_API_LEVEL := 32
 
 #TWRP Flags
 
