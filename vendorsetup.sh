@@ -15,8 +15,8 @@ export LC_ALL="C"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="In-Dev"
 export FOX_VERSION="Experimantal-(No-Oficial)"
-export FOX_TARGET_DEVICES=SM-A127M, SM-A127F, a12s
-export FOX_BUILD_DEVICE=SM-A127M, SM-A127F, a12s
+export FOX_TARGET_DEVICES="a12s,SM-A127M,SM-A127F,A127M,A127F,A127x"
+export FOX_BUILD_DEVICE=a12s
 export OF_CLASSIC_LEDS_FUNCTION=0
 export FOX_DELETE_AROMAFM=0
 export OF_CLOCK_POS=1
@@ -55,8 +55,7 @@ export OF_ENABLE_FS_COMPRESSION=1
 export OF_USE_LOCKSCREEN_BUTTON=1
 
 # Newer Functions For Me Dark (TheDarkDeath788 )
-#export OF_CHECK_OVERWRITE_ATTEMPTS=1
-#export OF_SKIP_FBE_DECRYPTION=1
+export OF_CHECK_OVERWRITE_ATTEMPTS=1
 export FOX_VANILLA_BUILD=1
 export FOX_PORTS_TMP=1
 export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
@@ -72,6 +71,7 @@ export FOX_NO_SAMSUNG_SPECIAL=2
 export OF_PATCH_AVB20=1
 export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 export OF_SCREEN_H=2400
+export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
 
 # File Paths Configurations
 #export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
@@ -86,4 +86,4 @@ export OF_MAINTAINER_AVATAR=$PWD/device/samsung/a12s/maintainer.png
 export FOX_ENABLE_APP_MANAGER=1
 
 # Custom Binaries to SD Card Configuration
-export FOX_CUSTOM_BINS_TO_SDCARD=1
+export FOX_CUSTOM_BINS_TO_SDCARD=3
