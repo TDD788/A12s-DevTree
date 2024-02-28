@@ -75,8 +75,8 @@ export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 G
 
 # File Paths Configurations
 #export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
-export OF_FL_PATH1=/system/flashlight/brightness
-export OF_FL_PATH2=/system/flashlight/max_brightness
+export OF_FL_PATH1="/system/flashlight"
+export OF_FL_PATH2=""
 export OF_FLASHLIGHT_ENABLE=1
 #export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
 #export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
