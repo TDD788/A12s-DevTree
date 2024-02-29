@@ -27,7 +27,30 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Inherit device configuration
-$(call inherit-product, device/samsung/a12s/device.mk)
+
+# Dynamic partitions
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+TW_INCLUDE_FASTBOOTD := true
+
+PRODUCT_PACKAGES += \
+    android.hardware.fastboot@1.0-impl-mock \
+    fastbootd
+    
+# TWRP
+TW_HAS_FASTBOOTD := true
+    
+PRODUCT_PROPERTY_OVERRIDES +=\
+	ro.fastbootd.available=true
+	ro.boot.dynamic_partitions=true 
+	
+# Apex Libraries
+PRODUCT_HOST_PACKAGES += \
+    libandroidicu
+
+TW_EXCLUDE_APEX := true
+
+#TWRP Flags
+TW_INCLUDE_PYTHON := true
 
 # Charger
 PRODUCT_PACKAGES += \
