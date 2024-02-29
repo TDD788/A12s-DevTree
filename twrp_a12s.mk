@@ -30,6 +30,8 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
+# TWRP
 TW_INCLUDE_FASTBOOTD := true
 
 PRODUCT_PACKAGES += \
