@@ -1,4 +1,4 @@
-name: OrangeFox - Build -
+name: OrangeFox - Build
 
 # Credits to:
 # https://github.com/TeamWin
@@ -45,8 +45,8 @@ on:
         - you_mom
 
 jobs:
-  Prepair:
-    name: Preparing OFR by ${{ github.actor }}
+  build:
+    name: Build OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     env:
@@ -56,20 +56,14 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-      
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache
-        key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
-        
+              
     - name: Clean-up
       uses: rokibhasansagar/slimhub_actions@main
 
     - name: Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 25
+        swap-size-gb: 50
       
     - name: Build Environment
       run: |
@@ -95,18 +89,7 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
-<<<<<<< HEAD
-        
-  Build:
-    name: Build OFR by ${{ github.actor }}
-    needs: Prepair
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-=======
->>>>>>> 5f25b9603564aa9c3fa15324888350314b3e007f
-      
+
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
@@ -115,42 +98,7 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
-<<<<<<< HEAD
-        
-  Upload:
-    name: Upload OFR by ${{ github.actor }}
-    needs: Build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-=======
->>>>>>> 5f25b9603564aa9c3fa15324888350314b3e007f
-     
-    - name: Upload files
-      uses: actions/upload-artifact@v2
-      with:
-       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }}
-       path: |
-         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
-         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
 
-    - name: Add comment to build
-      uses: actions/github-script@v4
-      with:
-       github-token: ${{ secrets.GITHUB_TOKEN }}
-       script: |
-        const github = context.repo;
-        const message = `
-        ## OrangeFox Recovery Build - Unofficial
-        Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-        Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-        Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-        ## MD5SUM
-        * ${{ env.MD5_IMG }} for IMG file.
-        * ${{ env.MD5_ZIP }} for ZIP file.
-        `;
-        
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
@@ -175,4 +123,3 @@ jobs:
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
 
-          
