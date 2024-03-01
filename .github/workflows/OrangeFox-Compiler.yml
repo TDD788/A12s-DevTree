@@ -45,8 +45,8 @@ on:
         - you_mom
 
 jobs:
-  build:
-    name: Build OFR by ${{ github.actor }} ...
+  Prepair:
+    name: Preparing OFR by ${{ github.actor }} ...
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     env:
@@ -95,7 +95,19 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
+        
+  Build:
+    name: Build OFR by ${{ github.actor }} ...
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
@@ -104,7 +116,19 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
-
+        
+  Upload:
+    name: Upload OFR by ${{ github.actor }} ...
+    runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+     
     - name: Upload files
       uses: actions/upload-artifact@v2
       with:
@@ -128,8 +152,7 @@ jobs:
         * ${{ env.MD5_IMG }} for IMG file.
         * ${{ env.MD5_ZIP }} for ZIP file.
         `;
-        github.issues.createComment({ ...github, issue_number: context.issue.number, body: message });
-      
+        
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
