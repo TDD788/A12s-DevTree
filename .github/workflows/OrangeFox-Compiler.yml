@@ -100,11 +100,6 @@ jobs:
     name: Build OFR by ${{ github.actor }}
     needs: Prepair
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -122,11 +117,6 @@ jobs:
     name: Upload OFR by ${{ github.actor }}
     needs: Build
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -178,4 +168,5 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
+
           
