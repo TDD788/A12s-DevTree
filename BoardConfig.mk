@@ -87,7 +87,7 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Rsync error fix or Fixing trying to copy non-existance files
 # System as root
-BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics prism
+BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics sys prism
 BOARD_SUPPRESS_SECURE_ERASE := true
 TARGET_COPY_OUT_VENDOR := vendor
 
