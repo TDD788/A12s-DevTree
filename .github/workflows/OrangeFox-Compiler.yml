@@ -105,6 +105,14 @@ jobs:
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
+    - name: Upload files
+      uses: actions/upload-artifact@v2
+      with:
+        name: Orange Fox
+        path: |
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+    
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
@@ -129,49 +137,3 @@ jobs:
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
           
-publish:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git clone
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Fetch archives
-        uses: actions/download-artifact@v2
-        with:
-          name: cs-archives-${{ github.sha }}
-          path: ./
-      - name: Get checksums
-        id: get_checksums
-        run: |
-          checksums=$(printf 'SHA-256:\n```\n%s\n```\n' "$(sha256sum *.tgz)")
-          # checksums="${checksums//'%'/'%25'}"
-          # checksums="${checksums//$'\n'/'%0A'}"
-          # checksums="${checksums//$'\r'/'%0D'}"
-          echo "checksums<<CSCONTENT" >>$GITHUB_OUTPUT
-          echo "$checksums" >>$GITHUB_OUTPUT
-          echo "CSCONTENT" >>$GITHUB_OUTPUT
-      - name: Create new tag
-        id: get_tag
-        run: |
-          new_tag="cs-$(date "+%Y.%m.%d")"
-          existing_tag_revision=$(git tag | grep "$new_tag" | sort -r | head -n 1 | cut -d- -f3 | cut -dr -f2)
-          if [ -n "$existing_tag_revision" ]; then
-            tag_rev=$((existing_tag_revision + 1))
-          else
-            tag_rev=1
-          fi
-          new_tag="${new_tag}-r${tag_rev}"
-          git tag "$new_tag"
-          git push --tags
-          echo "tag_name=$new_tag" >>$GITHUB_OUTPUT
-      - name: Publish GitHub release
-        uses: termux/upload-release-action@v3.0.3
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "*.tgz"
-          file_glob: true
-          release_name: "Orange Fox Recovery Build"
-          tag: ${{ steps.get_tag.outputs.tag_name }}
-          body: ${{ steps.get_checksums.outputs.checksums }}          
