@@ -69,7 +69,7 @@ jobs:
     - name: Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 50
+        swap-size-gb: 25
       
     - name: Build Environment
       run: |
@@ -95,6 +95,7 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
+<<<<<<< HEAD
         
   Build:
     name: Build OFR by ${{ github.actor }}
@@ -103,6 +104,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+=======
+>>>>>>> 5f25b9603564aa9c3fa15324888350314b3e007f
       
     - name: Building OrangeFox
       run: |
@@ -112,6 +115,7 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
+<<<<<<< HEAD
         
   Upload:
     name: Upload OFR by ${{ github.actor }}
@@ -120,6 +124,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+=======
+>>>>>>> 5f25b9603564aa9c3fa15324888350314b3e007f
      
     - name: Upload files
       uses: actions/upload-artifact@v2
@@ -168,4 +174,5 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
+
           
