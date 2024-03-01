@@ -48,6 +48,8 @@ jobs:
   Prepair:
     name: Preparing OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
+    matrix:
+    strategy:
     if: github.event.repository.owner.id == github.event.sender.id
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,7 +71,7 @@ jobs:
     - name: Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 50
+        swap-size-gb: 25
       
     - name: Build Environment
       run: |
@@ -97,12 +99,11 @@ jobs:
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
         
   Build:
-    name: Build OFR by ${{ github.actor }}
     needs: Prepair
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
       
     - name: Building OrangeFox
       run: |
@@ -114,12 +115,11 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
         
   Upload:
-    name: Upload OFR by ${{ github.actor }}
     needs: Build
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
      
     - name: Upload files
       uses: actions/upload-artifact@v2
@@ -168,4 +168,5 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
+
           
