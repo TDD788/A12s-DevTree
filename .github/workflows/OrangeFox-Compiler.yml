@@ -60,8 +60,6 @@ jobs:
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
-        path: |
-        $HOME/
         key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
         restore-keys: |
         ${{ runner.os }}-dependencies-
