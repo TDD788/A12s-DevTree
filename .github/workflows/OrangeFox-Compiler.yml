@@ -46,7 +46,7 @@ on:
 
 jobs:
   Prepair:
-    name: Preparing OFR by ${{ github.actor }} ...
+    name: Preparing OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     env:
@@ -97,7 +97,8 @@ jobs:
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
         
   Build:
-    name: Build OFR by ${{ github.actor }} ...
+    name: Build OFR by ${{ github.actor }}
+    needs: Prepair
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     env:
@@ -118,7 +119,8 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
         
   Upload:
-    name: Upload OFR by ${{ github.actor }} ...
+    name: Upload OFR by ${{ github.actor }}
+    needs: Build
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
     env:
