@@ -1,4 +1,4 @@
-name: OrangeFox - Build
+name: OrangeFox - Build -
 
 # Credits to:
 # https://github.com/TeamWin
@@ -59,6 +59,10 @@ jobs:
       
     - name: Cache dependencies
       uses: actions/cache@v2
+      with:
+        key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
+        restore-keys: |
+        ${{ runner.os }}-dependencies-
               
     - name: Clean-up
       uses: rokibhasansagar/slimhub_actions@main
