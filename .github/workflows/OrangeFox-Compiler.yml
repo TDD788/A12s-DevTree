@@ -128,7 +128,7 @@ jobs:
         * ${{ env.MD5_IMG }} for IMG file.
         * ${{ env.MD5_ZIP }} for ZIP file.
         `;
-      github.issues.createComment({ ...github, issue_number: context.issue.number, body: message });
+        github.issues.createComment({ ...github, issue_number: context.issue.number, body: message });
       
     - name: Set Release Properties
       run: |
