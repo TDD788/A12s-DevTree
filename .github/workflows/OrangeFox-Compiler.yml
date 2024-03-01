@@ -60,9 +60,9 @@ jobs:
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
-      path: |
-      ${{ github.workspace }}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out
-      key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
+        path: |
+        ${{ github.workspace }}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out
+        key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
               
     - name: Clean-up
       uses: rokibhasansagar/slimhub_actions@main
