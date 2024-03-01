@@ -48,8 +48,6 @@ jobs:
   Prepair:
     name: Preparing OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
-    matrix:
-    strategy:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
