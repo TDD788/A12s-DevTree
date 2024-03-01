@@ -108,20 +108,27 @@ jobs:
     - name: Upload files
       uses: actions/upload-artifact@v2
       with:
-        name: Orange Fox
-        path: |
-          name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
-          files: |
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
-          body: |
-          ## OrangeFox Recovery Build - Unofficial
-          Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-          Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-          Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-          ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMG file.
-          * ${{ env.MD5_ZIP }} for ZIP file.
+      name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+      path: |
+       OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+       OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+
+  - name: Add comment to build
+    uses: actions/github-script@v4
+    with:
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    script: |
+      const github = context.repo;
+      const message = `
+        ## OrangeFox Recovery Build - Unofficial
+        Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+        Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+        ## MD5SUM
+        * ${{ env.MD5_IMG }} for IMG file.
+        * ${{ env.MD5_ZIP }} for ZIP file.
+      `;
+      github.issues.createComment({ ...github, issue_number: context.issue.number, body: message });
       
     - name: Set Release Properties
       run: |
