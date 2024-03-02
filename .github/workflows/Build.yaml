@@ -1,4 +1,4 @@
-name: OrangeFox - Build - Master
+name: OrangeFox - Build - Test
 
 # Credits to:
 # https://github.com/TeamWin
@@ -97,13 +97,101 @@ jobs:
         
   Build:
     name: Building
-    runs-on: {{ needs.Prepair.outputs.runs-on }}
+    runs-on: ubuntu-latest
     needs: Prepair
     steps:
     
     - name: Restore workspace from cache
       uses: actions/cache@v2
       with:
+        path: ${{ github.workspace }}
+        key: ${{ runner.os }}-workspace-${{ hashFiles('**/buildspec.yml') }}
+        restore-keys: ${{ runner.os }}-workspace-
+
+    - name: Building OrangeFox
+      run: |
+        ls ${GITHUB_WORKSPACE}
+        echo "======================"
+        ls ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        echo "======================"
+        ls ~
+        echo "======================"
+        cd ~
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        set +e
+        source build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
+        set -e
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
+        
+    - name: Save workspace to cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}
+        key: ${{ runner.os }}-workspace-${{ hashFiles('**/buildspec.yml') }}
+        
+        
+  Upload:
+    name: Uploading
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+    - name: Restore workspace from cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ github.workspace }}
+        key: ${{ runner.os }}-workspace-${{ hashFiles('**/buildspec.yml') }}
+        restore-keys: ${{ runner.os }}-workspace-
+    
+    - name: Upload files
+      uses: actions/upload-artifact@v2
+      with:
+       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }}
+       path: |
+         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+
+    - name: Add comment to build
+      uses: actions/github-script@v4
+      with:
+       github-token: ${{ secrets.GITHUB_TOKEN }}
+       script: |
+        const github = context.repo;
+        const message = `
+        ## OrangeFox Recovery Build - Unofficial
+        Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+        Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+        ## MD5SUM
+        * ${{ env.MD5_IMG }} for IMG file.
+        * ${{ env.MD5_ZIP }} for ZIP file.
+        `;
+        
+    - name: Set Release Properties
+      run: |
+        echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        echo "MD5_IMG=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
+
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+        tag_name: ${{ github.run_id }}
+        body: |
+          ## OrangeFox Recovery Build - Unofficial
+          Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+          Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+          Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+          ## MD5SUM
+          * ${{ env.MD5_IMG }} for IMG file.
+          * ${{ env.MD5_ZIP }} for ZIP file.
+          
+          
         path: ${{ github.workspace }}
         key: ${{ runner.os }}-workspace-${{ hashFiles('**/buildspec.yml') }}
         restore-keys: ${{ runner.os }}-workspace-
