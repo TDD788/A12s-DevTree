@@ -111,6 +111,7 @@ jobs:
     - name: Building OrangeFox
       run: |
         ls
+        cd ~
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         set +e
         source build/envsetup.sh
