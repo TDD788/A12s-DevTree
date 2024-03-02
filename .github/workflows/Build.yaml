@@ -88,6 +88,7 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
+        rm -rf  /home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/build/blueprint/pathtools/testdata/escapes/*
         
     - name: Save workspace to cache
       uses: actions/cache@v2
