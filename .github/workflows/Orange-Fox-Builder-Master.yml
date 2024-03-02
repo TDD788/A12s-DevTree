@@ -1,4 +1,4 @@
-name: OrangeFox - Build -
+name: OrangeFox - Build - Master
 
 # Credits to:
 # https://github.com/TeamWin
@@ -110,6 +110,7 @@ jobs:
       
     - name: Building OrangeFox
       run: |
+        ls
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         set +e
         source build/envsetup.sh
