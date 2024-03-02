@@ -111,7 +111,7 @@ jobs:
       uses: actions/github-script@v4
       with:
        github-token: ${{ secrets.GITHUB_TOKEN }}
-      script: |
+       script: |
         const github = context.repo;
         const message = `
         ## OrangeFox Recovery Build - Unofficial
