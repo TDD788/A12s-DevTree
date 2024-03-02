@@ -97,11 +97,11 @@ jobs:
         
     - name: Create environment artifact
       uses: actions/upload-artifact@v2
-      if-no-files-found: ignore
-      continue-on-error: true
       with:
        name: Prepair Environment
-       path: ${{ github.workspace }}        
+       path: ${{ github.workspace }}       
+       if-no-files-found: ignore
+       continue-on-error: true
         
   Build:
     name: Building
@@ -145,11 +145,11 @@ jobs:
         
     - name: Create modified environment artifact
       uses: actions/upload-artifact@v2
-      if-no-files-found: ignore
-      continue-on-error: true
       with:
        name: Modified Environment
        path: ${{ github.workspace }}        
+       if-no-files-found: ignore
+       continue-on-error: true
         
         
   Upload:
