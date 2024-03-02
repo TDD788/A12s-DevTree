@@ -97,7 +97,7 @@ jobs:
         
   Build:
     name: Building
-    runs-on: ubuntu-latest
+    runs-on: {{ needs.Prepair.outputs.runs-on }}
     needs: Prepair
     steps:
     - name: Building OrangeFox
@@ -118,7 +118,7 @@ jobs:
         
   Upload:
     name: Uploading
-    runs-on: ubuntu-latest
+    runs-on: {{ needs.Build.outputs.runs-on }}
     needs: Build
     steps:
     - name: Upload files
