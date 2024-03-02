@@ -94,12 +94,25 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+    - name: Set up environment
+        id: set_env
+        run: echo "::set-output name=environment_name::prepair_environment"
+        shell: bash        
         
   Build:
     name: Building
-    runs-on: ${{ needs.Prepair.outputs.runs-on }}
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
     needs: Prepair
     steps:
+    - name: Use environment from Prepair
+      run: echo "Using environment ${{ needs.Prepair.outputs.environment_name }}"
+      shell: bash
+        
     - name: Building OrangeFox
       run: |
         ls ${GITHUB_WORKSPACE}
@@ -115,12 +128,25 @@ jobs:
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
+
+    - name: Set up environment
+      id: set_env
+      run: echo "::set-output name=environment_name::build_environment"
+      shell: bash        
         
   Upload:
     name: Uploading
-    runs-on: ${{ needs.Build.outputs.runs-on }}
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
     needs: Build
     steps:
+    - name: Use environment from Prepair
+      run: echo "Using environment ${{ needs.Build.outputs.environment_name }}"
+      shell: bash
+        
     - name: Upload files
       uses: actions/upload-artifact@v2
       with:
