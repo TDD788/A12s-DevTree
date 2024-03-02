@@ -98,16 +98,7 @@ jobs:
   Build:
     name: Building
     needs: Prepair
-    runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      
     - name: Building OrangeFox
       run: |
         ls ${GITHUB_WORKSPACE}
@@ -127,16 +118,7 @@ jobs:
   Upload:
     name: Uploading
     needs: Build
-    runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-     
     - name: Upload files
       uses: actions/upload-artifact@v2
       with:
