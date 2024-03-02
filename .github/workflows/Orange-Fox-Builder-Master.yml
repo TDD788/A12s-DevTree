@@ -96,7 +96,6 @@ jobs:
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
         
   Build:
-    name: Build OFR by ${{ github.actor }}
     needs: Prepair
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
@@ -110,7 +109,12 @@ jobs:
       
     - name: Building OrangeFox
       run: |
-        ls
+        ls ${GITHUB_WORKSPACE}
+        echo "======================"
+        ls ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        echo "======================"
+        ls ~
+        echo "======================"
         cd ~
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         set +e
