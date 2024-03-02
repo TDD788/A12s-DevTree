@@ -100,10 +100,10 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
     - name: Upload files
-       uses: actions/upload-artifact@v2
-       with:
-       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }}
-       path: |
+      uses: actions/upload-artifact@v2
+      with:
+      name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }}
+      path: |
          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
 
@@ -111,7 +111,7 @@ jobs:
       uses: actions/github-script@v4
       with:
        github-token: ${{ secrets.GITHUB_TOKEN }}
-       script: |
+      script: |
         const github = context.repo;
         const message = `
         ## OrangeFox Recovery Build - Unofficial
