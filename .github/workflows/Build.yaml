@@ -96,13 +96,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: Prepair
     env:
+      WORKSPACE: ${{needs.Prepair.outputs.workspace}}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
     outputs:
       workspace: ${{ runner.workspace }}
-    env:
-        WORKSPACE: ${{needs.Prepair.outputs.workspace}}
     steps:
     - name: Building OrangeFox
       run: |
@@ -125,6 +124,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       WORKSPACE: ${{needs.Build.outputs.workspace}}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write      
     needs: Build
     steps:
     - name: Upload files
