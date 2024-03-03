@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       result: ${{ steps.generate-output.outputs.result }}
+      Github_Workspace: ${{ github.workspace }}
     steps:
       - name: Generate output
         id: generate-output
@@ -14,9 +15,6 @@ jobs:
           # Generate the desired output file
           echo "Hello, World!" > output.txt
           echo "::set-output name=result::output.txt"
-    # Define the Github Workspace as the result of this job
-    outputs:
-      Github_Workspace: ${{ github.workspace }}
 
   consume-results:
     needs: produce-results
