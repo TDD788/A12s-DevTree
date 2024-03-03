@@ -23,5 +23,5 @@ jobs:
 
       - name: Check
         run: |
-         cd ${GITHUB_WORKSPACE}
-         ls
+         echo "cd ${GITHUB_WORKSPACE}"
+         echo "ls"
