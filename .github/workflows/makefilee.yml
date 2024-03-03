@@ -1,0 +1,17 @@
+name: Ejemplo Comunicación de Almacenamiento
+
+on: [push]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Crear archivo
+        run: echo "Datos importantes" > $GITHUB_WORKSPACE/datos.txt
+
+  job2:
+    runs-on: ubuntu-latest
+    needs: job1
+    steps:
+      - name: Leer archivo
+        run: cat $GITHUB_WORKSPACE/datos.txt
