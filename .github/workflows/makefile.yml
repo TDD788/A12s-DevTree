@@ -17,6 +17,6 @@ jobs:
     needs: job1
     steps:
       - name: Use workspace from job1
-        run: echo "Using workspace: $WORKSPACE" # Here you can use the $WORKSPACE variable to access the workspace directory
+        run: echo "Using workspace" # Here you can use the $WORKSPACE variable to access the workspace directory
         env:
           WORKSPACE: ${{needs.job1.outputs.workspace}}
