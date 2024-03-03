@@ -101,10 +101,10 @@ jobs:
       contents: write
     outputs:
       workspace: ${{ runner.workspace }}
+    env:
+        WORKSPACE: ${{needs.Prepair.outputs.workspace}}
     steps:
     - name: Building OrangeFox
-      env:
-        WORKSPACE: ${{needs.Prepair.outputs.workspace}}
       run: |
         ls ${GITHUB_WORKSPACE}
         echo "======================"
@@ -123,12 +123,10 @@ jobs:
   Upload:
     name: Uploading
     runs-on: ubuntu-latest
+    env:
+      WORKSPACE: ${{needs.Build.outputs.workspace}}
     needs: Build
     steps:
-    - name: Restore
-      env:
-        WORKSPACE: ${{needs.Prepair.outputs.workspace}}
-        
     - name: Upload files
       uses: actions/upload-artifact@v2
       with:
