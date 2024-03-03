@@ -52,6 +52,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     permissions:
       contents: write
+    outputs:
+      workspace: ${{ runner.workspace }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -99,8 +101,16 @@ jobs:
     name: Building
     runs-on: {{ needs.Prepair.outputs.runs-on }}
     needs: Prepair
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    outputs:
+      workspace: ${{ runner.workspace }}
     steps:
     - name: Building OrangeFox
+      env:
+        WORKSPACE: ${{needs.Prepair.outputs.workspace}}    
       run: |
         ls ${GITHUB_WORKSPACE}
         echo "======================"
@@ -120,6 +130,10 @@ jobs:
     name: Uploading
     runs-on: {{ needs.Build.outputs.runs-on }}
     needs: Build
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
     steps:
     - name: Upload files
       uses: actions/upload-artifact@v2
