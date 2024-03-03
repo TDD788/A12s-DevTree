@@ -1,29 +1,25 @@
-name: Ejemplo Comunicación de Almacenamiento
-
-on: [push]
-
 jobs:
-  job1:
+  produce-results:
     runs-on: ubuntu-latest
+    outputs:
+      result: ${{ steps.generate-output.outputs.result }}
     steps:
-      - name: Crear archivo
-        run: echo "Datos importantes" > datos.txt
-      - name: Subir archivo a GitHub Releases
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: datos.txt
-          asset_name: datos.txt
-          asset_content_type: text/plain
+      - name: Generate output
+        id: generate-output
+        run: |
+          # Genera los archivos o resultados deseados
+          echo "Hello, World!" > output.txt
+          echo "::set-output name=result::output.txt"
+    # Define el Github Workspace como el resultado de este job
+    outputs:
+      Github_Workspace: ${{ github.workspace }}
 
-  job2:
+  consume-results:
+    needs: produce-results
     runs-on: ubuntu-latest
-    needs: job1
     steps:
-      - name: Descargar archivo desde GitHub Releases
-        uses: actions/download-artifact@v2
-        with:
-          name: datos.txt
-          path: .
-      - name: Leer archivo
-        run: cat datos.txt
+      - name: Use output from previous job
+        run: |
+          # Usa los archivos generados por el job anterior desde el Github Workspace
+          cat ${{ needs.produce-results.outputs.result }}
+          echo "The workspace is located at: ${{ needs.produce-results.outputs.Github_Workspace }}"
