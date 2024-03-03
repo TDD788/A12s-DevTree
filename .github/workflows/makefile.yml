@@ -11,8 +11,8 @@ jobs:
       - name: Subir archivo a Google Cloud Storage
         run: gsutil cp datos.txt gs://mi-bucket/datos.txt
       - name: Obtener enlace de descarga
-        run: echo "Enlace de descarga: https://storage.googleapis.com/mi-bucket/datos.txt" >> enlace.txt
-        # Guarda el enlace de descarga en un archivo para que pueda ser accedido por otros trabajos
+        run: echo "Enlace de descarga: https://storage.googleapis.com/mi-bucket/datos.txt" > enlace.txt
+        # Utiliza ">" en lugar de ">>" para sobrescribir enlace.txt con la nueva línea
 
   job2:
     runs-on: ubuntu-latest
