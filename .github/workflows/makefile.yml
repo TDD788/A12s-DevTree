@@ -6,6 +6,10 @@ jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
+      - name: Instalar AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
       - name: Crear archivo
         run: echo "Datos importantes" > datos.txt
       - name: Subir archivo a AWS S3
@@ -15,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: job1
     steps:
+      - name: Instalar AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
       - name: Descargar archivo desde AWS S3
         run: aws s3 cp s3://mi-bucket/datos.txt datos.txt
       - name: Leer archivo
