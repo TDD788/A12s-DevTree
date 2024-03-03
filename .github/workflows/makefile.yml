@@ -8,19 +8,14 @@ jobs:
     steps:
       - name: Crear archivo
         run: echo "Datos importantes" > datos.txt
-      - name: Subir archivo a Gist
-        uses: actions/upload-artifact@v2
-        with:
-          name: datos
-          path: datos.txt
+      - name: Subir archivo a AWS S3
+        run: aws s3 cp datos.txt s3://mi-bucket/datos.txt
 
   job2:
     runs-on: ubuntu-latest
     needs: job1
     steps:
-      - name: Descargar archivo desde Gist
-        uses: actions/download-artifact@v2
-        with:
-          name: datos
+      - name: Descargar archivo desde AWS S3
+        run: aws s3 cp s3://mi-bucket/datos.txt datos.txt
       - name: Leer archivo
         run: cat datos.txt
