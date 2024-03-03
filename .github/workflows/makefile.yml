@@ -22,4 +22,4 @@ jobs:
           WORKSPACE: ${{needs.job1.outputs.workspace}}
 
       - name: Check
-        run: ls $GITHUB_WORKSPACE
+        run: ls ${GITHUB_WORKSPACE}
