@@ -106,22 +106,7 @@ jobs:
        path: |
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
-
-    - name: Add comment to build
-      uses: actions/github-script@v4
-      with:
-       github-token: ${{ secrets.GITHUB_TOKEN }}
-       script: |
-        const message = `
-        ## OrangeFox Recovery Build - Unofficial
-        Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-        Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-        Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-        ## MD5SUM
-        * ${{ env.MD5_IMG }} for IMG file.
-        * ${{ env.MD5_ZIP }} for ZIP file.
-        `;
-
+        
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
