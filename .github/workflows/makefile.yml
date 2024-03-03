@@ -7,18 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Crear archivo
-        run: echo "Datos importantes" > datos.txt
-      - name: Subir archivo a Google Cloud Storage
-        run: gsutil cp datos.txt gs://mi-bucket/datos.txt
-      - name: Obtener enlace de descarga
-        run: echo "Enlace de descarga: https://storage.googleapis.com/mi-bucket/datos.txt" > enlace.txt
-        # Utiliza ">" en lugar de ">>" para sobrescribir enlace.txt con la nueva línea
+        run: echo "Datos importantes" > $GITHUB_WORKSPACE/datos.txt
 
   job2:
     runs-on: ubuntu-latest
     needs: job1
     steps:
-      - name: Descargar archivo desde enlace
-        run: wget -O datos.txt $(cat enlace.txt)
+      - name: Copiar archivo desde job1
+        run: cp $GITHUB_WORKSPACE/datos.txt datos.txt
       - name: Leer archivo
         run: cat datos.txt
