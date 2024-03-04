@@ -86,8 +86,6 @@ BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Rsync error fix or Fixing trying to copy non-existance files
-# System as root
-BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics sys prism
 TARGET_COPY_OUT_VENDOR := vendor
 
 BOARD_SUPER_PARTITION_SIZE := 9122611200
@@ -148,7 +146,8 @@ TARGET_USES_MKE2FS := true
 # Making the recovery.img smaller
 BOARD_HAS_NO_REAL_SDCARD := true
 
-# Other Settins
+# System as root
+BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics sys prism
 BOARD_SUPPRESS_SECURE_ERASE := true
 
 # TWRP flags selected by TDD788
@@ -163,6 +162,5 @@ TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_RESETPROP := true
 TW_HAS_EDL_MODE := false
 TWRP_NEW_THEME := true
-TW_INCLUDE_INJECTTWRP := true
 
 
