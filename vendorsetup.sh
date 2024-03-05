@@ -172,12 +172,12 @@ set_env_var(){
         echo -e "${RED_BACK}Environment Variable CURR_DEVICE not set... Aborting${RESET}"
         echo "Set to the codename of the device you're building for"
         echo -e "${GREEN}Example :${RESET}"
-        echo " export CURR_DEVICE=a51"
+        echo " export CURR_DEVICE=a12s"
         exit 1
 }
 
 var_not_eq(){
-        echo -e "${RED_BACK}CURR_DEVICE not equal to a51${RESET}"
+        echo -e "${RED_BACK}CURR_DEVICE not equal to a12s${RESET}"
         echo -e "${RED_BACK}CURR_DEVICE = $CURR_DEVICE${RESET}"
         echo -e "${RED}If this is a mistake, then export CURR_DEVICE to the correct codename${RESET}"
         echo -e "${RED}Skipping a51 specific build vars...${RESET}"
