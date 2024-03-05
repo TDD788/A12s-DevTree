@@ -157,7 +157,7 @@ jobs:
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
           * ${{ env.MD5_TAR }} for TAR file.
-          
+
     - name: Set message output
       id: message
       run: |
