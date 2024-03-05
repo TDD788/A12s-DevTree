@@ -14,7 +14,7 @@ RED="\e[91m"
 RESET="\e[0m"
 GREEN="\e[92m"
 
-export_build_vars()
+export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
 	# Device Type
 	export CURR_DEVICE=a12s
@@ -110,56 +110,9 @@ export_build_vars()
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
 	fi
-	
 
 	#Ofox 11
 	#export FOX_R11=1
-
-# Magisk
-user='topjohnwu'
-repo='Magisk'
-pattern="$user/$repo/releases/download/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+\.apk"
-url_base="https://github.com/$user/$repo/releases"
-url_latest="$url_base/latest"
-
-echo 'Searching for latest Magisk...'
-redirect_url="$(curl "$url_latest" -s -L -I -o /dev/null -w '%{url_effective}')" || {
-    code=$?
-    echo "Failed to open $url_latest"
-    exit $code
-}
-
-# Extract tag
-version_tag="${redirect_url/$url_base\/tag\/}"
-
-url="https://github.com/topjohnwu/Magisk/releases/expanded_assets/$version_tag"
-
-echo 'Searching for Magisk download link...'
-html="$(curl --show-error --location "$url")" || {
-    code=$?
-    echo "Failed to download $url"
-    exit $code
-}
-
-file_link="$(echo "$html" | grep -iEo "$pattern" | (head -n 1; dd status=none of=/dev/null))"
-download_link="https://github.com/$file_link"
-file_name="/tmp/$(basename "${file_link/apk/zip}")"
-
-echo "Downloading Magisk from $download_link"
-response_code="$(curl \
-    --show-error \
-    --location "$download_link" \
-    --write-out '%{http_code}' \
-    --output "$file_name")"; code=$?
-
-if [ $code -gt 0 ] || [ $response_code -ge 400 ]; then
-    echo "Failed to download $download_link"
-    exit $code
-fi
-echo "Latest Magisk has been saved to: $file_name"
-
-export FOX_USE_SPECIFIC_MAGISK_ZIP="$file_name"
-
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
