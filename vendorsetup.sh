@@ -87,9 +87,11 @@ export_build_vars(){
 	export OF_FL_PATH1="/system/flashlight"
 	export OF_FL_PATH2=""
 	export OF_FLASHLIGHT_ENABLE=1
-	#export OF_MAINTAINER_AVATAR="${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/maintainer.png"
-	#export OF_MAINTAINER_AVATAR="/home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/device/samsung/a12s/maintainer.png"
-	export OF_MAINTAINER_AVATAR=$PWD/device/samsung/a12s/maintainer.png
+	
+	
+	# Maintainer Avatar
+	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/maintainer.png
+	export OF_MAINTAINER_AVATAR="./maintainer.png"
 
 	# Applications Configurations
 	export FOX_ENABLE_APP_MANAGER=1
