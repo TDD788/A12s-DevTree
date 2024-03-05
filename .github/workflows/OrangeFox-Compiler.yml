@@ -40,7 +40,6 @@ on:
         options:
           - oficial
           - experimental
-          
       BUILD_TARGET:
         description: 'Specify your Build Target'
         required: true
@@ -127,7 +126,7 @@ jobs:
       if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
-       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
+       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Tar
        path: |
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
         
@@ -137,6 +136,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         echo "MD5_IMG=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
     - name: Upload to Release
       if: github.event.inputs.RELEASE_TYPE == 'oficial'
@@ -156,24 +156,21 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
+          * ${{ env.MD5_TAR }} for TAR file.
           
-    - name: Set Artifact Comment
-      if: github.event.inputs.RELEASE_TYPE == 'experimental'
-      uses: actions/github-script@v4
-      with:
-       github-token: ${{ secrets.GITHUB_TOKEN }}
-       script: |
-         const COMMENT = `## OrangeFox Recovery Build - Unofficial
-           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-            ## MD5SUM
-            * ${{ env.MD5_IMG }} for IMG file.
-            * ${{ env.MD5_ZIP }} for ZIP file.`;
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: COMMENT
-            });          
+    - name: Create description file
+        run: |
+          echo '## OrangeFox Recovery Build - Unofficial' > OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}" >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "[Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})" >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building." >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "## MD5SUM" >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "* ${{ env.MD5_IMG }} for IMG file." >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "* ${{ env.MD5_ZIP }} for ZIP file." >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
+          echo "* ${{ env.MD5_TAR }} for TAR file." >> OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
 
+      - name: Upload description file
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifact_description
+          path: OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/artifact_description.md
