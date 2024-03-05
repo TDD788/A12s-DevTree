@@ -34,9 +34,13 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # TWRP
 TW_INCLUDE_FASTBOOTD := true
 
+# fastbootd
+PRODUCT_PACKAGES += \
+    fastbootd
+
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
-    fastbootd
+    android.hardware.fastboot@1.0-impl-mock.recovery
     
 # TWRP
 TW_HAS_FASTBOOTD := true
