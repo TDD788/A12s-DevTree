@@ -3,7 +3,7 @@ sudo apt install nano
 git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
 sudo chmod +rwx out/host/linux-x86/bin/avbtool
 chmod a+x device/samsung/a12s/mkbootimg
-add_lunch_combo twrp_a12s-eng
+COMMON_LUNCH_CHOICES twrp_a12s-eng
 
 
 
@@ -14,7 +14,7 @@ RED="\e[91m"
 RESET="\e[0m"
 GREEN="\e[92m"
 
-export_build_vars(){
+export_build_vars()
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
 	# Device Type
 	export CURR_DEVICE=a12s
