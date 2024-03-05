@@ -8,6 +8,7 @@ add_lunch_combo twrp_a12s-eng
 
 
 FDEVICE1="a12s"
+CURR_DEVICE="a12s"
 
 RED_BACK="\e[101m"
 RED="\e[91m"
