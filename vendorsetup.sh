@@ -16,6 +16,8 @@ GREEN="\e[92m"
 
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
+	# Device Type
+	export CURR_DEVICE=a12s
 	# General Configurations
 	export ALLOW_MISSING_DEPENDENCIES=true
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
