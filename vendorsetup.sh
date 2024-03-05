@@ -3,7 +3,7 @@ sudo apt install nano
 git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
 sudo chmod +rwx out/host/linux-x86/bin/avbtool
 chmod a+x device/samsung/a12s/mkbootimg
-COMMON_LUNCH_CHOICES twrp_a12s-eng
+add_lunch_combo twrp_a12s-eng
 
 
 
@@ -135,12 +135,12 @@ var_not_eq(){
         echo -e "${RED_BACK}CURR_DEVICE not equal to a12s${RESET}"
         echo -e "${RED_BACK}CURR_DEVICE = $CURR_DEVICE${RESET}"
         echo -e "${RED}If this is a mistake, then export CURR_DEVICE to the correct codename${RESET}"
-        echo -e "${RED}Skipping a51 specific build vars...${RESET}"
+        echo -e "${RED}Skipping a12s specific build vars...${RESET}"
 }
 
 case "$CURR_DEVICE" in
   "$FDEVICE1")
-    export_build_vars;
+    export CURR_DEVICE="a12s" && export_build_vars;
     ;;
   "")
     set_env_var
