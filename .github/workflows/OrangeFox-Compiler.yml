@@ -33,6 +33,13 @@ on:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
+      RELEASE_TYPE:
+        description: 'Release type'
+        required: true
+        type: choice
+        options:
+          - Experimental
+          - Oficial
       BUILD_TARGET:
         description: 'Specify your Build Target'
         required: true
@@ -100,12 +107,28 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
     - name: Upload files
+      if: env.RELEASE_TYPE == 'Experimental'
       uses: actions/upload-artifact@v2
       with:
-       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }}
+       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
        path: |
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+        
+    - name: Upload files
+      if: env.RELEASE_TYPE == 'Experimental'
+      uses: actions/upload-artifact@v2
+      with:
+       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Zip
+       path: |
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+        
+    - name: Upload files
+      if: env.RELEASE_TYPE == 'Experimental'
+      uses: actions/upload-artifact@v2
+      with:
+       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
+       path: |
+        OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
         
     - name: Set Release Properties
       run: |
@@ -115,6 +138,7 @@ jobs:
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
     - name: Upload to Release
+      if: env.RELEASE_TYPE == 'Oficial'
       uses: softprops/action-gh-release@v1
       with:
         files: |
@@ -131,4 +155,24 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
+          
+    - name: Set Artifact Comment
+      if: env.RELEASE_TYPE == 'Experimental'
+      uses: actions/github-script@v4
+      with:
+       github-token: ${{ secrets.GITHUB_TOKEN }}
+       script: |
+         const COMMENT = `## OrangeFox Recovery Build - Unofficial
+           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+            ## MD5SUM
+            * ${{ env.MD5_IMG }} for IMG file.
+            * ${{ env.MD5_ZIP }} for ZIP file.`;
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: COMMENT
+            });          
 
