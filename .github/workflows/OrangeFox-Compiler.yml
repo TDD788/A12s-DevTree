@@ -108,7 +108,7 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
     - name: Upload files
-      if: env.RELEASE_TYPE == 'experimental'
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
@@ -116,7 +116,7 @@ jobs:
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
         
     - name: Upload files
-      if: env.RELEASE_TYPE == 'experimental'
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Zip
@@ -124,7 +124,7 @@ jobs:
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
         
     - name: Upload files
-      if: env.RELEASE_TYPE == 'experimental'
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
@@ -139,7 +139,7 @@ jobs:
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
     - name: Upload to Release
-      if: env.RELEASE_TYPE == 'oficial'
+      if: github.event.inputs.RELEASE_TYPE == 'oficial'
       uses: softprops/action-gh-release@v1
       with:
         files: |
@@ -158,7 +158,7 @@ jobs:
           * ${{ env.MD5_ZIP }} for ZIP file.
           
     - name: Set Artifact Comment
-      if: env.RELEASE_TYPE == 'experimental'
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/github-script@v4
       with:
        github-token: ${{ secrets.GITHUB_TOKEN }}
