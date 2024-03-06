@@ -39,11 +39,6 @@ export_build_vars(){
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_USE_TWRP_SAR_DETECT=1
 
-	# Partition Configurations
-	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
-	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
-	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
-
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
 	#export OF_KEEP_DM_VERITY=1
