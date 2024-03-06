@@ -22,8 +22,8 @@ export_build_vars(){
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
-	export FOX_BUILD_TYPE="In-Dev"
-	export FOX_VERSION="Experimantal-(No-Oficial)"
+	export FOX_BUILD_TYPE="Oficial"
+	export FOX_VERSION="R12-(Nanaimo-Bars)"
 	#export FOX_TARGET_DEVICES="a12s,SM-A127M,SM-A127F,A127M,A127F,A127x"
 	#export FOX_BUILD_DEVICE=a12s
 	export OF_CLASSIC_LEDS_FUNCTION=0
@@ -50,7 +50,6 @@ export_build_vars(){
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
-
 
 	# Tools and Utilities Configurations
 	export OF_USE_MAGISKBOOT=1

@@ -1,9 +1,6 @@
 ro.display.series=Galaxy A12 Nacho
 ro.product.board=exynos850
-sys.usb.controller=13600000.dwc3
-sys.usb.all_controllers=13600000.dwc3
 fbe.metadata.wrappedkey=true
-ro.boot.boot_devices=12100000.dwmmc0
 persist.sys.isUsbOtgEnabled=false
 ro.fastbootd.available=true
 ro.fastboot.available=true

@@ -33,6 +33,7 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # TWRP
 TW_INCLUDE_FASTBOOTD := true
+TW_INCLUDE_FASTBOOT := true
 
 # fastbootd
 PRODUCT_PACKAGES += \
@@ -51,8 +52,8 @@ TW_HAS_FASTBOOT := true
     
 PRODUCT_PROPERTY_OVERRIDES +=\
 	ro.fastbootd.available=true
-	ro.boot.dynamic_partitions=true 
 	ro.fastboot.available=true
+	ro.boot.dynamic_partitions=true 
 	
 # Apex Libraries
 PRODUCT_HOST_PACKAGES += \
