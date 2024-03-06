@@ -159,7 +159,7 @@ jobs:
           * ${{ env.MD5_TAR }} for TAR file.
 
     - name: Set message output
-      id: message
+      id: messag
       run: |
   	  echo "::set-output name=message::## OrangeFox Recovery Build - Unofficial
 		Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
