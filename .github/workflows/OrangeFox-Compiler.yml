@@ -169,7 +169,6 @@ jobs:
        * ${{ env.MD5_IMG }} for IMG file.
        * ${{ env.MD5_ZIP }} for ZIP file.
        * ${{ env.MD5_TAR }} for TAR file."
-          
-      - name: Print message
-        run: echo "${{ steps.message.outputs.message }}"    
-          
+       
+    - name: Print message
+      run: echo "${{ steps.message.outputs.message }}"
