@@ -1,4 +1,4 @@
-[![OrangeFox-Action](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml/badge.svg)](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml)
+
 
 #TWRP Device configuration for Samsung Galaxy A12 Nacho / A12s
 
@@ -38,15 +38,5 @@ source build/envsetup.sh; export ALLOW_MISSING_DEPENDENCIES=true; lunch twrp_a12
  
 SPDX-License-Identifier: Apache-2.0
 ```
-
-[![OrangeFox-Action](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml/badge.svg?event=fork)](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml)
-
-[![OrangeFox-Action](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml/badge.svg?event=check_run)](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml)
-
-[![OrangeFox-Action](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml/badge.svg?event=watch)](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml)
-
-[![OrangeFox-Action](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml/badge.svg?event=create)](https://github.com/TDD788/A12s-DevTree/actions/workflows/OFRP-Recovery-Action-Builder.yml)
-
-
 
 # A12s-DevTree
