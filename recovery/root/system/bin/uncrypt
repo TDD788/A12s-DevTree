@@ -2,17 +2,12 @@
 
 # Check if an argument is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <file>"
+    echo "Usage: $0 <password>"
     exit 1
 fi
 
-# Get the path of the file provided as argument
-file="$1"
+# Get the path of the password provided as argument
+password="$1"
 
-# Check if the file exists
-if [ ! -f "$file" ]; then
-    exit 1
-fi
-
-# Execute nano with the provided file
-/sbin/decrypt "$file"
+# Decrypt with password
+/sbin/decrypt "$password"
