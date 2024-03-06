@@ -106,6 +106,24 @@ jobs:
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
+    - name: Set message output
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'    
+      run: |
+        echo "## OrangeFox Recovery Build - Unofficial
+        Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+        Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+        ## MD5SUM
+        * ${{ env.MD5_IMG }} for IMG file.
+        * ${{ env.MD5_ZIP }} for ZIP file.
+        * ${{ env.MD5_TAR }} for TAR file." >> $GITHUB_OUTPUT
+       
+    - name: Print message
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'    
+      run: |
+        MESSAGE=$(cat $GITHUB_OUTPUT)
+        echo "$MESSAGE"
+
     - name: Upload files
       if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
@@ -157,18 +175,3 @@ jobs:
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
           * ${{ env.MD5_TAR }} for TAR file.
-          
-    - name: Set message output
-      id: message
-      run: |
-       echo "::set-output name=message::## OrangeFox Recovery Build - Unofficial
-       Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-       Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-       Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-       ## MD5SUM
-       * ${{ env.MD5_IMG }} for IMG file.
-       * ${{ env.MD5_ZIP }} for ZIP file.
-       * ${{ env.MD5_TAR }} for TAR file."
-       
-    - name: Print message
-      run: echo "${{ steps.message.outputs.message }}"
