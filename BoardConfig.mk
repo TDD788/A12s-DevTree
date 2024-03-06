@@ -147,7 +147,7 @@ TARGET_USES_MKE2FS := true
 BOARD_HAS_NO_REAL_SDCARD := true
 
 # System as root
-BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics sys prism
+BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism
 BOARD_SUPPRESS_SECURE_ERASE := true
 
 # TWRP flags selected by TDD788

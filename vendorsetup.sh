@@ -91,7 +91,7 @@ export_build_vars(){
 	
 	
 	# Maintainer Avatar
-	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/maintainer.png
+	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/maintainer.png
 	export OF_MAINTAINER_AVATAR="./maintainer.png"
 
 	# Applications Configurations
