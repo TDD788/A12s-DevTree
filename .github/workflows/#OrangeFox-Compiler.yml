@@ -109,7 +109,8 @@ jobs:
     - name: Set message output
       if: github.event.inputs.RELEASE_TYPE == 'experimental'    
       run: |
-        echo "## OrangeFox Recovery Build - Unofficial
+        echo "Some Info Of The Recovery 
+        ## OrangeFox Recovery Build - Unofficial
         Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
         Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
