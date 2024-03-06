@@ -45,6 +45,12 @@ export_build_vars(){
 	export OF_DISABLE_FORCED_ENCRYPTION=1
 	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
 	export OF_USE_SYSTEM_FINGERPRINT=1
+	
+	# Partition Configurations
+	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
+	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
+	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
+
 
 	# Tools and Utilities Configurations
 	export OF_USE_MAGISKBOOT=1
