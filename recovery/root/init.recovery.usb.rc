@@ -86,7 +86,7 @@ on property:sys.usb.config=sideload && property:sys.usb.configfs=0
     write /sys/class/android_usb/android0/enable 1
     setprop sys.usb.state ${sys.usb.config}
 
-on property:sys.usb.config=fastboot || property:sys.usb.config=fastbootd && property:sys.usb.configfs=0
+on property:sys.usb.config=(fastboot || fastbootd),property:sys.usb.configfs=0
     write /sys/class/android_usb/android0/idProduct 4EE0
     write /sys/class/android_usb/android0/functions fastboot
     write /sys/class/android_usb/android0/enable 1
