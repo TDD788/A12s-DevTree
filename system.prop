@@ -4,3 +4,5 @@ fbe.metadata.wrappedkey=true
 persist.sys.isUsbOtgEnabled=false
 ro.fastbootd.available=true
 ro.fastboot.available=true
+sys.usb.configfs=1
+sys.usb.config=fastboot,mtp,adb
