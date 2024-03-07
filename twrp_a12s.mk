@@ -64,6 +64,10 @@ TW_EXCLUDE_APEX := true
 #TWRP Flags
 TW_INCLUDE_PYTHON := true
 
+# Vibrator
+TW_SUPPORT_INPUT_AIDL_HAPTICS := true
+
+
 # Charger
 PRODUCT_PACKAGES += \
     charger_res_images
