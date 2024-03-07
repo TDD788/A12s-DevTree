@@ -55,7 +55,7 @@ on property:sys.usb.config=adb
 on property:sys.usb.config=mtp,adb
     start adbd
 
-on property:sys.usb.config=fastboot || property:sys.usb.state=fastboot
+on property:sys.usb.config=fastboot && property:sys.usb.state=fastboot
     start fastbootd
     start fastboot
 
