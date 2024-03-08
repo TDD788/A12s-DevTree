@@ -17,7 +17,7 @@ barrier_2() {
 }
 
 printico_with_info () {
-    cat /system/orangefl/logo
+    cat /system/etc/logo
 }
 
 printinfo() {
@@ -25,7 +25,7 @@ printinfo() {
     msg " "
     printico_with_info
     msg " "
-    msg "OFRP FOR GALAXY A12s - $(cat /system/orangefl/fox.version)"
+    msg "OFRP FOR GALAXY A12s - $(cat /system/etc/fox.version)"
     barrier_2
     msg "Bootloader: $(getprop ro.boot.bootloader)"
     msg "Brand: $(getprop ro.product.manufacturer)"

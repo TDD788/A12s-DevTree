@@ -57,6 +57,10 @@ export_build_vars(){
 	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
 	export OF_USE_LOCKSCREEN_BUTTON=1
+	export OF_ALLOW_DISABLE_NAVBAR=0
+	export OF_USE_GREEN_LED=0
+	export OF_USE_HEXDUMP=1
+	export OF_DEVICE_WITHOUT_PERSIST=1
 
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
@@ -64,6 +68,15 @@ export_build_vars(){
 	export FOX_PORTS_TMP=1
 	export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	export FOX_REPLACE_TOOLBOX_GETPROP=1
+	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
+	export OF_TWRP_COMPATIBILITY_MODE=1
+	export OF_DONT_KEEP_LOG_HISTORY=1
+	export OF_USE_GREEN_LED=1
+	export OF_FORCE_USE_RECOVERY_FSTAB=1
+	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
+	export OF_OPTIONS_LIST_NUM=6
+	export FOX_BASH_TO_SYSTEM_BIN=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
@@ -75,7 +88,7 @@ export_build_vars(){
 	export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=1
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_VARIANT="AOSP"
-	export FOX_NO_SAMSUNG_SPECIAL=2
+	export FOX_NO_SAMSUNG_SPECIAL=1
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
@@ -108,6 +121,8 @@ export_build_vars(){
 		export FOX_REPLACE_TOOLBOX_GETPROP=1
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
+		export FOX_ASH_IS_BASH=1
+		export FOX_USE_BASH_SHELL=1
 	fi
 
 	#Ofox 11
