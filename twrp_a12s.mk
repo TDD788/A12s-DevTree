@@ -38,11 +38,9 @@ TW_HAS_FASTBOOTD := true
 
 # fastbootd
 PRODUCT_PACKAGES += \
-    fastbootd
-
-PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
-    android.hardware.fastboot@1.0-impl-mock.recovery
+    android.hardware.fastboot@1.0-impl-mock.recovery \
+    fastbootd
     
 PRODUCT_PROPERTY_OVERRIDES +=\
 	ro.fastbootd.available=true

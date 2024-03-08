@@ -1,10 +1,11 @@
 import /init.recovery.samsung.rc
 
 on init
-    write /proc/sys/kernel/hung_task_timeout_secs 0
-
-on late-init
-    setprop ro.debuggable 1
-    setprop service.adb.root 1
     setprop sys.usb.configfs 1
-    setprop sys.usb.config adb
+    setprop sys.usb.ffs.aio_compat 0
+
+on fs && property:ro.debuggable=0
+    # distinguish USB shoulde connect or not, i.e. CDP vs SDP
+    write /sys/class/udc/musb-hdrc/device/cmode 2
+    # set charging free due to it wait for USB activation
+    start adbd

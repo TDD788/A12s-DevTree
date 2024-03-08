@@ -23,7 +23,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_1"
+	export FOX_VERSION="R12.1_2"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
