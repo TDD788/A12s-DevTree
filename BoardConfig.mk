@@ -109,7 +109,7 @@ TARGET_COPY_OUT_VENDOR := vendor
 
 # TWRP
 # Interface and theme
-TW_THEME := true # Defines the theme used by TWRP.
+TW_THEME := portrait_hdpi # Defines the theme used by TWRP.
 TW_SCREEN_BLANK_ON_BOOT := true # Controls whether a blank screen is displayed on boot.
 TWRP_NEW_THEME := true # Indicates if a new theme is used in TWRP.
 
@@ -131,6 +131,7 @@ TW_NO_REBOOT_BOOTLOADER := false # Controls whether reboot to bootloader is allo
 TW_HAS_DOWNLOAD_MODE := true # Indicates if download mode is available.
 TWRP_INCLUDE_LOGCAT := true # Controls the inclusion of logcat logs in TWRP.
 TARGET_USES_LOGD := true # Indicates if the system uses the log daemon.
+TW_MTP_DEVICE := "Fox MTP A12s" # Indicates the MTP name of the recovery
 
 # File and filesystem compatibility
 TW_INCLUDE_NTFS_3G := true # Indicates if NTFS support is included.
