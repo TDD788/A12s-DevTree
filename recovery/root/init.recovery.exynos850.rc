@@ -1,4 +1,5 @@
 import /init.recovery.samsung.rc
+import /init.recovery.usb.rc
 
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
@@ -7,7 +8,6 @@ on late-init
     setprop ro.debuggable 1
     setprop service.adb.root 1
     setprop sys.usb.configfs 1
-    setprop sys.usb.config adb
 
 on fs
     export ANDROID_ROOT /system
