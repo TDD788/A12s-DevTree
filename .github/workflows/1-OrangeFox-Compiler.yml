@@ -89,6 +89,11 @@ jobs:
         git clone https://gitlab.com/OrangeFox/sync.git -b master
         cd sync
         ./orangefox_sync.sh --branch ${{ github.event.inputs.MANIFEST_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+        rm -rf gui/theme/portrait_hdpi/images/Defaut/About/maintainer.png
+        cd gui/theme/portrait_hdpi/images/Defaut/About
+        wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
+        mv TheDarkDeath788.png maintainer.png
 
     - name: Clone Device Tree
       run: |
