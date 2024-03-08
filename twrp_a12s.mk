@@ -34,7 +34,7 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # TWRP
 TW_INCLUDE_FASTBOOTD := true
-TW_INCLUDE_FASTBOOT := true
+TW_HAS_FASTBOOTD := true
 
 # fastbootd
 PRODUCT_PACKAGES += \
@@ -44,15 +44,9 @@ PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
     android.hardware.fastboot@1.0-impl-mock.recovery
     
-# TWRP
-TW_HAS_FASTBOOTD := true
-TW_HAS_FASTBOOT := true
-    
 PRODUCT_PROPERTY_OVERRIDES +=\
 	ro.fastbootd.available=true
-	ro.fastboot.available=true
 	ro.boot.dynamic_partitions=true 
-	ro.treble.enabled=true
 	
 # Apex Libraries
 PRODUCT_HOST_PACKAGES += \

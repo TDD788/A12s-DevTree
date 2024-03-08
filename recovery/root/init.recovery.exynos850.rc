@@ -5,8 +5,6 @@ on init
 
 on late-init
     setprop ro.debuggable 1
-    setprop service.adb.root 1
-    setprop sys.usb.configfs 1
 
 on fs
     export ANDROID_ROOT /system
