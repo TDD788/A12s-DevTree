@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 DEVICE_PATH := device/samsung/a12s
+LOCAL_PATH := device/samsung/a12s
 
 # Release name
 PRODUCT_RELEASE_NAME := a12s
@@ -43,9 +44,6 @@ PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
     android.hardware.fastboot@1.0-impl-mock.recovery
     
-PRODUCT_PACKAGES += \
-    fastboot_recovery
-    
 # TWRP
 TW_HAS_FASTBOOTD := true
 TW_HAS_FASTBOOT := true
@@ -60,14 +58,11 @@ PRODUCT_PROPERTY_OVERRIDES +=\
 PRODUCT_HOST_PACKAGES += \
     libandroidicu
 
-TW_EXCLUDE_APEX := true
-
 #TWRP Flags
 TW_INCLUDE_PYTHON := true
 
 # Vibrator
 TW_SUPPORT_INPUT_AIDL_HAPTICS := true
-
 
 # Charger
 PRODUCT_PACKAGES += \

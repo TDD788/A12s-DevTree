@@ -22,8 +22,8 @@ export_build_vars(){
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
-	export FOX_BUILD_TYPE="Oficial"
-	export FOX_VERSION="R12-(Oatmeal-Cookies)"
+	export FOX_BUILD_TYPE="Stable"
+	export FOX_VERSION="R12.1_1"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1

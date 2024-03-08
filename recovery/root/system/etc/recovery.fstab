@@ -13,6 +13,7 @@
 /product    ext4    /dev/block/mapper/product  flags=display="Product";backup=1
 /odm    ext4    /dev/block/mapper/odm  flags=display="ODM";backup=1
 /usb-otg    auto    /dev/block/sda1 /dev/block/sda  flags=display="USB-OTG";storage;wipeingui;removable
+/storage	ext4	/data/media/0	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
 
 # AVOID USING /sdcard and sdfat, its not supported...
 
@@ -43,5 +44,5 @@
 
 
 # Samsung ODE
-#/dev/block/by-name/keydata		/keydata	ext4	defaults		recoveryonly
-#/dev/block/by-name/keyrefuge		/keyrefuge	f2fs	defaults		recoveryonly
+/dev/block/by-name/keydata		/keydata	ext4	defaults		recoveryonly
+/dev/block/by-name/keyrefuge		/keyrefuge	f2fs	defaults		recoveryonly
