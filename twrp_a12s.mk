@@ -54,6 +54,7 @@ PRODUCT_PROPERTY_OVERRIDES +=\
 	ro.fastbootd.available=true
 	ro.fastboot.available=true
 	ro.boot.dynamic_partitions=true 
+	ro.treble.enabled=true
 	
 # Apex Libraries
 PRODUCT_HOST_PACKAGES += \
