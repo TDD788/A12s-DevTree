@@ -134,7 +134,7 @@ export_build_vars(){
 	export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=1
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_VARIANT="AOSP"
-	export FOX_NO_SAMSUNG_SPECIAL=1
+	export FOX_NO_SAMSUNG_SPECIAL=2
 	#export OF_PATCH_AVB20=1
 	#export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
@@ -168,6 +168,8 @@ export_build_vars(){
 		export FOX_USE_SPECIFIC_MAGISK_ZIP="$file_name"
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
+		export FOX_ASH_IS_BASH=1
+		export FOX_USE_BASH_SHELL=1
 	fi
 
 	#Ofox 11
