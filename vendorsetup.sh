@@ -168,8 +168,6 @@ export_build_vars(){
 		export FOX_USE_SPECIFIC_MAGISK_ZIP="$file_name"
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
-		export FOX_ASH_IS_BASH=1
-		export FOX_USE_BASH_SHELL=1
 	fi
 
 	#Ofox 11
