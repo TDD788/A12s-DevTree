@@ -5,51 +5,6 @@ sudo chmod +rwx out/host/linux-x86/bin/avbtool
 chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
 add_lunch_combo twrp_a12s-eng
 
-# Magisk
-user='topjohnwu'
-repo='Magisk'
-pattern="$user/$repo/releases/download/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+\.apk"
-url_base="https://github.com/$user/$repo/releases"
-url_latest="$url_base/latest"
-
-echo 'Searching for latest Magisk...'
-redirect_url="$(curl "$url_latest" -s -L -I -o /dev/null -w '%{url_effective}')" || {
-    code=$?
-    echo "Failed to open $url_latest"
-    exit $code
-}
-
-# Extract tag
-version_tag="${redirect_url/$url_base\/tag\/}"
-
-url="https://github.com/topjohnwu/Magisk/releases/expanded_assets/$version_tag"
-
-echo 'Searching for Magisk download link...'
-html="$(curl --show-error --location "$url")" || {
-    code=$?
-    echo "Failed to download $url"
-    exit $code
-}
-
-file_link="$(echo "$html" | grep -iEo "$pattern" | (head -n 1; dd status=none of=/dev/null))"
-download_link="https://github.com/$file_link"
-file_name="/tmp/$(basename "${file_link/apk/zip}")"
-
-echo "Downloading Magisk from $download_link"
-response_code="$(curl \
-    --show-error \
-    --location "$download_link" \
-    --write-out '%{http_code}' \
-    --output "$file_name")"; code=$?
-
-if [ $code -gt 0 ] || [ $response_code -ge 400 ]; then
-    echo "Failed to download $download_link"
-    exit $code
-fi
-echo "Latest Magisk has been saved to: $file_name"
-
-echo "======================================================="
-
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
 
@@ -165,7 +120,6 @@ export_build_vars(){
 		export FOX_USE_XZ_UTILS=1
 		export FOX_REPLACE_BUSYBOX_PS=1
 		export FOX_REPLACE_TOOLBOX_GETPROP=1
-		export FOX_USE_SPECIFIC_MAGISK_ZIP="$file_name"
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
 		export FOX_ASH_IS_BASH=1

@@ -25,7 +25,7 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-on property:ro.boot.usbcontroller=*
+on property:ro.boot.usbcontroller=13600000.dwc3
     setprop sys.usb.controller ${ro.boot.usbcontroller}
 
 on fs
