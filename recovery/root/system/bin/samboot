@@ -11,6 +11,12 @@ case $1 in
     --download)
         reboot download
         ;;
+    --fastbootd)
+        reboot fastboot
+        ;;
+    --bootloader)
+        reboot bootloader
+        ;;
     --system)
         reboot system
         ;;
@@ -27,6 +33,8 @@ case $1 in
         echo "--recovery             Boot again to recovery"
         echo "--download             Boot to Download Mode"
         echo "--system               Boot to System"
+        echo "--fastbootd			Boot to Fastbootd"
+        echo "--bootloader    	   Boot to Bootloader/Stock Fastboot"
         echo ""
         echo "Made By TheDarkDeath788 with Like and Appreciation for You"
         echo ""
