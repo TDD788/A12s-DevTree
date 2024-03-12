@@ -7,13 +7,13 @@ SGDISK=/system/bin/sgdisk
 DISK=/dev/block/mmcblk0
 
 # Get disk code and sector size
-DISKCODE=`$SGDISK --print $DISK | grep super | awk '{printf $6}'`
-SECSIZE=`$SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}'`
+DISKCODE=$( $SGDISK --print $DISK | grep super | awk '{printf $6}' )
+SECSIZE=$( $SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}' )
 
 function delete_partition() {
     # Delete specified partition
     local partition_name=$1
-    local partition_number=`$SGDISK --print $DISK | grep -i $partition_name | awk '{printf $1}'`
+    local partition_number=$( $SGDISK --print $DISK | grep -i $partition_name | awk '{printf $1}' )
     $SGDISK --delete=$partition_number $DISK
 }
 
@@ -22,6 +22,12 @@ function repartition() {
     local partition_size=$2
     # Repartition with specified size
     $SGDISK --new=0:0:+${partition_size}Mib --typecode=0:$DISKCODE --change-name=0:$partition_name $DISK
+}
+
+# Function to repartition Prism with default size (30 MB)
+function repartition_prism_default() {
+    local default_prism_size=30
+    repartition "PRISM" $default_prism_size
 }
 
 # Prompt user to choose partition and size
@@ -59,8 +65,9 @@ case $partition_number in
         partition_name="USERDATA"
         ;;
     8)
-        partition_name="PRISM"
-        partition_size=30
+        repartition "SUPER" 6265
+        repartition_prism_default
+        exit 0
         ;;
     *)
         echo "Invalid partition number selected. Exiting."
@@ -68,9 +75,9 @@ case $partition_number in
         ;;
 esac
 
-# If partition_name is PRISM and size is not set by user, set default size to 30 MB
-if [ "$partition_name" == "PRISM" ] && [ -z "$partition_size" ]; then
-    partition_size=30
+# If partition_name is not PRISM (default), prompt user to enter size
+if [ "$partition_name" != "PRISM" ]; then
+    read -p "Enter new size in MB for $partition_name partition: " partition_size
 fi
 
 # Main
