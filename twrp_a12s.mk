@@ -53,9 +53,6 @@ PRODUCT_HOST_PACKAGES += \
 #TWRP Flags
 TW_INCLUDE_PYTHON := true
 
-# Vibrator
-TW_SUPPORT_INPUT_AIDL_HAPTICS := true
-
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := twrp_a12s
 PRODUCT_DEVICE := a12s
