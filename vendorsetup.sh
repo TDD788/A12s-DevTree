@@ -34,6 +34,7 @@ export_build_vars(){
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_USE_TWRP_SAR_DETECT=1
+	export OF_SKIP_FBE_DECRYPTION=1
 
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
