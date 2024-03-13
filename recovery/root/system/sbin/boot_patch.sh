@@ -68,19 +68,16 @@ if [ $? -ne 0 ]; then
 fi
 
 # shellcheck disable=SC2039
-if [[ $FLASH_TO_DEVICE == *"true"* ]]; then
-  # flash
-  if [ -b "$BOOTIMAGE" ] || [ -c "$BOOTIMAGE" ] && [ -f "new-boot.img" ]; then
-    echo "- Flashing new boot image"
-    flash_image new-boot.img "$BOOTIMAGE"
-    if [ $? -ne 0 ]; then
-      >&2 echo "- Flash error: $?"
-      exit $?
-    fi
+if [ -b "$BOOTIMAGE" ] || [ -c "$BOOTIMAGE" ] && [ -f "new-boot.img" ]; then
+  echo "- Flashing new boot image"
+  flash_image new-boot.img "$BOOTIMAGE"
+  if [ $? -ne 0 ]; then
+    >&2 echo "- Flash error: $?"
+    exit $?
   fi
 
   echo "- Successfully Flashed!"
 else
-  echo "- Successfully Patched!"
+  >&2 echo "- Error: BOOTIMAGE is not a valid block device or new-boot.img does not exist."
+  exit 1
 fi
-
