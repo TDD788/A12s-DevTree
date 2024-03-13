@@ -31,7 +31,17 @@ case "$1" in
         exit 0
         ;;
     -p | --patch)
-        /sbin/boot_patch.sh
+        read -p "Enter directory: " directory
+        if [ -z "$directory" ]; then
+            echo "Directory is empty."
+            exit 1
+        fi
+        read -p "Enter superkey: " superkey
+        if [ -z "$superkey" ]; then
+            echo "Superkey is empty."
+            exit 1
+        fi
+        /sbin/boot_patch.sh "$directory" "$superkey"
         ;;
     -u | --unpatch)
         /sbin/boot_unpatch.sh
