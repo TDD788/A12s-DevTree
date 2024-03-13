@@ -3,8 +3,6 @@
 # Path to the apd binary
 APD_BIN="/data/adb/apd"
 
-mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
-
 # Function to display help
 show_help() {
     echo "Usage: apatch [OPTION]"
@@ -50,6 +48,8 @@ case "$1" in
         bash /sbin/boot_extract.sh
         ;;
     -m | --manager)
+    
+    mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
 # Function to display the main menu
 main_menu() {
     echo "Main Menu:"
