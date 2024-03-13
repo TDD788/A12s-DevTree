@@ -3,6 +3,8 @@
 # Path to the apd binary
 APD_BIN="/data/adb/apd"
 
+mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
+
 # Function to display help
 show_help() {
     echo "Usage: apatch [OPTION]"
