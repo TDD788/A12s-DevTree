@@ -41,13 +41,13 @@ case "$1" in
             echo "Superkey is empty."
             exit 1
         fi
-        /sbin/boot_patch.sh "$directory" "$superkey"
+        bash /sbin/boot_patch.sh "$directory" "$superkey"
         ;;
     -u | --unpatch)
-        /sbin/boot_unpatch.sh
+        bash /sbin/boot_unpatch.sh
         ;;
     -e | --extract)
-        /sbin/boot_extract.sh
+        bash /sbin/boot_extract.sh
         ;;
     -m | --manager)
 # Function to display the main menu
