@@ -1,10 +1,3 @@
-# Mkbootimage
-sudo apt install nano
-git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
-sudo chmod +rwx out/host/linux-x86/bin/avbtool
-chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
-add_lunch_combo twrp_a12s-eng
-
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
 
@@ -21,7 +14,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_3"
+	export FOX_VERSION="R12.1_4"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -42,7 +35,6 @@ export_build_vars(){
 	export OF_FORCE_DISABLE_DM_VERITY=1
 	export OF_DISABLE_FORCED_ENCRYPTION=1
 	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
-	export OF_USE_SYSTEM_FINGERPRINT=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -58,7 +50,6 @@ export_build_vars(){
 	export OF_USE_LOCKSCREEN_BUTTON=1
 	export OF_ALLOW_DISABLE_NAVBAR=0
 	export OF_USE_GREEN_LED=0
-	export OF_USE_HEXDUMP=1
 	export OF_DEVICE_WITHOUT_PERSIST=1
 	export FOX_BUILD_BASH=1
 	
@@ -68,16 +59,12 @@ export_build_vars(){
 	export FOX_PORTS_TMP=1
 	export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
-	export FOX_REPLACE_TOOLBOX_GETPROP=1
-	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
-	export OF_TWRP_COMPATIBILITY_MODE=1
+	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=32
 	export OF_DONT_KEEP_LOG_HISTORY=1
 	export OF_USE_GREEN_LED=1
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
-	export OF_OPTIONS_LIST_NUM=6
-	export FOX_BASH_TO_SYSTEM_BIN=1
-	export OF_FORCE_USE_RECOVERY_FSTAB=1
+	export OF_OPTIONS_LIST_NUM=8
 	export OF_FORCE_PREBUILT_KERNEL=1
 	
 	# maximum permissible splash image size
@@ -87,11 +74,10 @@ export_build_vars(){
 	# Specific Features Configurations
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-	export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=1
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=0
 	export FOX_VARIANT="AOSP"
 	export FOX_NO_SAMSUNG_SPECIAL=2
-	#export OF_PATCH_AVB20=1
+	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
 	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
