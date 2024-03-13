@@ -92,12 +92,11 @@ export_build_vars(){
 	export FOX_VARIANT="AOSP"
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	#export OF_PATCH_AVB20=1
-	#export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
+	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
 	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
 
 	# File Paths Configurations
-	#export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
 	export OF_FL_PATH1="/system/flashlight"
 	export OF_FL_PATH2=""
 	export OF_FLASHLIGHT_ENABLE=1
@@ -120,7 +119,6 @@ export_build_vars(){
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
 		export FOX_REPLACE_BUSYBOX_PS=1
-		export FOX_REPLACE_TOOLBOX_GETPROP=1
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
 		export FOX_ASH_IS_BASH=1
