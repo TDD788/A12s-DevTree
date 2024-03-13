@@ -141,16 +141,16 @@ TW_DEFAULT_BRIGHTNESS := 153
 
 # TWRP Settings
 TW_INCLUDE_FASTBOOTD := true
-TW_USE_TOOLBOX := true
+#TW_USE_TOOLBOX := true
 TW_NO_REBOOT_BOOTLOADER := false
 TW_HAS_DOWNLOAD_MODE := true
 TW_MTP_DEVICE := "Fox MTP A12s"
 TW_INCLUDE_NTFS_3G := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
+#TW_INPUT_BLACKLIST := "hbtp_vm"
 TARGET_USES_MKE2FS := true
 
 # Making the recovery.img smaller
-BOARD_HAS_NO_REAL_SDCARD := true
+#BOARD_HAS_NO_REAL_SDCARD := true
 
 # System as root
 BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism
@@ -161,10 +161,10 @@ TW_EXCLUDE_SUPERSU := true
 TARGET_ARCH := arm64
 TW_INCLUDE_REPACKTOOLS := true
 TW_EXTRA_LANGUAGES := true
-TWRP_INCLUDE_LOGCAT := true
-TARGET_USES_LOGD := true
+#TWRP_INCLUDE_LOGCAT := true
+#TARGET_USES_LOGD := true
 TW_INCLUDE_FUSE_EXFAT := true
-TW_HAS_EDL_MODE := false
+#TW_HAS_EDL_MODE := false
 TW_INCLUDE_PYTHON := true
 TW_EXCLUDE_TWRPAPP := true
 TW_USE_SAMSUNG_HAPTICS := true
