@@ -36,12 +36,11 @@ export_build_vars(){
 	export OF_USE_TWRP_SAR_DETECT=1
 
 	# Security Configurations
-	export OF_ADVANCED_SECURITY=1
+	#export OF_ADVANCED_SECURITY=1
 	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
 	export OF_FORCE_DISABLE_DM_VERITY=1
 	export OF_DISABLE_FORCED_ENCRYPTION=1
 	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
-	export OF_USE_SYSTEM_FINGERPRINT=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -64,6 +63,7 @@ export_build_vars(){
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
+	export FOX_PATCH_VBMETA_FLAG=1
 	export FOX_PORTS_TMP=1
 	export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
@@ -96,7 +96,6 @@ export_build_vars(){
 	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
 
 	# File Paths Configurations
-	#export OF_FL_PATH1="/sys/devices/virtual/camera/flash/rear_flash"
 	export OF_FL_PATH1="/system/flashlight"
 	export OF_FL_PATH2=""
 	export OF_FLASHLIGHT_ENABLE=1
@@ -119,7 +118,6 @@ export_build_vars(){
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
 		export FOX_REPLACE_BUSYBOX_PS=1
-		export FOX_REPLACE_TOOLBOX_GETPROP=1
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
 		export FOX_ASH_IS_BASH=1
