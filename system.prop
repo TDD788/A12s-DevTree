@@ -1,4 +1,4 @@
-ro.display.series=Samsung Galaxy A12 Nacho
+ro.display.series=a12s
 ro.product.board=exynos850
 ro.boot.usbcontroller=13600000.dwc3
 ro.boot.dynamic_partitions = true

@@ -1,10 +1,3 @@
-on boot
-    # Check if the device was rebooted into fastbootd
-    if [ "$(getprop ro.bootmode)" = "fastboot" ]; then
-        # Set the USB configuration property to "fastboot"
-        setprop sys.usb.config fastboot
-    fi
-
 on init
     setprop persist.sys.isUsbOtgEnabled false
     # Path to the log file

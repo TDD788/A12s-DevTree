@@ -21,18 +21,14 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_5"
+	export FOX_VERSION="R12.1_6"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
-	export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
-	export OF_FORCE_PREBUILT_KERNEL=1
-	export OF_NO_SPLASH_CHANGE=0
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 
 	# Security Configurations
 	#export OF_ADVANCED_SECURITY=1
@@ -47,23 +43,16 @@ export_build_vars(){
 	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
 
 	# Tools and Utilities Configurations
-	export OF_USE_MAGISKBOOT=1
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export OF_ALLOW_DISABLE_NAVBAR=0
-	export OF_USE_GREEN_LED=0
-	export OF_USE_HEXDUMP=1
-	export FOX_BUILD_BASH=1
+	export OF_USE_GREEN_LED=01
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
-	export FOX_PORTS_INSTALLER=1
-	export FOX_INSTALLER_DISABLE_AUTOREBOOT=0
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
-	export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	#export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
-	export FOX_PORTS_TMP=1
-	export OF_OTA_BACKUP_STOCK_BOOT_IMAGE=1
+	#export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
 	export OF_TWRP_COMPATIBILITY_MODE=1
@@ -71,9 +60,6 @@ export_build_vars(){
 	export OF_USE_GREEN_LED=1
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
-	export FOX_BASH_TO_SYSTEM_BIN=1
-	export OF_FORCE_USE_RECOVERY_FSTAB=1
-	export OF_FORCE_PREBUILT_KERNEL=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
@@ -82,8 +68,6 @@ export_build_vars(){
 	# Specific Features Configurations
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-	export OF_SKIP_MULTIUSER_FOLDERS_BACKUP=1
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	#export OF_PATCH_AVB20=1
 	#export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
@@ -157,4 +141,3 @@ case "$CURR_DEVICE" in
     var_not_eq
     ;;
 esac
-
