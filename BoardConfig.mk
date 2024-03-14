@@ -43,10 +43,13 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
 TARGET_USES_UEFI := true
 
+# Display
+TARGET_SCREEN_DENSITY := 300
+
 # Kernel
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=permisive loop.max_part=10 firmware_class.path=/vendor/firmware
+BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=enforce loop.max_part=7
 BOARD_KERNEL_CMDLINE += androidboot.usbconfigfs=true
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x01000000
@@ -54,13 +57,19 @@ BOARD_KERNEL_TAGS_OFFSET := 0x00000100
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_KERNEL_IMAGE_NAME := Image.gz-dtb
+BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO := true
 TARGET_KERNEL_CONFIG := a12s_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/a12s
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_ARCH := arm64
+
+#Other
+TARGET_KERNEL_ADDITIONAL_FLAGS := \
+    HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
+
+BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
@@ -96,6 +105,7 @@ BOARD_GOOGLE_DYNAMIC_PARTITIONS_PARTITION_LIST := \
 TARGET_BOARD_PLATFORM := universal3830    
 
 # Recovery
+BOARD_INCLUDE_RECOVERY_DTBO := true
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 
@@ -119,7 +129,6 @@ TW_THEME := portrait_hdpi
 TW_FRAMERATE := 60
 TARGET_SCREEN_WIDTH := 720
 TARGET_SCREEN_HEIGHT := 1600
-TARGET_SCREEN_DENSITY := 300
 RECOVERY_SDCARD_ON_DATA := true
 
 # Fastbootd 
@@ -132,25 +141,31 @@ TW_MAX_BRIGHTNESS := 306
 TW_DEFAULT_BRIGHTNESS := 153
 
 # TWRP Settings
+TW_HAS_FASTBOOTD := true
 TW_USE_TOOLBOX := true
 TW_NO_REBOOT_BOOTLOADER := false
 TW_HAS_DOWNLOAD_MODE := true
 TW_MTP_DEVICE := "Fox MTP A12s"
 TW_INCLUDE_NTFS_3G := true
+TW_USE_NEW_MINADBD := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TARGET_USES_MKE2FS := true
 
+# Making the recovery.img smaller
+BOARD_HAS_NO_REAL_SDCARD := true
+
 # System as root
-BOARD_ROOT_EXTRA_FOLDERS := "cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism"
+BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism
 BOARD_SUPPRESS_SECURE_ERASE := true
 
 # TWRP flags selected by TDD788
-TW_EXCLUDE_SUPERSU := true
 TW_INCLUDE_REPACKTOOLS := true
 TW_EXTRA_LANGUAGES := true
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_INCLUDE_FUSE_EXFAT := true
+TW_INCLUDE_RESETPROP := true
+TWRP_NEW_THEME := true
 TW_INCLUDE_PYTHON := true
+TW_EXCLUDE_TWRPAPP := true
 TW_USE_SAMSUNG_HAPTICS := true
-TW_SCREEN_BLANK_ON_BOOT := true
