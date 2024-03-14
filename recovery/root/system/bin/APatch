@@ -48,8 +48,6 @@ case "$1" in
         bash /sbin/boot_extract.sh
         ;;
     -m | --manager)
-    
-    mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
 # Function to display the main menu
 main_menu() {
     echo "Main Menu:"
@@ -82,6 +80,7 @@ manage_modules_menu() {
 manage_modules() {
     while true; do
         manage_modules_menu
+            mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
         read option
         case "$option" in
             1)

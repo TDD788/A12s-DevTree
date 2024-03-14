@@ -41,7 +41,7 @@ TARGET_SOC := universal3830
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_RADIOIMAGE := true
-#TARGET_USES_UEFI := true
+TARGET_USES_UEFI := true
 
 # Kernel
 BOARD_BOOTIMG_HEADER_VERSION := 2
@@ -140,9 +140,6 @@ TW_INCLUDE_NTFS_3G := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TARGET_USES_MKE2FS := true
 
-# Making the recovery.img smaller
-#BOARD_HAS_NO_REAL_SDCARD := true
-
 # System as root
 BOARD_ROOT_EXTRA_FOLDERS := "cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism"
 BOARD_SUPPRESS_SECURE_ERASE := true
@@ -154,6 +151,6 @@ TW_EXTRA_LANGUAGES := true
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_INCLUDE_FUSE_EXFAT := true
-#TW_HAS_EDL_MODE := false
 TW_INCLUDE_PYTHON := true
 TW_USE_SAMSUNG_HAPTICS := true
+TW_SCREEN_BLANK_ON_BOOT := true

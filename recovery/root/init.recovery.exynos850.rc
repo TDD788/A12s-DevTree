@@ -1,10 +1,40 @@
 on init
     setprop sys.usb.configfs 1
     setprop setprop persist.sys.isUsbOtgEnabled false
+
+    # Path to the log file
+    LOG_FILE="/cache/loop_log.log"
+
+    # Check if the log file exists, if not, create it
+    if [ ! -f "$LOG_FILE" ]; then
+        touch "$LOG_FILE"
+        chmod 666 "$LOG_FILE"
+    fi
+
+    # Read the current restart count from the log file
+    restart_count=$(cat "$LOG_FILE")
+
+    # Increment the restart count
+    ((restart_count++))
+
+    # Log the restart
+    echo "Recovery process restarted. Count: $restart_count" >> "$LOG_FILE"
+
+    # Check if the restart count exceeds the limit
+    if [ "$restart_count" -ge 5 ]; then
+        echo "Restart limit exceeded. Rebooting the system."
+        # Reboot the system
+        reboot
+    fi
+
+    # Update the log file with the new restart count
+    echo "$restart_count" > "$LOG_FILE"
     
+    # Set up a timer to reboot the system if the user doesn't touch the screen for 10 minutes
+    (sleep 600; reboot)
+
 on fs && property:ro.debuggable=0
-    # distinguish USB shoulde connect or not, i.e. CDP vs SDP
+    # Distinguish whether USB should connect or not, i.e., CDP vs SDP
     write /sys/class/udc/13600000.dwc3/device/cmode 2
-    # set charging free due to it wait for USB activation
+    # Set charging free due to it waiting for USB activation
     start adbd
-    
