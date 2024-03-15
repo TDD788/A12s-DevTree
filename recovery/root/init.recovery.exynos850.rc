@@ -1,7 +1,4 @@
-on init
-    setprop persist.sys.isUsbOtgEnabled false
-    setprop sys.usb.configfs 1
-    setprop sys.usb.ffs.aio_compat 0    
+on boot
     # Path to the log file
     LOG_FILE="/cache/loop_log.log"
 
@@ -29,12 +26,26 @@ on init
 
     # Update the log file with the new restart count
     echo "$restart_count" > "$LOG_FILE"
+    
+import /init.recovery.samsung.rc
+import /init.recovery.usb.rc
+    
+on init
+    write /proc/sys/kernel/hung_task_timeout_secs 0
 
+on late-init
+    setprop ro.debuggable 1
+    setprop service.adb.root 1
+    setprop sys.usb.configfs 1
+    setprop sys.usb.config adb
+
+on fs
+    export ANDROID_ROOT /system_root
+
+    wait /dev/block/platform/12100000.dwmmc0
+    symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
+    symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
+    symlink /dev/block/platorm/12100000.dwmmc0/by-name/param /dev/block/param
+    
     # Set up a timer to reboot the system if the user doesn't touch the screen for 10 minutes
     (sleep 900; reboot)
-
-on fs && property:ro.debuggable=0
-    # Distinguish whether USB should connect or not, i.e., CDP vs SDP
-    write /sys/class/udc/13600000.dwc3/device/cmode 2
-    # Set charging free due to it waiting for USB activation
-    start adbd

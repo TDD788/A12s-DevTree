@@ -120,7 +120,6 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
     - name: Upload files
-      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
@@ -173,7 +172,7 @@ jobs:
 
     - name: Prepare the patch environment
       run: |
-        sudo apt install git wget lz4 tar openssl python3 -y && git clone https://github.com/TDD788/Patch-Recovery.git ${GITHUB_WORKSPACE}/ && cd ${GITHUB_WORKSPACE}/	
+        sudo apt install git wget lz4 tar openssl python3 -y && git clone https://github.com/TDD788/Patch-Recovery.git ${GITHUB_WORKSPACE}/patch && cd ${GITHUB_WORKSPACE}/patch	
 
     - name: Fetch image from URL
       uses: actions/download-artifact@v4
