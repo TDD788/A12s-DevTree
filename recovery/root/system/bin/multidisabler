@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/system/bin/bash
 #
 # A simple Samsung services disabler by Ian Macdonald.
 #

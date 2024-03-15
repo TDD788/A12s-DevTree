@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/bash
 # Path to the apd binary
 APD_BIN="/data/adb/apd"
 
