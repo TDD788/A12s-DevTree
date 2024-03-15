@@ -57,6 +57,6 @@
 /vbmeta         emmc    /dev/block/by-name/vbmeta               flags=display="Vbmeta Samsung";backup=1;flashimg=1;
 
 # External Stuff
-/storage 	   ext4	/data/media/0									flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
-/external_sd    auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1          flags=fsflags=utf8;display="MicroSD";storage;wipeingui;removable
-/usb-otg    	auto	/dev/block/sda1	/dev/block/sda				flags=display="USB-OTG";storage;wipeingui;removable
+/storage 	   ext4	/data/media/0								    	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
+/external_sd    auto    /dev/block/mmcblk1p1   /dev/block/mmcblk1            flags=fsflags=utf8;display="MicroSD";storage;wipeingui;removable
+/usb-otg    	auto	/dev/block/sda1		/dev/block/sda				flags=display="USB-OTG";storage;wipeingui;removable
