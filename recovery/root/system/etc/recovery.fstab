@@ -8,41 +8,34 @@
 /system_image   emmc    /dev/block/mapper/system    flags=backup=0;flashimg=1;display="System";wipeingui
 /vendor_image   emmc    /dev/block/mapper/vendor    flags=backup=0;flashimg=1;display="Vendor";wipeingui
 /external_sd    vfat    /dev/block/mmcblk1p1    /dev/block/mmcblk1  flags=storage;wipeingui;removable
-/system     ext4    /dev/block/mapper/system   flags=display="System";backup=1
+/system_root     ext4    /dev/block/mapper/system   flags=display="System";backup=1
 /vendor     ext4    /dev/block/mapper/vendor   flags=display="Vendor";backup=1
 /product    ext4    /dev/block/mapper/product  flags=display="Product";backup=1
-/odm    ext4    /dev/block/mapper/odm	flags=display="ODM";backup=1
-/usb-otg    auto    /dev/block/sda1	/dev/block/sda	flags=display="USB-OTG";storage;wipeingui;removable
-/storage	ext4	/data/media/0	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
+/odm    ext4    /dev/block/mapper/odm    flags=display="ODM";backup=1
+/usb-otg    auto    /dev/block/sda1    /dev/block/sda   flags=display="USB-OTG";storage;wipeingui;removable
+/storage    ext4    /data/media/0   flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
 
-# AVOID USING /sdcard and sdfat, its not supported...
-
-# Separate
-# These will be separated due to some functions
-# DO NOT PLAY AROUND WITH wipeingui
-
-/boot	emmc    /dev/block/by-name/boot	flags=display="Boot, also called Android Kernel"
-/recovery	emmc    /dev/block/by-name/recovery	flags=display=recovery
-/dtbo	emmc	/dev/block/by-name/dtbo	flags=display="DTBO";flashimg=1
-/metadata   ext4    /dev/block/by-name/metadata	flags=display=metadata;wipeingui
-/data   f2fs    /dev/block/by-name/userdata	flags=display="Device Data";wipeingui
-/cache	ext4    /dev/block/by-name/cache    flags=display=cache;wipeingui
-/efs    ext4    /dev/block/by-name/sec_efs	flags=display=efs
-/sec_efs    ext4    /dev/block/by-name/sec_efs	flags=display=sec_efs
-#/carrier    ext4    /dev/block/by-name/carrier	flags=display=carrier
-#/preload    ext4    /dev/block/by-name/hidden	flags=display=preload
-/prism  ext4    /dev/block/by-name/prism    flags=display=prism;flashimg=1
-/optics ext4    /dev/block/by-name/optics	flags=display=optics;flashimg=1
-#/vbmeta_system	emmc    /dev/block/by-name/vbmeta_system    flags=display=vbmeta_system
-#/vendor_boot	emmc    /dev/block/by-name/vendor_boot    flags=display=vendor_boot
-/param    emmc    /dev/block/by-name/up_param	flags=display="Param";flashimg=1;backup=1
-/vbmeta emmc    /dev/block/by-name/vbmeta	flags=display="vbmeta Samsung"
-#/system_ext	ext4    /dev/block/by-name/system_ext	flags=display="System_EXT_AB"
-#/vendor_dlkm    ext4    /dev/block/by-name/vendor_dlkm	flags=display="Vendor DLKM"
-#/system_dlkm    ext4    /dev/block/by-name/system_dlkm	flags=display="System DLKM"
-/init_boot	emmc    /dev/block/by-name/init_boot    flags=display=init_boot
-
+/boot    emmc    /dev/block/by-name/boot    flags=display="Boot, also called Android Kernel"
+/recovery    emmc    /dev/block/by-name/recovery    flags=display=recovery
+/dtbo    emmc    /dev/block/by-name/dtbo    flags=display="DTBO";flashimg=1
+/metadata   ext4    /dev/block/by-name/metadata    flags=display=metadata;wipeingui
+/data   f2fs    /dev/block/by-name/userdata    flags=display="Device Data";wipeingui
+/cache    ext4    /dev/block/by-name/cache    flags=display=cache;wipeingui
+/efs    emmc    /dev/block/by-name/sec_efs    flags=display=efs
+/sec_efs    emmc    /dev/block/by-name/sec_efs    flags=display=sec_efs
+#/carrier    ext4    /dev/block/by-name/carrier    flags=display=carrier
+#/preload    ext4    /dev/block/by-name/hidden    flags=display=preload
+/prism	ext4    /dev/block/by-name/prism    flags=display=prism;flashimg=1
+/optics	ext4    /dev/block/by-name/optics    flags=display=optics;flashimg=1
+#/vbmeta_system    emmc    /dev/block/by-name/vbmeta_system    flags=display=vbmeta_system
+#/vendor_boot    emmc    /dev/block/by-name/vendor_boot    flags=display=vendor_boot
+/param    emmc    /dev/block/by-name/up_param    flags=display="Param";flashimg=1;backup=1
+/vbmeta emmc    /dev/block/by-name/vbmeta    flags=display="vbmeta Samsung"
+#/system_ext    ext4    /dev/block/by-name/system_ext    flags=display="System_EXT_AB"
+#/vendor_dlkm    ext4    /dev/block/by-name/vendor_dlkm    flags=display="Vendor DLKM"
+#/system_dlkm    ext4    /dev/block/by-name/system_dlkm    flags=display="System DLKM"
+/init_boot    emmc    /dev/block/by-name/init_boot    flags=display=init_boot
 
 # Samsung ODE
-/dev/block/by-name/keydata		/keydata	ext4	defaults		recoveryonly
-/dev/block/by-name/keyrefuge		/keyrefuge	f2fs	defaults		recoveryonly
+/dev/block/by-name/keydata        /keydata    ext4    defaults    recoveryonly
+/dev/block/by-name/keyrefuge        /keyrefuge    f2fs    defaults    recoveryonly
