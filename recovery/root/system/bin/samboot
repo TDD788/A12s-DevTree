@@ -1,4 +1,4 @@
-#!/system/bin/sh 
+#!/bin/sh 
 # THIS SCRIPT IS INTENDED TO WORK ON SAMSUNG DEVICES
 # OTHERS ARE UNTESTED
 # V1

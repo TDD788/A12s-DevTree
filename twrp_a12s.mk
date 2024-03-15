@@ -21,41 +21,17 @@ LOCAL_PATH := device/samsung/a12s
 PRODUCT_RELEASE_NAME := a12s
 
 # Inherit from common AOSP config
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-#$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
-
-# Inherit some common TWRP stuff.
-#$(call inherit-product, vendor/twrp/config/common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
 
 # Inherit from the common Open Source product configuration
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 
-
 # Inherit device configuration
+$(call inherit-product, device/samsung/a12s/device.mk)
 
-# Dynamic partitions
-PRODUCT_USE_DYNAMIC_PARTITIONS := true
-
-PRODUCT_PROPERTY_OVERRIDES +=\
-	ro.fastbootd.available=true
-	ro.boot.dynamic_partitions=true 
-	
-# TWRP
-TW_INCLUDE_FASTBOOTD := true
-
-# fastbootd
-PRODUCT_PACKAGES += \
-    fastbootd \
-    android.hardware.fastboot@1.0-impl-mock
-    #android.hardware.fastboot@1.0-impl-mock.recovery \
-    #fastbootd
-    
-# Apex Libraries
-#PRODUCT_HOST_PACKAGES += \
-#    libandroidicu
-
-#TWRP Flags
-TW_INCLUDE_PYTHON := true
+# Inherit some common TWRP stuff.
+$(call inherit-product, vendor/twrp/config/common.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := twrp_a12s

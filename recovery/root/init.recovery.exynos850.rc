@@ -1,5 +1,7 @@
 on init
     setprop persist.sys.isUsbOtgEnabled false
+    setprop sys.usb.configfs 1
+    setprop sys.usb.ffs.aio_compat 0    
     # Path to the log file
     LOG_FILE="/cache/loop_log.log"
 
@@ -29,7 +31,7 @@ on init
     echo "$restart_count" > "$LOG_FILE"
 
     # Set up a timer to reboot the system if the user doesn't touch the screen for 10 minutes
-    (sleep 600; reboot)
+    (sleep 900; reboot)
 
 on fs && property:ro.debuggable=0
     # Distinguish whether USB should connect or not, i.e., CDP vs SDP

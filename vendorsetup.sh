@@ -59,6 +59,7 @@ export_build_vars(){
 	export OF_DONT_KEEP_LOG_HISTORY=1
 	export OF_USE_GREEN_LED=1
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
+	export OF_FORCE_PREBUILT_KERNEL=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
 	
 	# maximum permissible splash image size
