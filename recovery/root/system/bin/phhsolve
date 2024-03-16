@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# List of folders to delete
+folders=(
+    "/data/data/me.phh.qcrilam/"
+    "/data/data/me.phh.treble.app/"
+)
+
+# Loop to delete each folder
+for folder in "${folders[@]}"; do
+    if [ -d "$folder" ]; then
+        rm -rf "$folder"
+        echo "Folder $folder deleted successfully."
+    else
+        echo "Folder $folder does not exist."
+    fi
+done
+
+echo "Bootloop issue resolved."

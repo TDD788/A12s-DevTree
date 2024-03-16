@@ -1,4 +1,4 @@
-#!/system/bin/bash
+#!/bin/bash
 
 # Ruta del archivo
 archivo="/sys/devices/virtual/camera/flash/rear_flash"

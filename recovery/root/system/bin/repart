@@ -1,4 +1,4 @@
-#!/system/bin/bash
+#!/bin/bash
 
 # Path to sgdisk binary
 SGDISK=/system/bin/sgdisk

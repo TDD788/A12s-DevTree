@@ -17,7 +17,6 @@ export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
 	# General Configurations
 	export ALLOW_MISSING_DEPENDENCIES=true
-	export FOX_LOCAL_CALLBACK_SCRIPT="$SCRIPT_DIR/localCallback.sh"
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
