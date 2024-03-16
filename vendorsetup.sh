@@ -1,1 +1,145 @@
-{"files":[{"id":"mb5qud32","filename":"untitled.txt","isUnsaved":true,"readOnly":false,"deletedFile":false,"cursorPos":{"row":0,"column":0},"scrollTop":0,"scrollLeft":0,"editable":true,"encoding":"UTF-8","render":true,"folds":[]}],"folders":[],"storageList":[{"name":"#Local-WorkSpace-Github","uri":"content://com.android.externalstorage.documents/tree/primary%3A%23Local-WorkSpace-Github","uuid":"me2tasbn"},{"name":"#Github-Local","uri":"content://com.android.externalstorage.documents/tree/primary%3A%23Github-Local","uuid":"n12dt4za"}],"fileBrowserState":[{"url":"/","name":"/"},{"url":"content://com.android.externalstorage.documents/tree/primary%3A%23Github-Local","name":"#Github-Local"}],"settings":{"animation":"system","appTheme":"ocean","autosave":0,"fileBrowser":{"showHiddenFiles":false,"sortByName":true},"formatter":{},"maxFileSize":12,"serverPort":8158,"previewPort":8158,"showConsoleToggler":true,"previewMode":"inapp","disableCache":false,"host":"localhost","search":{"caseSensitive":false,"regExp":false,"wholeWord":false},"lang":"es-AR","fontSize":"12px","editorTheme":"ayu-mirage","textWrap":false,"softTab":true,"tabSize":2,"retryRemoteFsAfterFail":true,"linenumbers":true,"formatOnSave":false,"autoCorrect":true,"openFileListPos":"sidebar","quickTools":1,"quickToolsTriggerMode":"touch","editorFont":"Roboto Mono","vibrateOnTap":true,"fullscreen":true,"floatingButton":true,"liveAutoCompletion":true,"showPrintMargin":false,"printMargin":80,"scrollbarSize":20,"showSpaces":true,"confirmOnExit":true,"lineHeight":2,"leftMargin":50,"checkFiles":true,"desktopMode":false,"console":"legacy","keyboardMode":"NO_SUGGESTIONS_AGGRESSIVE","rememberFiles":true,"rememberFolders":true,"diagonalScrolling":false,"reverseScrolling":false,"teardropTimeout":3000,"teardropSize":30,"scrollSpeed":0.04,"customTheme":{"name":"Custom","type":"dark","version":"free","popupBorderRadius":"4px","activeColor":"rgb(51, 153, 255)","activeTextColor":"rgb(255, 215, 0)","activeIconColor":"rgba(0, 0, 0, 0.2)","borderColor":"rgba(122, 122, 122, 0.2)","boxShadowColor":"rgba(0, 0, 0, 0.2)","buttonActiveColor":"rgb(44, 142, 240)","buttonBackgroundColor":"rgb(51, 153, 255)","buttonTextColor":"rgb(255, 255, 255)","errorTextColor":"rgb(255, 185, 92)","primaryColor":"rgb(153, 153, 255)","primaryTextColor":"rgb(255, 255, 255)","secondaryColor":"rgb(255, 255, 255)","secondaryTextColor":"rgb(37, 37, 37)","linkTextColor":"rgb(97, 94, 253)","scrollbarColor":"rgba(0, 0, 0, 0.3)","popupBorderColor":"rgba(0, 0, 0, 0)","popupIconColor":"rgb(153, 153, 255)","popupBackgroundColor":"rgb(255, 255, 255)","popupTextColor":"rgb(37, 37, 37)","popupActiveColor":"rgb(169, 0, 0)","dangerColor":"rgb(160, 51, 0)","dangerTextColor":"rgb(255, 255, 255)","fileTabWidth":"120px"},"relativeLineNumbers":true,"elasticTabstops":true,"rtlText":true,"hardWrap":false,"useTextareaForIME":false,"touchMoveThreshold":0.25,"quicktoolsItems":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],"excludeFolders":["**/putoto/**"],"defaultFileEncoding":"UTF-8","inlineAutoCompletion":true,"colorPreview":true,"maxRetryCount":3,"showRetryToast":false,"showSideButtons":false,"showAnnotations":true,"bajrangcoder.bs.intellisense":{"bootstrapUrl":"https://cdn.jsdelivr.net/npm/bootstrap@latest/dist/css/bootstrap.css"},"techno.acode.reload":{"addRefreshBtn":true,"autorefreshloadedfiles":false},"acode.plugin.extra_syntax_highlights":{"colorPreview":true,"cursorColorizer":"cursor and teardrop","defaultCursorColor":"LightSkyBlue","rainbowIndentGuide":true,"bracketPairColorizer":true,"bracketLevel":3,"bracketColorLevel1":"#ffd700","bracketColorLevel2":"#f472b6","bracketColorLevel3":"#57afff","bracketColorLevel4":"#7ce38b","bracketColorLevel5":"#fb7185","bracketColorLevel6":"#1edac1","indentColorLevel1":"#da70d6","indentColorLevel2":"#fa8072","indentColorLevel3":"#87cefa","indentColorLevel4":"#dd8374","indentColorLevel5":"#ff8c00","indentColorLevel6":"#ffd700"},"acode.plugin.command.button":{"row":"1","column":"8"},"bajrangcoder.phpprettifier":{"phpVersion":"7.0","printWidth":80,"tabWidth":2,"useTabs":true,"singleQuote":false,"trailingCommaPHP":true,"braceStyle":"per-cs","requirePragma":true,"insertPragma":true},"bajrangcoder.react.snippets":{"snippetDocs":false},"acode.plugin.github":{"askCommitMessage":true},"acode.plugin.lint":{"esversion":11},"github.next.monaspace":{"weight":"600","width":"100","slant":"0"},"acode.plugin.prettier":{"printWidth":80,"tabWidth":4,"useTabs":false,"semi":true,"singleQuote":false,"quoteProps":"as-needed","jsxSingleQuote":false,"trailingComma":"none","bracketSpacing":true,"bracketSameLine":false,"arrowParens":"avoid","rangeStart":0,"rangeEnd":null,"requirePragma":false,"insertPragma":false,"proseWrap":"preserve","htmlWhitespaceSensitivity":"css","vueIndentScriptAndStyle":false,"endOfLine":"lf","embeddedLanguageFormatting":"auto","singleAttributePerLine":false,"openErrorPageOnErrors":true,"version":3},"acode.plugin.ace_linters":{"html":true,"css":true,"javascript":true,"json":true,"yaml":true,"xml":true,"lua":true,"php":true,"python":true,"autocomplete":true},"acode.plugin.snippets":{"snippetLocation":""}}}
+# Mkbootimage
+sudo apt install nano
+git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
+sudo chmod +rwx out/host/linux-x86/bin/avbtool
+chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
+add_lunch_combo twrp_a12s-eng
+
+FDEVICE1="a12s"
+CURR_DEVICE="a12s"
+
+RED_BACK="\e[101m"
+RED="\e[91m"
+RESET="\e[0m"
+GREEN="\e[92m"
+
+export_build_vars(){
+	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
+	# General Configurations
+	export ALLOW_MISSING_DEPENDENCIES=true
+	export FOX_LOCAL_CALLBACK_SCRIPT="$SCRIPT_DIR/localCallback.sh"
+	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
+	export LC_ALL="C"
+	export OF_MAINTAINER="TheDarkDeath788"
+	export FOX_BUILD_TYPE="Stable"
+	export FOX_VERSION="R12.1_7"
+	export OF_CLASSIC_LEDS_FUNCTION=0
+	export FOX_DELETE_AROMAFM=0
+	export OF_CLOCK_POS=1
+	export OF_STATUS_INDENT_RIGHT=48
+	export OF_STATUS_INDENT_LEFT=48
+	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
+	export OF_OPTIONS_LIST_NUM=8
+
+	# Security Configurations
+	#export OF_ADVANCED_SECURITY=1
+	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
+	export OF_FORCE_DISABLE_DM_VERITY=1
+	export OF_DISABLE_FORCED_ENCRYPTION=1
+	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
+	
+	# Partition Configurations
+	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
+	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
+	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
+
+	# Tools and Utilities Configurations
+	export OF_USE_LZMA_COMPRESSION=1
+	export OF_ENABLE_LPTOOLS=1
+	export OF_ENABLE_FS_COMPRESSION=1
+	export OF_USE_GREEN_LED=01
+	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
+	
+	# Newer Functions For Me Dark (TheDarkDeath788 )
+	#export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	export FOX_VANILLA_BUILD=1
+	#export FOX_PORTS_TMP=1
+	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
+	export OF_TWRP_COMPATIBILITY_MODE=1
+	export OF_DONT_KEEP_LOG_HISTORY=1
+	export OF_USE_GREEN_LED=1
+	export OF_FORCE_USE_RECOVERY_FSTAB=1
+	export OF_FORCE_PREBUILT_KERNEL=1
+	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
+	
+	# maximum permissible splash image size
+	# (in kilobytes); do *NOT* increase!
+	export OF_SPLASH_MAX_SIZE=104
+
+	# Specific Features Configurations
+	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
+	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
+	export FOX_NO_SAMSUNG_SPECIAL=2
+	#export OF_PATCH_AVB20=1
+	#export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
+	export OF_SCREEN_H=2400
+	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
+
+	# File Paths Configurations
+	export OF_FL_PATH1="/system/flashlight"
+	export OF_FL_PATH2=""
+	export OF_FLASHLIGHT_ENABLE=1
+	
+	# Maintainer Avatar
+	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
+	export OF_MAINTAINER_AVATAR="./maintainer.png"
+
+	# Applications Configurations
+	export FOX_ENABLE_APP_MANAGER=1
+
+	# Custom Binaries to SD Card Configuration
+	export FOX_CUSTOM_BINS_TO_SDCARD=3
+	
+	
+	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
+		export FOX_USE_NANO_EDITOR=1
+		export FOX_USE_SED_BINARY=1
+		export FOX_USE_TAR_BINARY=1
+		export FOX_USE_UNZIP_BINARY=1
+		export FOX_USE_XZ_UTILS=1
+		export FOX_REPLACE_BUSYBOX_PS=1
+	else
+		export FOX_DYNAMIC_SAMSUNG_FIX=1
+		export FOX_ASH_IS_BASH=1
+		export FOX_USE_BASH_SHELL=1
+	fi
+
+	#Ofox 11
+	#export FOX_R11=1
+	
+	# let's see what are our build VARs
+	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
+	  export | grep "FOX" >> $FOX_BUILD_LOG_FILE
+	  export | grep "OF_" >> $FOX_BUILD_LOG_FILE
+	  export | grep "TARGET_" >> $FOX_BUILD_LOG_FILE
+	  export | grep "TW_" >> $FOX_BUILD_LOG_FILE
+	fi
+}
+
+set_env_var(){
+        echo -e "${RED_BACK}Environment Variable CURR_DEVICE not set... Aborting${RESET}"
+        echo "Set to the codename of the device you're building for"
+        echo -e "${GREEN}Example :${RESET}"
+        echo " export CURR_DEVICE=a12s"
+        exit 1
+}
+
+var_not_eq(){
+        echo -e "${RED_BACK}CURR_DEVICE not equal to a12s${RESET}"
+        echo -e "${RED_BACK}CURR_DEVICE = $CURR_DEVICE${RESET}"
+        echo -e "${RED}If this is a mistake, then export CURR_DEVICE to the correct codename${RESET}"
+        echo -e "${RED}Skipping a12s specific build vars...${RESET}"
+}
+
+case "$CURR_DEVICE" in
+  "$FDEVICE1")
+    export_build_vars;
+    ;;
+  "")
+    set_env_var
+    ;;
+  *)
+    var_not_eq
+    ;;
+esac
