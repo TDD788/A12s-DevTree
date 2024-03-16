@@ -5,7 +5,7 @@ ARCH=$(getprop ro.product.cpu.abi)
 IS_INSTALL_NEXT_SLOT=$1
 
 # Load utility functions
-. /sbin/util_functions.sh
+. /system/bin/util_functions.sh
 
 # shellcheck disable=SC2039
 if [[ $IS_INSTALL_NEXT_SLOT == *"true"* ]]; then

@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_7"
+	export FOX_VERSION="R12.1_8"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -88,7 +88,7 @@ export_build_vars(){
 	export FOX_ENABLE_APP_MANAGER=1
 
 	# Custom Binaries to SD Card Configuration
-	export FOX_CUSTOM_BINS_TO_SDCARD=3
+	#export FOX_CUSTOM_BINS_TO_SDCARD=2
 	
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
@@ -100,8 +100,13 @@ export_build_vars(){
 		export FOX_REPLACE_BUSYBOX_PS=1
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
-		export FOX_ASH_IS_BASH=1
 		export FOX_USE_BASH_SHELL=1
+		export FOX_USE_NANO_EDITOR=1
+		export FOX_USE_SED_BINARY=1
+		export FOX_USE_TAR_BINARY=1
+		export FOX_USE_UNZIP_BINARY=1
+		export FOX_USE_XZ_UTILS=1
+		export FOX_REPLACE_BUSYBOX_PS=1
 	fi
 
 	#Ofox 11

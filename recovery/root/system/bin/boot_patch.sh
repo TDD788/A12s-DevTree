@@ -22,7 +22,7 @@
 ARCH=$(getprop ro.product.cpu.abi)
 
 # Load utility functions
-. /sbin/util_functions.sh
+. /system/bin/util_functions.sh
 
 echo "****************************"
 echo " APatch Boot Image Patcher"
