@@ -155,7 +155,7 @@ TARGET_USES_MKE2FS := true
 BOARD_HAS_NO_REAL_SDCARD := true
 
 # System as root
-BOARD_ROOT_EXTRA_FOLDERS := cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism
+BOARD_ROOT_EXTRA_FOLDERS := "cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism"
 BOARD_SUPPRESS_SECURE_ERASE := true
 
 # TWRP flags selected by TDD788
@@ -165,6 +165,7 @@ TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_RESETPROP := true
-TWRP_NEW_THEME := true
 TW_EXCLUDE_TWRPAPP := true
 TW_USE_SAMSUNG_HAPTICS := true
+TW_NO_SCREEN_TIMEOUT := true
+W_SCREEN_BLANK_ON_BOOT := true

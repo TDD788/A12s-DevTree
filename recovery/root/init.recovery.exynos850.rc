@@ -27,9 +27,6 @@ on boot
     # Update the log file with the new restart count
     echo "$restart_count" > "$LOG_FILE"
     
-import /init.recovery.samsung.rc
-import /init.recovery.usb.rc
-    
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
 
@@ -46,6 +43,3 @@ on fs
     symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
     symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
     symlink /dev/block/platorm/12100000.dwmmc0/by-name/param /dev/block/param
-    
-    # Set up a timer to reboot the system if the user doesn't touch the screen for 10 minutes
-    (sleep 900; reboot)
