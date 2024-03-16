@@ -31,11 +31,7 @@ export_build_vars(){
 	export OF_OPTIONS_LIST_NUM=8
 
 	# Security Configurations
-	#export OF_ADVANCED_SECURITY=1
-	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
-	export OF_FORCE_DISABLE_DM_VERITY=1
-	export OF_DISABLE_FORCED_ENCRYPTION=1
-	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
+	export OF_ADVANCED_SECURITY=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -50,9 +46,9 @@ export_build_vars(){
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
-	#export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
-	#export FOX_PORTS_TMP=1
+	export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
 	export OF_TWRP_COMPATIBILITY_MODE=1
