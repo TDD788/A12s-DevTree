@@ -1,7 +1,6 @@
-ro.display.series=a12s
+ro.display.series=Samsung A12 Nacho
 ro.product.board=exynos850
-ro.boot.usbcontroller=13600000.dwc3
-ro.boot.dynamic_partitions = true
+#ro.board.platform=universal3830
+sys.usb.controller=13600000.dwc3
+ro.boot.dynamic_partitions=true
 ro.boot.boot_devices=bootdevice,12100000.dwmmc0
-
-

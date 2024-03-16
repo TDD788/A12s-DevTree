@@ -1,0 +1,234 @@
+#!/usr/bin/env bash
+# Copyright (C) 2018-2022 The OrangeFox Recovery Project
+#
+# OrangeFox is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# OrangeFox is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# This software is released under GPL version 3 or any later version.
+# See <http://www.gnu.org/licenses/>.
+#
+# Please maintain this if you use this script or any part of it
+#
+# ********************************************************************
+
+function main() {
+    action="$2"
+    case "$action" in
+        --first-call) # before ramdisk packing
+            FOX_RAMDISK="$1"
+            removeFonts
+            enableRebootToFastbootItemUnconditionally
+            addUSBStorageExporterToMount
+            addEMMCLifetimeToPartMgr
+            addFastbootItemToMenu
+            increaseUIRenderingTo60FPS
+            addDarkLightModeToggler
+            makeLockscreenBGSemiTransparent
+            ;;
+        --last-call) # before .zip packing
+            OF_WORKING_DIR="$1"
+    esac
+}
+
+function removeFonts() {
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local custom_xml=$TWRES_DIR/pages/customization.xml
+    local image_xml=$TWRES_DIR/resources/images.xml
+    local fonts_dir=$TWRES_DIR/fonts
+
+    echo -e "${ORANGE}-- Removing some fonts from ramdisk... ${NC}"
+
+    # Fonts to be deleted
+    declare -A fonts=(
+        ['font5']='Chococooky'
+        ['font7']='Exo2-Regular'
+        ['font8']='MILanPro-Regular'
+        ['font9']='Amatic'
+    )
+
+    # Remove references to them in resources
+    local font file
+    for font in "${!fonts[@]}"; do
+        file="$fonts_dir/${fonts["$font"]}.ttf"
+        rm "$file"
+
+        # Delete the matching line
+        if __findMatch__ "$font" "$image_xml"; then
+            sed -i "/$font/ d" "$image_xml"
+        fi
+
+        # Delete the matching line plus the next 2 lines
+        if __findMatch__ "$font" "$custom_xml"; then
+            sed -i "/$font/I,+2 d" "$custom_xml"
+        fi
+    done
+
+    # Those are not mentioned in resources
+    rm "$fonts_dir"/{Exo2,MILanPro}-Medium.ttf
+
+    # Let FiraCode move to where Chococooky font was to avoid the gap
+    if __findMatch__ 'row4_2a_y' "$custom_xml"; then
+        sed -i 's/row4_2a_y/row4_1_y/g' "$custom_xml"
+    fi
+}
+
+function addUSBStorageExporterToMount() {
+    echo -e "${GREY}-- Adding USB Storage Exporter slider to Mount... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local mount_xml=$TWRES_DIR/pages/mount.xml
+    local local_pages="$SCRIPT_DIR/theme/portrait_hdpi/pages"
+    local line slider="$local_pages/mount-usb-exporter-slider.xml"
+    local page="$local_pages/mount-usb-exporter-page.xml"
+
+    local tag
+    for tag in 'page' 'slider'; do
+        sed -i "/<!-- USBExporter $tag -->/,/<!-- \/USBExporter $tag -->/ d" "$mount_xml"
+    done
+
+    # Insert our page after all pages
+    line="$(__getMatchLineNr__ '<\/pages>' "$mount_xml")" || exit $?
+    sed -i "$((line - 1)) r $page" "$mount_xml"
+
+    # Insert slider
+    line="$(__getMatchLineNr__ '<\/partitionlist>' "$mount_xml")" || exit $?
+    sed -i "$line r $slider" "$mount_xml"
+}
+
+function addEMMCLifetimeToPartMgr() {
+    echo -e "${GREY}-- Adding eMMC Lifetime Used to Partition Manager... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local wipe_xml=$TWRES_DIR/pages/wipe.xml
+    local local_pages="$SCRIPT_DIR/theme/portrait_hdpi/pages"
+    local line lifetime="$local_pages/wipe-lifetime.xml"
+
+    sed -i '/<!-- Lifetime -->/,/<!-- \/Lifetime -->/ d' "$wipe_xml"
+
+    # Insert on partition manager page
+    line="$(__getMatchLineNr__ '<image resource="fab_accept"\/>' "$wipe_xml")" || exit $?
+    sed -i "$((line + 1)) r $lifetime" "$wipe_xml"
+}
+
+function addFastbootItemToMenu() {
+    echo -e "${GREY}-- Adding Fastboot item to Menu... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local advanced_xml=$TWRES_DIR/pages/advanced.xml
+    local local_pages="$SCRIPT_DIR/theme/portrait_hdpi/pages"
+    local line item="$local_pages/advanced-fastboot-item.xml"
+    local page="$local_pages/advanced-fastboot-page.xml"
+
+    sed -i -e '/<!-- Fastboot item -->/,/<!-- \/Fastboot item -->/ d' \
+        -e '/<!-- Fastboot page -->/,/<!-- \/Fastboot page -->/ d' \
+        "$advanced_xml"
+
+    # Insert after ADB & Sideload item
+    line="$(__getMatchLineNr__ '<listitem name="{@fox_modules_hdr}">' "$advanced_xml")" || exit $?
+    sed -i "$((line - 1)) r $item" "$advanced_xml"
+
+    # Insert our page at the end
+    line="$(__getMatchLineNr__ '<\/pages>' "$advanced_xml")" || exit $?
+    sed -i "$((line - 1)) r $page" "$advanced_xml"
+}
+
+function increaseUIRenderingTo60FPS() {
+    echo -e "${GREY}-- Increasing UI rendering to 60 FPS... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local pages=$TWRES_DIR/pages
+
+    for page in main.xml templates/base.xml files.xml; do
+        __sedReplace__ 's/fps="30"/fps="60"/g' "$pages/$page"
+    done
+}
+
+function addDarkLightModeToggler() {
+    echo -e "${GREY}-- Adding Dark/Light Mode Toggler... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local anywhere_xml=$TWRES_DIR/pages/anywhere.xml
+    local local_pages="$SCRIPT_DIR/theme/portrait_hdpi/pages"
+    local line buttons="$local_pages/anywhere-theme-toggler.xml"
+
+    sed -i -e '/<!-- Theme toggler buttons -->/,/<!-- \/Theme toggler buttons -->/ d' \
+        "$anywhere_xml"
+
+    line="$(__getMatchLineNr__ '<slidervalue>' "$anywhere_xml")" || exit $?
+    sed -i "$((line - 1)) r $buttons" "$anywhere_xml"
+
+    # Also adjust the brightness slider to fit the toggler button
+    local old='<placement x="-24" y="%console_brightness_y%" w="%slidervalue_w%" \/>'
+    local new='<placement x="105" y="%console_brightness_y%" w="870" \/>'
+    __sedReplace__ "s/$old/$new/" "$anywhere_xml"
+}
+
+function makeLockscreenBGSemiTransparent() {
+    echo -e "${GREY}-- Making lockscreen background semi-transparent... ${NC}"
+
+    local TWRES_DIR=$FOX_RAMDISK/twres
+    local line anywhere_xml=$TWRES_DIR/pages/anywhere.xml
+
+    line="$(__getMatchLineNr__ '<page name="lock">' "$anywhere_xml")" || exit $?
+    __sedReplace__ "$((line + 1)) s/%background%/%darktransparent%/" "$anywhere_xml"
+}
+
+# Inherit some colour codes form vendor/recovery
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+ORANGE='\033[0;33m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+GREY='\033[0;37m'
+LIGHTGREY='\033[0;38m'
+WHITEONBLACK='\033[0;40m'
+WHITEONRED='\033[0;41m'
+WHITEONGREEN='\033[0;42m'
+WHITEONORANGE='\033[0;43m'
+WHITEONBLUE='\033[0;44m'
+WHITEONPURPLE='\033[0;46m'
+NC='\033[0m'
+
+function __prettyNumber__() {
+    # Format the value using thousands separator
+    sed -r ':L;s=\b([0-9]+)([0-9]{3})\b=\1,\2=g;t L' <<< "${1-}"
+}
+
+function __sedReplace__() {
+    local regex="${1-}" file="${2-}"
+    if [ -z "$(sed -i -e "$regex w /dev/stdout" "$file")" ]; then
+        echo -e "${GREY}--- caution: cannot apply regex '$regex' in file: $file${NC}"
+    fi
+}
+
+function __findMatch__() {
+    local match="${1-}" file="${2-}"
+    if ! grep -q "$match" "$file"; then
+        echo -e "${GREY}--- caution: cannot find match '$match' in file: $file${NC}"
+        return 1
+    fi
+}
+
+function __getMatchLineNr__() {
+    local pattern="${1-}" file="${2-}" line
+    line=$(sed -n "/$pattern/=" "$file")
+    if [ -z "$line" ] || [ "$line" -le 0 ]; then
+        echo -e "${GREY}--- caution: cannot find match '$pattern' in file: $file${NC}" >&2
+        return 1
+    fi
+    echo "$line"
+}
+
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+
+# This script will be called from vendor/recovery and will receive two args
+main "$1" "$2"
