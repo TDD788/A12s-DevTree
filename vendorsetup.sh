@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_10"
+	export FOX_VERSION="R12.1_11"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -29,6 +29,8 @@ export_build_vars(){
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
+	export FOX_TARGET_DEVICES="SM-A127M, SM-A127F, a12s"
+	export TARGET_DEVICE_ALT="SM-A127M, SM-A127F, a12s"
 
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
