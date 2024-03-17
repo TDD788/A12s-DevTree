@@ -3,10 +3,10 @@
 /system_image   emmc	/dev/block/mapper/system  			  flags=backup=1;flashimg;display="System Image"
 /vendor_image   emmc	/dev/block/mapper/vendor 			   flags=backup=1;flashimg;display="Vendor Image"
 /odm_image      emmc	/dev/block/mapper/odm 				  flags=backup=1;flashimg;display="Odm Image"
-/product    	ext4	/dev/block/mapper/product  			 flags=backup=1;flashimg;display="Product";wipeingui
-/system_root    ext4	/dev/block/mapper/system  			  flags=backup=1;flashimg;display="System Root";wipeingui
-/vendor  	   ext4	/dev/block/mapper/vendor 			   flags=backup=1;flashimg;display="Vendor";wipeingui
-/odm     	   ext4	/dev/block/mapper/odm 				  flags=backup=1;flashimg;display="Odm";wipeingui
+#/product        ext4	/dev/block/mapper/product  			 flags=backup=1;flashimg;display="Product";wipeingui
+#/system	     ext4	/dev/block/mapper/system  			  flags=backup=1;flashimg;display="System";wipeingui
+#/vendor  	   ext4	/dev/block/mapper/vendor 			   flags=backup=1;flashimg;display="Vendor";wipeingui
+#/odm     	   ext4	/dev/block/mapper/odm 				  flags=backup=1;flashimg;display="Odm";wipeingui
 /boot           emmc    /dev/block/by-name/boot                 flags=display="Boot";backup=1;flashimg=1;
 /recovery       emmc    /dev/block/by-name/recovery             flags=display="Recovery";backup=1;flashimg=1;
 /metadata       ext4    /dev/block/by-name/metadata             flags=display="Metadata";wipeingui;wipeduringfactoryreset

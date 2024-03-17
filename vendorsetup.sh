@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_11"
+	export FOX_VERSION="R12.1_12"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -44,7 +44,7 @@ export_build_vars(){
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export OF_USE_GREEN_LED=01
+	export OF_USE_GREEN_LED=1
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
@@ -52,7 +52,6 @@ export_build_vars(){
 	export FOX_VANILLA_BUILD=1
 	export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
-	export OF_SKIP_FBE_DECRYPTION_SDKVERSION=30
 	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DONT_KEEP_LOG_HISTORY=1
 	export OF_USE_GREEN_LED=1
@@ -70,7 +69,7 @@ export_build_vars(){
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	#export OF_PATCH_AVB20=1
-	#export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
+	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
 	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
 
@@ -80,8 +79,8 @@ export_build_vars(){
 	export OF_FLASHLIGHT_ENABLE=1
 	
 	# Maintainer Avatar
-	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
-	export OF_MAINTAINER_AVATAR="./maintainer.png"
+	#wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
+	#export OF_MAINTAINER_AVATAR="./maintainer.png"
 
 	# Applications Configurations
 	export FOX_ENABLE_APP_MANAGER=1
