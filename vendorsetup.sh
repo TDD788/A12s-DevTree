@@ -1,10 +1,3 @@
-# Mkbootimage
-sudo apt install nano
-git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
-sudo chmod +rwx out/host/linux-x86/bin/avbtool
-chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
-add_lunch_combo twrp_a12s-eng
-
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
 
@@ -21,8 +14,8 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_14"
-	export OF_CLASSIC_LEDS_FUNCTION=0
+	export FOX_VERSION="R12.1_15"
+	export OF_CLASSIC_LEDS_FUNCTION=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -45,28 +38,24 @@ export_build_vars(){
 	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
 	export OF_USE_GREEN_LED=1
-	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
-	export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	#export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
-	export FOX_PORTS_TMP=1
-	#export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
-	#export OF_TWRP_COMPATIBILITY_MODE=1
+	#export FOX_PORTS_TMP=1
+	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DONT_KEEP_LOG_HISTORY=1
-	export OF_USE_GREEN_LED=1
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
 	export OF_FORCE_PREBUILT_KERNEL=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
-	export FOX_BASH_TO_SYSTEM_BIN=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
 	export OF_SPLASH_MAX_SIZE=104
 
 	# Specific Features Configurations
-	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
-	#export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_USE_MAGISKBOOT=1
 	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
@@ -89,7 +78,7 @@ export_build_vars(){
 	export FOX_ENABLE_APP_MANAGER=1
 
 	# Custom Binaries to SD Card Configuration
-	#export FOX_CUSTOM_BINS_TO_SDCARD=2
+	export FOX_CUSTOM_BINS_TO_SDCARD=1
 	
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then

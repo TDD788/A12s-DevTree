@@ -104,12 +104,6 @@ jobs:
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
         
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache
-        key: ${{ runner.os }}-dependencies-${{ hashFiles('**/buildspec.yml') }}
-
     - name: Building OrangeFox
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
@@ -120,6 +114,7 @@ jobs:
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image
 
     - name: Upload files
+      if: github.event.inputs.RELEASE_TYPE == 'experimental'
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image

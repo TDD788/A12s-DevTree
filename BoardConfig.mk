@@ -65,12 +65,6 @@ TARGET_KERNEL_SOURCE := kernel/samsung/a12s
 TARGET_KERNEL_HEADER_ARCH := arm64
 TARGET_KERNEL_ARCH := arm64
 
-#Other
-TARGET_KERNEL_ADDITIONAL_FLAGS := \
-    HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
-
-BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
-
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
