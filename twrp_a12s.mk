@@ -58,12 +58,10 @@ TW_INCLUDE_PYTHON := true
 TW_EXCLUDE_APEX := true
 
 ## Device identifier. This must come after all inclusions
-BOARD_VENDOR := samsung
 PRODUCT_NAME := twrp_a12s
 PRODUCT_DEVICE := a12s
-PRODUCT_MODEL := SM-A127M,SM-A127F,a12s
+PRODUCT_MODEL := a12s
 PRODUCT_BRAND := samsung
-TARGET_VENDOR := samsung
 PRODUCT_MANUFACTURER := samsung
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
