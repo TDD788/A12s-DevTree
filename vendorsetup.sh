@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_8"
+	export FOX_VERSION="R12.1_10"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -57,6 +57,7 @@ export_build_vars(){
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
 	export OF_FORCE_PREBUILT_KERNEL=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
+	export FOX_BASH_TO_SYSTEM_BIN=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!

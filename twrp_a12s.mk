@@ -31,14 +31,15 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Inherit device configuration
+
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
 # Fastbootd
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
+    android.hardware.fastboot@1.0-impl-mock.recovery \
     fastbootd
-    #android.hardware.fastboot@1.0-impl-mock.recovery \
 
 # Props
 PRODUCT_PROPERTY_OVERRIDES +=\
@@ -57,10 +58,12 @@ TW_INCLUDE_PYTHON := true
 TW_EXCLUDE_APEX := true
 
 ## Device identifier. This must come after all inclusions
+BOARD_VENDOR := samsung
 PRODUCT_NAME := twrp_a12s
 PRODUCT_DEVICE := a12s
-PRODUCT_MODEL := a12s
+PRODUCT_MODEL := SM-A127M,SM-A127F,a12s
 PRODUCT_BRAND := samsung
+TARGET_VENDOR := samsung
 PRODUCT_MANUFACTURER := samsung
 
 PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
