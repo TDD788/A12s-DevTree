@@ -36,7 +36,7 @@ printinfo() {
     msg "Platform: $(getprop ro.board.platform)"
     msg "CPU API: $(getprop ro.system.product.cpu.abilist)"
     msg "Dynamic: $(getprop ro.boot.dynamic_partitions)"
-    msg "Android: $(getprop ro.build.version.release) , SDK: $(ro.vendor.build.version.sdk)"
+    msg "Android: $(getprop ro.build.version.release) , SDK: $(getprop ro.build.version.sdk)"
     msg "ID: $(getprop ro.build.id)"
 	msg "Kernel: $(uname -r)"
     msg""

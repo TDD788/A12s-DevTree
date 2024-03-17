@@ -1,3 +1,32 @@
+on boot
+    # Path to the log file
+    LOG_FILE="/cache/loop_log.log"
+
+    # Check if the log file exists, if not, create it
+    if [ ! -f "$LOG_FILE" ]; then
+        touch "$LOG_FILE"
+        chmod 666 "$LOG_FILE"
+    fi
+
+    # Read the current restart count from the log file
+    restart_count=$(cat "$LOG_FILE")
+
+    # Increment the restart count
+    ((restart_count++))
+
+    # Log the restart
+    echo "Recovery process restarted. Count: $restart_count" >> "$LOG_FILE"
+
+    # Check if the restart count exceeds the limit
+    if [ "$restart_count" -ge 5 ]; then
+        echo "Restart limit exceeded. Rebooting the system."
+        # Reboot the system
+        reboot
+    fi
+
+    # Update the log file with the new restart count
+    echo "$restart_count" > "$LOG_FILE"
+    
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
 
@@ -7,4 +36,10 @@ on late-init
     setprop sys.usb.configfs 1
     setprop sys.usb.config adb
 
-on boot
+on fs
+    export ANDROID_ROOT /system_root
+
+    wait /dev/block/platform/12100000.dwmmc0
+    symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
+    symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
+    symlink /dev/block/platorm/12100000.dwmmc0/by-name/param /dev/block/param

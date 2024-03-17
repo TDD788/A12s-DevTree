@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_13"
+	export FOX_VERSION="R12.1_14"
 	export OF_CLASSIC_LEDS_FUNCTION=0
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -33,7 +33,7 @@ export_build_vars(){
 	export TARGET_DEVICE_ALT="SM-A127M, SM-A127F, a12s"
 
 	# Security Configurations
-	export OF_ADVANCED_SECURITY=1
+	#export OF_ADVANCED_SECURITY=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -51,8 +51,8 @@ export_build_vars(){
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
 	export FOX_PORTS_TMP=1
-	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
-	export OF_TWRP_COMPATIBILITY_MODE=1
+	#export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	#export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DONT_KEEP_LOG_HISTORY=1
 	export OF_USE_GREEN_LED=1
 	export OF_FORCE_USE_RECOVERY_FSTAB=1
@@ -66,7 +66,7 @@ export_build_vars(){
 
 	# Specific Features Configurations
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	#export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_USE_MAGISKBOOT=1
 	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
