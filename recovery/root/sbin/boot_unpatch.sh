@@ -6,7 +6,7 @@
 ARCH=$(getprop ro.product.cpu.abi)
 
 # Load utility functions
-. /system/bin/util_functions.sh
+. /sbin/util_functions.sh
 
 echo "****************************"
 echo " APatch Boot Image Unpatcher"
@@ -30,7 +30,7 @@ fi
 mv kernel kernel.ori
 
 echo "- Unpatching kernel"
-kptools -u --image kernel.ori --out kernel
+/sbin/kptools -u --image kernel.ori --out kernel
 
 if [ $? -ne 0 ]; then
   >&2 echo "- Unpatch error: $?"

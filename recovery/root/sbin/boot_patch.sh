@@ -22,7 +22,7 @@
 ARCH=$(getprop ro.product.cpu.abi)
 
 # Load utility functions
-. /system/bin/util_functions.sh
+. /sbin/util_functions.sh
 
 echo "****************************"
 echo " APatch Boot Image Patcher"
@@ -50,7 +50,7 @@ mv kernel kernel.ori
 echo "- Patching kernel"
 
 set -x
-kptools -p -i kernel.ori -s "$SUPERKEY" -k kpimg -o kernel "$@"
+/sbin/kptools -p -i kernel.ori -s "$SUPERKEY" -k kpimg -o kernel "$@"
 patch_rc=$?
 set +x
 
