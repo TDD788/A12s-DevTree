@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_15"
+	export FOX_VERSION="R12.1_16"
 	export OF_CLASSIC_LEDS_FUNCTION=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
@@ -47,14 +47,12 @@ export_build_vars(){
 	export OF_USE_GREEN_LED=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
-	#export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
-	#export FOX_PORTS_TMP=1
+	export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DONT_KEEP_LOG_HISTORY=1
-	export OF_FORCE_USE_RECOVERY_FSTAB=1
-	export OF_FORCE_PREBUILT_KERNEL=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
 	
 	# maximum permissible splash image size
