@@ -12,8 +12,8 @@
 /metadata       ext4    /dev/block/by-name/metadata             flags=display="Metadata";wipeingui;wipeduringfactoryreset
 /data           f2fs    /dev/block/by-name/userdata			 flags=length=length=-20480=128M,fileencryption=aes-256-xts:aes-256-cts:v2,checkpoint=fs,length=-20480,keydirectory=/metadata/vold/metadata_encryption
 /cache          ext4    /dev/block/by-name/cache                flags=display="Cache";wipeingui;wipeduringfactoryreset
-/efs            ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui
-/sec_efs        ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui
+/efs            ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui;wipeduringfactoryreset
+/sec_efs        ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui;wipeduringfactoryreset
 /modem          emmc    /dev/block/by-name/radio                flags=backup=1;display="Modem";
 /misc           emmc    /dev/block/by-name/misc
 /dtbo           emmc    /dev/block/by-name/dtbo                 flags=display="DTBO Image";flashimg=1;backup=1;
