@@ -48,7 +48,7 @@ export_build_vars(){
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
-	export FOX_VANILLA_BUILD=1
+	#export FOX_VANILLA_BUILD=1
 	export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
@@ -61,6 +61,8 @@ export_build_vars(){
 
 	# Specific Features Configurations
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	export OF_TWRP_COMPATIBILITY_MODE=1
+	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_USE_MAGISKBOOT=1
 	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
