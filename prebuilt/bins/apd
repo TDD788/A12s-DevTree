@@ -1,0 +1,212 @@
+#!/bin/bash
+# Path to the apd binary
+APD_BIN="/data/adb/apd"
+
+# Function to display help
+show_help() {
+    echo "Usage: apatch [OPTION]"
+    echo "Apply patches to the boot system."
+    echo ""
+    echo "Options:"
+    echo "  -h, --help           Display this help and exit"
+    echo "  -p, --patch          Execute /sbin/boot_patch.sh"
+    echo "  -u, --unpatch        Execute /sbin/boot_unpatch.sh"
+    echo "  -e, --extract        Execute /sbin/boot_extract.sh"
+    echo "  -m, --manager        Display manager menu"
+}
+
+# Check if at least one argument is provided
+if [ $# -eq 0 ]; then
+    show_help
+    exit 1
+fi
+
+# Parse arguments
+case "$1" in
+    -h | --help)
+        show_help
+        exit 0
+        ;;
+    -p | --patch)
+        read -p "Enter directory: " directory
+        if [ -z "$directory" ]; then
+            echo "Directory is empty."
+            exit 1
+        fi
+        read -p "Enter superkey: " superkey
+        if [ -z "$superkey" ]; then
+            echo "Superkey is empty."
+            exit 1
+        fi
+        bash /sbin/boot_patch.sh "$directory" "$superkey"
+        ;;
+    -u | --unpatch)
+        bash /sbin/boot_unpatch.sh
+        ;;
+    -e | --extract)
+        bash /sbin/boot_extract.sh
+        ;;
+    -m | --manager)
+# Function to display the main menu
+main_menu() {
+    echo "Main Menu:"
+    echo "1. Manage APatch modules"
+    echo "2. Trigger 'post-fs-data' event"
+    echo "3. Trigger 'services' event"
+    echo "4. Trigger 'boot-completed' event"
+    echo "5. Help"
+    echo "6. Exit"
+    echo "Select an option: "
+}
+
+# Function to manage APatch modules
+manage_modules_menu() {
+    echo "APatch Modules Menu:"
+    echo "Usage: $APD_BIN module <COMMAND>"
+    echo ""
+    echo "Commands:"
+    echo "  1. Install module <ZIP>"
+    echo "  2. Uninstall module <id>"
+    echo "  3. Enable module <id>"
+    echo "  4. Disable module <id>"
+    echo "  5. List all modules"
+    echo "  6. Help"
+    echo ""
+    echo "Select an option: "
+}
+
+# Function to manage APatch modules
+manage_modules() {
+    while true; do
+        manage_modules_menu
+            mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
+        read option
+        case "$option" in
+            1)
+                echo "Please enter the directory where the module is located: "
+                read module_directory
+                echo "Installing module from directory: $module_directory"
+                $APD_BIN module install "$module_directory"
+                break
+                ;;
+            2)
+                echo "Please enter the module id: "
+                read module_id
+                echo "Uninstalling module with id: $module_id"
+                $APD_BIN module uninstall "$module_id"
+                break
+                ;;
+            3)
+                echo "Please enter the module id: "
+                read module_id
+                echo "Enabling module with id: $module_id"
+                $APD_BIN module enable "$module_id"
+                break
+                ;;
+            4)
+                echo "Please enter the module id: "
+                read module_id
+                echo "Disabling module with id: $module_id"
+                $APD_BIN module disable "$module_id"
+                break
+                ;;
+            5)
+                echo "Listing all modules..."
+                $APD_BIN module list
+                break
+                ;;
+            6)
+                echo "APatch Modules Menu:"
+                echo "Usage: $APD_BIN module <COMMAND>"
+                echo ""
+                echo "Commands:"
+                echo "  1. Install module <ZIP>"
+                echo "  2. Uninstall module <id>"
+                echo "  3. Enable module <id>"
+                echo "  4. Disable module <id>"
+                echo "  5. List all modules"
+                echo "  6. Help"
+                echo ""
+                echo "Select an option: "
+                ;;
+            *)
+                echo "Invalid option. Please select a valid option."
+                ;;
+        esac
+    done
+}
+
+# Placeholder functions for additional actions
+trigger_post_fs_data() {
+    echo "Triggering 'post-fs-data' event..."
+    # Add your post-fs-data logic here
+}
+
+trigger_services() {
+    echo "Triggering 'services' event..."
+    # Add your services logic here
+}
+
+trigger_boot_completed() {
+    echo "Triggering 'boot-completed' event..."
+    # Add your boot-completed logic here
+}
+
+# Help message for main menu
+print_main_help() {
+    echo "APatch CLI"
+    echo ""
+    echo "Usage: $APD_BIN <COMMAND>"
+    echo ""
+    echo "Commands:"
+    echo "  1. Manage APatch modules"
+    echo "  2. Trigger 'post-fs-data' event"
+    echo "  3. Trigger 'services' event"
+    echo "  4. Trigger 'boot-completed' event"
+    echo "  5. Help"
+    echo "  6. Exit"
+    echo ""
+    echo "Select an option: "
+}
+
+# Main function
+main() {
+    while true; do
+        main_menu
+        read option
+        case "$option" in
+            1)
+                manage_modules
+                ;;
+            2)
+                trigger_post_fs_data
+                ;;
+            3)
+                trigger_services
+                ;;
+            4)
+                trigger_boot_completed
+                ;;
+            5)
+                print_main_help
+                ;;
+            6)
+                echo "Exiting..."
+                exit 0
+                ;;
+            *)
+                echo "Invalid option. Please select a valid option."
+                ;;
+        esac
+    done
+}
+
+# Call the main function
+main
+        ;;
+    *)
+        echo "Invalid option: $1"
+        show_help
+        exit 1
+        ;;
+esac

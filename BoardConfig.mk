@@ -49,7 +49,7 @@ TARGET_SCREEN_DENSITY := 300
 # Kernel
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=permissive loop.max_part=7
+BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=permissive loop.max_part=10
 BOARD_KERNEL_CMDLINE += androidboot.usbconfigfs=true
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x01000000
@@ -142,7 +142,8 @@ TW_DEFAULT_BRIGHTNESS := 153
 
 # TWRP Settings
 TW_HAS_FASTBOOTD := true
-#TW_USE_TOOLBOX := true
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_USE_TOOLBOX := true
 TW_NO_REBOOT_BOOTLOADER := false
 TW_HAS_DOWNLOAD_MODE := true
 TW_MTP_DEVICE := "Fox MTP A12s"
@@ -164,7 +165,7 @@ TW_EXTRA_LANGUAGES := true
 #TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
 TW_INCLUDE_FUSE_EXFAT := true
-#TW_INCLUDE_RESETPROP := true
+TW_INCLUDE_RESETPROP := true
 TW_USE_SAMSUNG_HAPTICS := true
 TW_NO_SCREEN_TIMEOUT := true
 TW_SCREEN_BLANK_ON_BOOT := true
