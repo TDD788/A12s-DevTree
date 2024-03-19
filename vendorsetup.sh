@@ -31,6 +31,10 @@ export_build_vars(){
 
 	# Security Configurations
 	#export OF_ADVANCED_SECURITY=1
+	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
+	export OF_FORCE_DISABLE_DM_VERITY=1
+	export OF_DISABLE_FORCED_ENCRYPTION=1
+	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -73,29 +77,20 @@ export_build_vars(){
 	export OF_FLASHLIGHT_ENABLE=1
 	
 	# Maintainer Avatar
-	#wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
-	#export OF_MAINTAINER_AVATAR="./maintainer.png"
+	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
+	export OF_MAINTAINER_AVATAR="./maintainer.png"
 
 	# Applications Configurations
 	export FOX_ENABLE_APP_MANAGER=1
 
 	# Custom Binaries to SD Card Configuration
 	export FOX_CUSTOM_BINS_TO_SDCARD=3
-	
-	
-	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
-		export FOX_USE_NANO_EDITOR=1
-		export FOX_USE_SED_BINARY=1
-		export FOX_USE_TAR_BINARY=1
-		export FOX_USE_UNZIP_BINARY=1
-		export FOX_USE_XZ_UTILS=1
-		export FOX_REPLACE_BUSYBOX_PS=1
-	else
-		export FOX_DYNAMIC_SAMSUNG_FIX=1
-	fi
-
-	#Ofox 11
-	#export FOX_R11=1
+	export FOX_USE_NANO_EDITOR=1
+	export FOX_USE_SED_BINARY=1
+	export FOX_USE_TAR_BINARY=1
+	export FOX_USE_UNZIP_BINARY=1
+	export FOX_USE_XZ_UTILS=1
+	export FOX_REPLACE_BUSYBOX_PS=1
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
