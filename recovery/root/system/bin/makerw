@@ -1,0 +1,33 @@
+#!/bin/bash
+# Prompt user for the directory where the image is located
+read -p "Please enter the full path of the image including the filename: " filepath
+
+# Extract directory path from the file path
+directory=$(dirname "$filepath")
+
+# Check if the directory exists
+if [ ! -d "$directory" ]; then
+    echo "The specified directory does not exist."
+    exit 1
+fi
+
+# Change directory to the specified directory
+cd "$directory" || { echo "Unable to change directory."; exit 1; }
+
+# Extract the filename from the full path
+filename=$(basename "$filepath")
+
+# Check if the image file exists
+if [ ! -f "$filename" ]; then
+    echo "The specified image file does not exist in the directory."
+    exit 1
+fi
+
+# Rename the image file to system.img
+mv "$filename" "system.img"
+echo "The image file $filename in directory $directory has been renamed to system.img."
+
+# Perform commands to resize and unshare blocks
+resize2fs "system.img" 7G
+e2fsck -E unshare_blocks "system.img"
+resize2fs -M "system.img"
