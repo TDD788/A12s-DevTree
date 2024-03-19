@@ -22,15 +22,12 @@ export_build_vars(){
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
 	export FOX_VERSION="R12.1_16"
-	export OF_CLASSIC_LEDS_FUNCTION=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
-	export FOX_TARGET_DEVICES="SM-A127M, SM-A127F, a12s"
-	export TARGET_DEVICE_ALT="SM-A127M, SM-A127F, a12s"
 
 	# Security Configurations
 	#export OF_ADVANCED_SECURITY=1
@@ -44,11 +41,10 @@ export_build_vars(){
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export OF_USE_GREEN_LED=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
-	#export FOX_VANILLA_BUILD=1
+	export FOX_VANILLA_BUILD=1
 	export FOX_PORTS_TMP=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
@@ -67,10 +63,9 @@ export_build_vars(){
 	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export FOX_NO_SAMSUNG_SPECIAL=2
-	#export OF_PATCH_AVB20=1
+	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
-	export FOX_BUGGED_AOSP_ARB_WORKAROUND="1695707220" # [Tue Feb 27 2024 01:07:00 GMT]
 
 	# File Paths Configurations
 	export OF_FL_PATH1="/system/flashlight"
@@ -97,13 +92,6 @@ export_build_vars(){
 		export FOX_REPLACE_BUSYBOX_PS=1
 	else
 		export FOX_DYNAMIC_SAMSUNG_FIX=1
-		export FOX_USE_BASH_SHELL=1
-		export FOX_USE_NANO_EDITOR=1
-		export FOX_USE_SED_BINARY=1
-		export FOX_USE_TAR_BINARY=1
-		export FOX_USE_UNZIP_BINARY=1
-		export FOX_USE_XZ_UTILS=1
-		export FOX_REPLACE_BUSYBOX_PS=1
 	fi
 
 	#Ofox 11
