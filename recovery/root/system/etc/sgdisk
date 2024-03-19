@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Path to the sgdisk file
+file="/sbin/sgdisk"
+
+# Check if the file exists
+if [ ! -f "$file" ]; then
+    echo "The sgdisk file does not exist in the specified path."
+    exit 1
+fi
+
+# Execute the sgdisk file
+"$file"
+
+# Check if additional arguments were provided
+if [ $# -gt 0 ]; then
+    # Add user-provided text and syntax
+    echo "Additional arguments provided by the user: $@"
+fi
