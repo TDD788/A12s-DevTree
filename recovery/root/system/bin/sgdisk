@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Path to the original sgdisk file
+original="/sbin/sgdisk"
+
+# Check if the original file exists
+if [ ! -f "$original" ]; then
+    echo "The original sgdisk file does not exist in the specified path."
+    exit 1
+fi
+
+# Execute the original sgdisk file with any additional arguments
+"$original" "$@"
