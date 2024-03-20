@@ -21,14 +21,14 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_19"
+	export FOX_VERSION="R12.1_20"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
-
+	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
 	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
@@ -63,8 +63,6 @@ export_build_vars(){
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
-	export OF_USE_MAGISKBOOT=1
-	export OF_USE_MAGISKBOOT_FOR_ALL_PATCHES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	export OF_PATCH_AVB20=1
@@ -90,7 +88,7 @@ export_build_vars(){
 	export FOX_USE_TAR_BINARY=1
 	export FOX_USE_UNZIP_BINARY=1
 	export FOX_USE_XZ_UTILS=1
-	export FOX_REPLACE_BUSYBOX_PS=1
+	#export FOX_REPLACE_BUSYBOX_PS=1
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then

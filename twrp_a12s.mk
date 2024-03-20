@@ -16,6 +16,9 @@
 #
 DEVICE_PATH := device/samsung/a12s
 
+# Release name
+PRODUCT_RELEASE_NAME := a12s
+
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
@@ -38,4 +41,4 @@ PRODUCT_DEVICE := a12s
 PRODUCT_MODEL := a12s
 PRODUCT_BRAND := samsung
 PRODUCT_MANUFACTURER := samsung
-PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
+PRODUCT_GMS_CLIENTID_BASE := android-samsung
