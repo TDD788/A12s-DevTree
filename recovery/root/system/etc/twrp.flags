@@ -18,10 +18,8 @@
 /optics        			 ext4    /dev/block/by-name/optics               flags=display="Optics";backup=0;
 /optics_image  			 emmc    /dev/block/by-name/optics               flags=display="Optics Image";backup=1;flashimg=1;
 /up_param     			  emmc    /dev/block/by-name/up_param             flags=display="Param";backup=1;flashimg=1;
-/vbmeta_system			  emmc    /dev/block/by-name/vbmeta_system        flags=display="Vbmeta System";backup=1;flashimg=1;
-/vbmeta        			 emmc    /dev/block/by-name/vbmeta               flags=display="Vbmeta Samsung";backup=1;flashimg=1;
 
 # External Stuff
-/storage/emulated/0	     ext4	/data/media/0					   	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
-/storage/external_sd 	   auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1 flags=fsflags=utf8;display="MicroSD";storage;wipeingui;removable
-/storage/externalfusb   	auto	/dev/block/sda1 /dev/block/sda		  flags=display="USB-OTG";storage;wipeingui;removable
+/internal_sdcard	        f2fs	/data/media/0					   	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
+/external_sdcard   		 auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1 flags=fsflags=utf8;display="MicroSD";storage;wipeingui;removable
+/external_usb		   	auto	/dev/block/sda1 /dev/block/sda		  flags=display="USB-OTG";storage;wipeingui;removable

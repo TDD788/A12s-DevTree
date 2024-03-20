@@ -13,4 +13,4 @@ on fs
     wait /dev/block/platform/12100000.dwmmc0
     symlink /dev/block/platform/12100000.dwmmc0 /dev/block/bootdevice
     symlink /dev/block/platform/12100000.dwmmc0/by-name /dev/block/by-name
-    symlink /dev/block/platorm/12100000.dwmmc0/by-name/param /dev/block/param
+    symlink /dev/block/platorm/12100000.dwmmc0/by-name/up_param /dev/block/param

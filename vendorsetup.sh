@@ -21,30 +21,43 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_20"
+	export FOX_VERSION="R12.1_21"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
+	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
+	export FOX_TARGET_DEVICES="a12s"
+	export FOX_BUILD_DEVICE="a12s"
+	export OF_USE_SYSTEM_FINGERPRINT=1
+	export FOX_VARIANT="AOSP"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
 	export OF_FORCE_DISABLE_DM_VERITY=1
 	export OF_DISABLE_FORCED_ENCRYPTION=1
-	export OF_FORCE_DISABLE_FORCED_ENCRYPTION=1
 	
 	# Partition Configurations
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
-	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
 
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
-	export OF_ENABLE_LPTOOLS=1
 	export OF_ENABLE_FS_COMPRESSION=1
+	export OF_USE_GREEN_LED=1
+	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
+	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	
+	# Binaries & Tools
+	export FOX_USE_BASH_SHELL=1
+	export FOX_ASH_IS_BASH=1
+	export FOX_USE_NANO_EDITOR=1
+	export FOX_USE_TAR_BINARY=1
+	export FOX_USE_SED_BINARY=1
+	export FOX_USE_XZ_UTILS=1
+	export OF_ENABLE_LPTOOLS=1
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
@@ -75,20 +88,25 @@ export_build_vars(){
 	export OF_FLASHLIGHT_ENABLE=1
 	
 	# Maintainer Avatar
-	wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
-	export OF_MAINTAINER_AVATAR="./maintainer.png"
+	#wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
+	#export OF_MAINTAINER_AVATAR="./maintainer.png"
 
 	# Applications Configurations
 	export FOX_ENABLE_APP_MANAGER=1
+	
+	 # CCACHE
+	 export USE_CCACHE=1
+	 export CCACHE_EXEC=/usr/bin/ccache
 
-	# Custom Binaries to SD Card Configuration
-	export FOX_CUSTOM_BINS_TO_SDCARD=3
-	export FOX_USE_NANO_EDITOR=1
-	export FOX_USE_SED_BINARY=1
-	export FOX_USE_TAR_BINARY=1
-	export FOX_USE_UNZIP_BINARY=1
-	export FOX_USE_XZ_UTILS=1
-	#export FOX_REPLACE_BUSYBOX_PS=1
+	 CCACHE_DIR="/media/${USERNAME}/ccache"
+
+	 if [ -d ${CCACHE_DIR} ];
+	  then
+	   export CCACHE_DIR=${CCACHE_DIR}
+	  else
+	   echo "CCACHE Directory/Partition is not mounted at \"${CCACHE_DIR}\""
+	   echo "Please edit the CCACHE_DIR build variable or mount the directory."
+	 fi
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
