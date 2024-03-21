@@ -1,1 +1,16 @@
-/sbin/sgdisk
+#!/system/bin/sh
+
+SGDISK_BIN="/sbin/sgdisk"
+
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 [additional text]"
+    exit 1
+fi
+
+if [ "$1" = "sgdisk" ]; then
+    shift
+    "$SGDISK_BIN" "$@"
+else
+    command="$SGDISK_BIN $@"
+    sh -c "$command"
+fi
