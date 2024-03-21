@@ -1,8 +1,6 @@
 #!/system/bin/sh
-# Path to the apd binary
 APD_BIN="/data/adb/apd"
 
-# Function to display help
 show_help() {
     echo "Usage: apatch [OPTION]"
     echo "Apply patches to the boot system."
@@ -15,13 +13,11 @@ show_help() {
     echo "  -m, --manager        Display manager menu"
 }
 
-# Check if at least one argument is provided
 if [ $# -eq 0 ]; then
     show_help
     exit 1
 fi
 
-# Parse arguments
 case "$1" in
     -h | --help)
         show_help
@@ -47,7 +43,7 @@ case "$1" in
         bash /sbin/boot_extract.sh
         ;;
     -m | --manager)
-# Function to display the main menu
+    
 main_menu() {
     echo "Main Menu:"
     echo "1. Manage APatch modules"
@@ -59,7 +55,6 @@ main_menu() {
     echo "Select an option: "
 }
 
-# Function to manage APatch modules
 manage_modules_menu() {
     echo "APatch Modules Menu:"
     echo "Usage: $APD_BIN module <COMMAND>"
@@ -75,7 +70,6 @@ manage_modules_menu() {
     echo "Select an option: "
 }
 
-# Function to manage APatch modules
 manage_modules() {
     while true; do
         manage_modules_menu
@@ -136,23 +130,18 @@ manage_modules() {
     done
 }
 
-# Placeholder functions for additional actions
 trigger_post_fs_data() {
     echo "Triggering 'post-fs-data' event..."
-    # Add your post-fs-data logic here
 }
 
 trigger_services() {
     echo "Triggering 'services' event..."
-    # Add your services logic here
 }
 
 trigger_boot_completed() {
     echo "Triggering 'boot-completed' event..."
-    # Add your boot-completed logic here
 }
 
-# Help message for main menu
 print_main_help() {
     echo "APatch CLI"
     echo ""
@@ -169,7 +158,6 @@ print_main_help() {
     echo "Select an option: "
 }
 
-# Main function
 main() {
     while true; do
         main_menu
@@ -201,7 +189,6 @@ main() {
     done
 }
 
-# Call the main function
 main
         ;;
     *)

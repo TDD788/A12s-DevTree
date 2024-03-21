@@ -33,6 +33,7 @@ export_build_vars(){
 	export FOX_BUILD_DEVICE="a12s"
 	export OF_USE_SYSTEM_FINGERPRINT=1
 	export FOX_VARIANT="AOSP"
+	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
@@ -51,6 +52,7 @@ export_build_vars(){
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	
 	# Binaries & Tools
+	export FOX_CUSTOM_BINS_TO_SDCARD=3
 	export FOX_USE_BASH_SHELL=1
 	export FOX_ASH_IS_BASH=1
 	export FOX_USE_NANO_EDITOR=1
@@ -86,10 +88,6 @@ export_build_vars(){
 	export OF_FL_PATH1="/system/flashlight"
 	export OF_FL_PATH2=""
 	export OF_FLASHLIGHT_ENABLE=1
-	
-	# Maintainer Avatar
-	#wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
-	#export OF_MAINTAINER_AVATAR="./maintainer.png"
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then

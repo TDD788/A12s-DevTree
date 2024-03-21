@@ -3,13 +3,6 @@ LOCAL_PATH := device/samsung/a12s
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-# Boot control
-PRODUCT_PACKAGES += \
-    android.hardware.boot@1.2-impl-qti.recovery
-
-PRODUCT_PACKAGES_DEBUG += \
-    bootctl
-
 # Fastbootd
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.0-impl-mock \
