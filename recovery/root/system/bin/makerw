@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/system/bin/sh
 # Prompt user for the directory where the image is located
 read -p "Please enter the full path of the image including the filename: " filepath
 
