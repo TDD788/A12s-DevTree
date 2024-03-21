@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_21"
+	export FOX_VERSION="R12.1_22"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -29,10 +29,11 @@ export_build_vars(){
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
-	export FOX_TARGET_DEVICES="a12s"
-	export FOX_BUILD_DEVICE="a12s"
-	export OF_USE_SYSTEM_FINGERPRINT=1
+	export OF_DEVICE_WITHOUT_PERSIST=1
+	export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
+	export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 	export FOX_VARIANT="AOSP"
+	export OF_USE_HEXDUMP=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
@@ -40,10 +41,6 @@ export_build_vars(){
 	export OF_FORCE_DISABLE_DM_VERITY=1
 	export OF_DISABLE_FORCED_ENCRYPTION=1
 	
-	# Partition Configurations
-	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
-	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
-
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_FS_COMPRESSION=1
@@ -53,11 +50,18 @@ export_build_vars(){
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=3
-	export FOX_USE_NANO_EDITOR=1
-	export FOX_USE_TAR_BINARY=1
-	export FOX_USE_SED_BINARY=1
-	export FOX_USE_XZ_UTILS=1
-	export OF_ENABLE_LPTOOLS=1
+	
+	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
+		export FOX_USE_NANO_EDITOR=1
+		export FOX_USE_SED_BINARY=1
+		export FOX_USE_TAR_BINARY=1
+		export FOX_USE_UNZIP_BINARY=1
+		export FOX_USE_XZ_UTILS=1
+		export FOX_REPLACE_BUSYBOX_PS=1
+		export FOX_REPLACE_TOOLBOX_GETPROP=1
+	else
+		export FOX_DYNAMIC_SAMSUNG_FIX=1
+	fi
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1

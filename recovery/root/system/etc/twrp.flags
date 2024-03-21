@@ -8,8 +8,9 @@
 /metadata   			    ext4    /dev/block/by-name/metadata             flags=display="Metadata";wipeingui;wipeduringfactoryreset
 /data     			      f2fs    /dev/block/by-name/userdata			 flags=length=length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2
 /cache    			      ext4    /dev/block/by-name/cache                flags=display="Cache";wipeingui;wipeduringfactoryreset
-/efs      		 	     ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui
-/sec_efs   			     ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui
+/super					  emmc	/dev/block/by-name/super			    flags=backup=1;flashimg;display="Super (System, ODM, Vendor, Product)"
+/efs      		 	     ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui;flashimg
+/sec_efs   			     ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui;flashimg
 /modem     			     emmc    /dev/block/by-name/radio                flags=backup=1;display="Modem";
 /misc      			     emmc    /dev/block/by-name/misc
 /dtbo       			    emmc    /dev/block/by-name/dtbo                 flags=display="DTBO Image";flashimg=1;backup=1;
@@ -19,7 +20,7 @@
 /optics_image  			 emmc    /dev/block/by-name/optics               flags=display="Optics Image";backup=1;flashimg=1;
 /up_param     			  emmc    /dev/block/by-name/up_param             flags=display="Param";backup=1;flashimg=1;
 
-# External Stuff
+# External Stuff 00 p
 /internal_sdcard	        f2fs	/data/media/0					   	flags=display="Internal Storage";usermrf;backup=1;fsflags="bind";removable
 /external_sdcard   		 auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1 flags=fsflags=utf8;display="MicroSD";storage;wipeingui;removable
 /external_usb		   	auto	/dev/block/sda1 /dev/block/sda		  flags=display="USB-OTG";storage;wipeingui;removable

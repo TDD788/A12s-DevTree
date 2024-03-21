@@ -5,8 +5,8 @@ PRISMSIZE=30
 SGDISK=/system/bin/sgdisk
 DISK=/dev/block/mmcblk0
 
-DISKCODE=`$SGDISK --print $DISK | grep super | awk '{printf $6}'`
-SECSIZE=`$SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}'`
+DISKCODE=`sh $SGDISK --print $DISK | grep super | awk '{printf $6}'`
+SECSIZE=`sh $SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}'`
 
 
 function delete() {
@@ -15,16 +15,16 @@ function delete() {
 }
 
 function calculate() {
-	SYSPART=`$SGDISK --print $DISK | grep super | awk '{printf $1}'`
+	SYSPART=`sh $SGDISK --print $DISK | grep super | awk '{printf $1}'`
 	delete $SYSPART
-	PRISMPART=`$SGDISK --print $DISK | grep prism | awk '{printf $1}'`
+	PRISMPART=`$sh SGDISK --print $DISK | grep prism | awk '{printf $1}'`
 	delete $PRISMPART
 
 }
 	
 function repart() {
-    $SGDISK --new=0:0:+${SUPERSIZE}Mib --typecode=0:$DISKCODE --change-name=0:super $DISK
-	$SGDISK --new=0:0:+${PRISMSIZE}Mib --typecode=0:$DISKCODE --change-name=0:prism $DISK
+    sh $SGDISK --new=0:0:+${SUPERSIZE}Mib --typecode=0:$DISKCODE --change-name=0:super $DISK
+	sh $SGDISK --new=0:0:+${PRISMSIZE}Mib --typecode=0:$DISKCODE --change-name=0:prism $DISK
 
 }
 

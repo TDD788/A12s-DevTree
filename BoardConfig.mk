@@ -46,16 +46,25 @@ TARGET_USES_UEFI := true
 # Kernel
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE := 0x10000000
-BOARD_KERNEL_CMDLINE := androidboot.hardware=exynos850 androidboot.selinux=enforce loop.max_part=10
+BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_RAMDISK_OFFSET := 0x01000000
 BOARD_KERNEL_TAGS_OFFSET := 0x00000100
+
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
 BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_KERNEL_IMAGE_NAME := Image
+
+BOARD_KERNEL_CMDLINE += \
+	androidboot.hardware=exynos850 \
+	androidboot.selinux=permissive \
+	loop.max_part=15 \
+	androidboot.usbcontroller=13600000.dwc3 \
+	androidboot.usbconfigfs=true
+
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO := true
+
 TARGET_KERNEL_CONFIG := a12s_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/a12s
 TARGET_KERNEL_HEADER_ARCH := arm64
@@ -90,10 +99,14 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 # Rsync error fix or Fixing trying to copy non-existance files
 TARGET_COPY_OUT_VENDOR := vendor
 
-BOARD_SUPER_PARTITION_SIZE := 9126805504 # TODO: Fix hardcoded value
-BOARD_SUPER_PARTITION_GROUPS := samsung_dynamic_partitions
-BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := system vendor product odm
-BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
+BOARD_SUPER_PARTITION_SIZE := 9126805504
+BOARD_GOOGLE_DYNAMIC_PARTITIONS_SIZE := 9126805504
+BOARD_SUPER_PARTITION_GROUPS := google_dynamic_partitions
+BOARD_GOOGLE_DYNAMIC_PARTITIONS_PARTITION_LIST := \
+    system \
+    vendor \
+    product \
+    odm
 
 # Platform
 TARGET_BOARD_PLATFORM := universal3830    
@@ -162,10 +175,3 @@ TW_INCLUDE_RESETPROP := true
 TW_USE_SAMSUNG_HAPTICS := true
 TW_NO_SCREEN_TIMEOUT := true
 TW_SCREEN_BLANK_ON_BOOT := true
-
-# Power
-TARGET_USES_INTERACTION_BOOST := true
-
-# Properties
-TARGET_SYSTEM_PROP += $(DEVICE_PATH)/system.prop
-
