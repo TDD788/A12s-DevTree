@@ -70,7 +70,7 @@ jobs:
     - name: Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 50
+        swap-size-gb: 30
       
     - name: Build Environment
       run: |
@@ -89,13 +89,6 @@ jobs:
         git clone https://gitlab.com/OrangeFox/sync.git -b master
         cd sync
         ./orangefox_sync.sh --branch ${{ github.event.inputs.MANIFEST_BRANCH }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-        find ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }} -name "maintainer.png"
-        #ls ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
-        #cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/bootable/recovery/gui/theme/portrait_hdpi/images/Defaut/About/
-        #cd /home/runner/work/A12s-DevTree/A12s-DevTree/OrangeFox/fox_12.1/bootable/recovery/gui/theme/portrait_hdpi/images/Default/About/
-        #rm maintainer.png
-        #wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
-        #mv TheDarkDeath788.png maintainer.png
 
     - name: Clone Device Tree
       run: |

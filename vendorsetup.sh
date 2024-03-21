@@ -90,23 +90,6 @@ export_build_vars(){
 	# Maintainer Avatar
 	#wget https://raw.githubusercontent.com/TDD788/A12s-DevTree/DT-Builder/recovery/root/TheDarkDeath788.png
 	#export OF_MAINTAINER_AVATAR="./maintainer.png"
-
-	# Applications Configurations
-	export FOX_ENABLE_APP_MANAGER=1
-	
-	 # CCACHE
-	 export USE_CCACHE=1
-	 export CCACHE_EXEC=/usr/bin/ccache
-
-	 CCACHE_DIR="/media/${USERNAME}/ccache"
-
-	 if [ -d ${CCACHE_DIR} ];
-	  then
-	   export CCACHE_DIR=${CCACHE_DIR}
-	  else
-	   echo "CCACHE Directory/Partition is not mounted at \"${CCACHE_DIR}\""
-	   echo "Please edit the CCACHE_DIR build variable or mount the directory."
-	 fi
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
