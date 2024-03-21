@@ -53,8 +53,6 @@ export_build_vars(){
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=3
-	export FOX_USE_BASH_SHELL=1
-	export FOX_ASH_IS_BASH=1
 	export FOX_USE_NANO_EDITOR=1
 	export FOX_USE_TAR_BINARY=1
 	export FOX_USE_SED_BINARY=1
