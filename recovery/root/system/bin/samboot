@@ -28,7 +28,7 @@ case $1 in
         echo "=============================================="
         echo " "
         echo "Usage: "
-        echo "# samboot [--recovery|--download|--system] "
+        echo "# samboot [--recovery|--download|--system|--fastbootd|--bootloader] "
         echo " "
         echo "--recovery             Boot again to recovery"
         echo "--download             Boot to Download Mode"
