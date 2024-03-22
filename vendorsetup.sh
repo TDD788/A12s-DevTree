@@ -49,7 +49,7 @@ export_build_vars(){
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	
 	# Binaries & Tools
-	export FOX_CUSTOM_BINS_TO_SDCARD=3
+	export FOX_CUSTOM_BINS_TO_SDCARD=2
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
@@ -59,8 +59,6 @@ export_build_vars(){
 		export FOX_USE_XZ_UTILS=1
 		export FOX_REPLACE_BUSYBOX_PS=1
 		export FOX_REPLACE_TOOLBOX_GETPROP=1
-	else
-		export FOX_DYNAMIC_SAMSUNG_FIX=1
 	fi
 	
 	# Newer Functions For Me Dark (TheDarkDeath788 )
