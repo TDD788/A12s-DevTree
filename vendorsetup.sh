@@ -31,6 +31,7 @@ export_build_vars(){
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export OF_DEVICE_WITHOUT_PERSIST=1
 	export FOX_VARIANT="AOSP"
+	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_HEXDUMP=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
@@ -47,10 +48,7 @@ export_build_vars(){
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	
 	# Target Device
-	export TARGET_DEVICE="a12s"
-	export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
-	export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
-	export TARGET_DEVICE_ALT="SM-A127M, SM-A127F"
+	export FOX_TARGET_DEVICES="a12s,a12sub,SM-A127M,SM-A127F"
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=2

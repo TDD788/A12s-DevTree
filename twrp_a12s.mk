@@ -16,9 +16,6 @@
 #
 DEVICE_PATH := device/samsung/a12s
 
-# Target Device
-TARGET_DEVICE="a12s"
-
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
@@ -34,6 +31,9 @@ PRODUCT_PACKAGES += \
     charger_res_images
 
 PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
+
+# Target Device
+TARGET_DEVICE="a12s"
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := twrp_a12s

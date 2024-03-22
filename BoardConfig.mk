@@ -119,6 +119,11 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Verified Boot
 BOARD_AVB_ENABLE := true
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
+BOARD_AVB_VBMETA_SYSTEM := system system_ext
+BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
@@ -162,7 +167,20 @@ TARGET_USES_MKE2FS := true
 BOARD_HAS_NO_REAL_SDCARD := true
 
 # System as root
-BOARD_ROOT_EXTRA_FOLDERS := "cache carrier data_mirror efs keyrefuge linkerconfig metadata omr optics bin sys prism"
+BOARD_ROOT_EXTRA_FOLDERS += \
+    	cache \
+    	carrier \
+    	data_mirror \
+    	efs \
+    	keyrefuge \
+    	linkerconfig \
+    	metadata \
+    	omr \
+    	optics \
+    	bin \
+    	sys \
+    	prism
+    	
 BOARD_SUPPRESS_SECURE_ERASE := true
 
 # TWRP flags selected by TDD788
