@@ -7,10 +7,16 @@ perform_resize_and_unshare_blocks() {
 }
 
 process_user_selected_image() {
-    read -p "Please enter the full path of the installed image, including the filename: " filepath
+    filepath=$1
 
-    directory=$(dirname "$filepath")
-    filename=$(basename "$filepath")
+    if [ -f "$filepath" ]; then
+        directory=$(dirname "$filepath")
+        filename=$(basename "$filepath")
+    else
+        directory="$filepath"
+        echo "Enter the name of the image file:"
+        read -p "Image File Name: " filename
+    fi
 
     cd "$directory" || { echo "Could not change to the specified directory."; exit 1; }
 
@@ -35,7 +41,9 @@ read -p "Option: " option
 
 case $option in
     1)
-        process_user_selected_image
+        echo "Enter the full path of the image file or directory:"
+        read -p "Image File/Directory Path: " image_path
+        process_user_selected_image "$image_path"
         ;;
     2)
         process_copied_system_image

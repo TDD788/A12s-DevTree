@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_22"
+	export FOX_VERSION="R12.1_23"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -30,8 +30,6 @@ export_build_vars(){
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export OF_DEVICE_WITHOUT_PERSIST=1
-	export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
-	export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 	export FOX_VARIANT="AOSP"
 	export OF_USE_HEXDUMP=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
@@ -47,6 +45,12 @@ export_build_vars(){
 	export OF_USE_GREEN_LED=1
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	
+	# Target Device
+	export TARGET_DEVICE="a12s"
+	export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
+	export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
+	export TARGET_DEVICE_ALT="SM-A127M, SM-A127F"
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=2

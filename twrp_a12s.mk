@@ -16,6 +16,9 @@
 #
 DEVICE_PATH := device/samsung/a12s
 
+# Target Device
+TARGET_DEVICE="a12s"
+
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)

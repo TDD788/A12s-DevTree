@@ -24,6 +24,7 @@ case "$1" in
         exit 0
         ;;
     -p | --patch)
+    	cp /dev/block/by-name/boot /sdcard/boot-apatch-backup.img
         read -p "Enter directory: " directory
         if [ -z "$directory" ]; then
             echo "Directory is empty."
