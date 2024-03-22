@@ -1,5 +1,8 @@
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
+    if [ -f /sbin/from_fox_sd.sh ]; then
+      source /sbin/from_fox_sd.sh
+    fi
 
 on late-init
     setprop ro.debuggable 1
