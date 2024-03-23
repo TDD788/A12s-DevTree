@@ -50,7 +50,7 @@ mv kernel kernel.ori
 echo "- Patching kernel"
 
 set -x
-/sbin/kptools -p -i kernel.ori -s "$SUPERKEY" -k kpimg -o kernel "$@"
+sh /sbin/kptools -p -i kernel.ori -s "$SUPERKEY" -k kpimg -o kernel "$@"
 patch_rc=$?
 set +x
 

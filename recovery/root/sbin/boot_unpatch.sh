@@ -30,7 +30,7 @@ fi
 mv kernel kernel.ori
 
 echo "- Unpatching kernel"
-/sbin/kptools -u --image kernel.ori --out kernel
+sh /sbin/kptools -u --image kernel.ori --out kernel
 
 if [ $? -ne 0 ]; then
   >&2 echo "- Unpatch error: $?"

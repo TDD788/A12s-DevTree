@@ -1,3 +1,3 @@
 #!/sbin/sh
 
-/system/bin/multidisabler
+sh /system/bin/multidisabler

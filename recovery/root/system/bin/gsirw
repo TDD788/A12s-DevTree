@@ -15,7 +15,7 @@ process_user_selected_image() {
     else
         directory="$filepath"
         echo "Enter the name of the image file:"
-        read -p "Image File Name: " filename
+        read filename
     fi
 
     cd "$directory" || { echo "Could not change to the specified directory."; exit 1; }
@@ -37,12 +37,14 @@ echo "Select an option:"
 echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
 
-read -p "Option: " option
+echo "Option: "
+read option
 
 case $option in
     1)
         echo "Enter the full path of the image file or directory:"
-        read -p "Image File/Directory Path: " image_path
+        echo "Image File/Directory Path: "
+        read image_path
         process_user_selected_image "$image_path"
         ;;
     2)
