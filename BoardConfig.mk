@@ -194,5 +194,5 @@ TW_INCLUDE_RESETPROP := true
 TW_USE_SAMSUNG_HAPTICS := true
 TW_NO_SCREEN_TIMEOUT := true
 TW_SCREEN_BLANK_ON_BOOT := true
-PB_TORCH_PATH := /system/flashlight
+PB_TORCH_PATH := "/system/flashlight/brightness"
 BOARD_RAMDISK_USE_LZMA := true
