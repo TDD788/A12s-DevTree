@@ -33,7 +33,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 
 # Target Device
-TARGET_DEVICE="a12s"
+TARGET_DEVICE := a12s
+
+# Release name
+PRODUCT_RELEASE_NAME := a12s
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_NAME := twrp_a12s
@@ -41,7 +44,7 @@ PRODUCT_DEVICE := a12s
 PRODUCT_MODEL := a12s
 PRODUCT_BRAND := samsung
 PRODUCT_MANUFACTURER := samsung
-PRODUCT_GMS_CLIENTID_BASE := android-samsung
+PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
     PRIVATE_BUILD_DESC="a12sub-user 13 TP1A.220624.014 A127MUBUBDWK2-A127FXXSADWK2 release-keys"

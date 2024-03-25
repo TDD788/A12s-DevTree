@@ -38,7 +38,7 @@ export_build_vars(){
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
 	export OF_FORCE_DISABLE_DM_VERITY=1
-	export OF_DISABLE_FORCED_ENCRYPTION=1
+	#export OF_DISABLE_FORCED_ENCRYPTION=1
 	
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
