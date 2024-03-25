@@ -1,24 +1,4 @@
 #!/system/bin/sh
-#######################################################################################
-# APatch Boot Image Patcher
-#######################################################################################
-#
-# Usage: boot_patch.sh <superkey> <bootimage> [ARGS_PASS_TO_KPTOOLS]
-#
-# This script should be placed in a directory with the following files:
-#
-# File name          Type          Description
-#
-# boot_patch.sh      script        A script to patch boot image for APatch.
-#                  (this file)      The script will use files in its same
-#                                  directory to complete the patching process.
-# bootimg            binary        The target boot image
-# kpimg              binary        KernelPatch core Image
-# kptools            executable    The KernelPatch tools binary to inject kpimg to kernel Image
-# magiskboot         executable    Magisk tool to unpack boot.img.
-#
-#######################################################################################
-
 ARCH=$(getprop ro.product.cpu.abi)
 
 # Load utility functions
