@@ -33,7 +33,7 @@ export_build_vars(){
 	export FOX_VARIANT="AOSP"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_HEXDUMP=1
-	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
+	#export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
