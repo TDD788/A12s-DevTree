@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_23"
+	export FOX_VERSION="R12.1_24"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -33,7 +33,7 @@ export_build_vars(){
 	export FOX_VARIANT="AOSP"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_HEXDUMP=1
-	#export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
+	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
