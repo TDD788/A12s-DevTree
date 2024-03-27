@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_25"
+	export FOX_VERSION="R12.1_26"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -46,9 +46,13 @@ export_build_vars(){
 	export OF_USE_GREEN_LED=1
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
+	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/bootdevice/by-name/recovery"
+	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
+	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
+	export OF_HIDE_NOTCH=1
 	
 	# Target Device
-	export FOX_TARGET_DEVICES="a12s,a12sub,SM-A127M,SM-A127F"
+	export FOX_TARGET_DEVICES="a12s"
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=2
