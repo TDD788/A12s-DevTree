@@ -1,9 +1,4 @@
 #!/system/bin/sh
-# THIS SCRIPT IS INTENDED TO WORK ON SAMSUNG DEVICES
-# OTHERS ARE UNTESTED
-# V1
-
-
 case $1 in
     --recovery)
         pkill recovery && recovery

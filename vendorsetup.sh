@@ -21,7 +21,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_24"
+	export FOX_VERSION="R12.1_25"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -82,6 +82,7 @@ export_build_vars(){
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export FOX_NO_SAMSUNG_SPECIAL=2
+	export FOX_PATCH_VBMETA_FLAG=1
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400

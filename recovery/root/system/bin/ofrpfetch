@@ -1,6 +1,4 @@
 #!/system/bin/sh
-#!/bin/sh
-# THE /bin/sh CALL IS MEANT FOR DIAGNOSTICS! REMOVE IT ON PROD
 
 msg() {
     echo "$1"
