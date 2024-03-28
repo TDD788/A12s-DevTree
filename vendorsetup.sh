@@ -20,7 +20,9 @@ export_build_vars(){
 	
 	# Target Device
 	export FOX_TARGET_DEVICES="a12sub,a12s,a12,A127M,A127F,A127F/DS,7F,SM-A127M,SM-A127F,SM-A127F/DS"
-	export TARGET_DEVICE_ALT="a12sub,a12s,a12,A127M,A127F,A127F/DS,7F,SM-A127M,SM-A127F,SM-A127F/DS"
+	export TARGET_DEVICE_ALT="a12s"
+	export TARGET_DEVICE_ALT="a12sub"
+	export TARGET_DEVICE_ALT="a12"
 	
 	# General Configurations
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
