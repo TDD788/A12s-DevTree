@@ -15,8 +15,14 @@ GREEN="\e[92m"
 
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
-	# General Configurations
+	# Important Value
 	export ALLOW_MISSING_DEPENDENCIES=true
+	
+	# Target Device
+	export FOX_TARGET_DEVICES="a12sub,a12s,a12,A127M,A127F,A127F/DS,7F,SM-A127M,SM-A127F,SM-A127F/DS"
+	export TARGET_DEVICE_ALT="a12sub,a12s,a12,A127M,A127F,A127F/DS,7F,SM-A127M,SM-A127F,SM-A127F/DS"
+	
+	# General Configurations
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
@@ -50,9 +56,6 @@ export_build_vars(){
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export OF_HIDE_NOTCH=1
-	
-	# Target Device
-	export FOX_TARGET_DEVICES="a12s"
 	
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=2
