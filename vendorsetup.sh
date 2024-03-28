@@ -19,8 +19,9 @@ export_build_vars(){
 	export ALLOW_MISSING_DEPENDENCIES=true
 	
 	# Target Device
-	export FOX_TARGET_DEVICES="a12s, a12sub, a12"
-	export TARGET_DEVICE_ALT="a12s, a12sub, a12"
+	export FOX_TARGET_DEVICES="a12s"
+	export TARGET_DEVICES="a12s"
+	export TARGET_DEVICE_ALT="a12s, a12sub, twrp_a12s"
 	
 	# General Configurations
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
@@ -38,6 +39,8 @@ export_build_vars(){
 	export FOX_VARIANT="Tiramisu"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_HEXDUMP=1
+	export FOX_INSTALLER_DEBUG_MODE=0
+	export OF_USE_SAMSUNG_HAPTICS=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
