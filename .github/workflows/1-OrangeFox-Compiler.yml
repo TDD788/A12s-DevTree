@@ -136,7 +136,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         echo "MD5_IMG=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        #echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
 
     - name: Upload to Release
       if: github.event.inputs.RELEASE_TYPE == 'oficial'
@@ -156,4 +156,4 @@ jobs:
           ## MD5SUM
           * ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
-          * ${{ env.MD5_TAR }} for TAR file.
+          #* ${{ env.MD5_TAR }} for TAR file.
