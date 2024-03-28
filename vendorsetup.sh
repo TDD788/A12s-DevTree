@@ -29,7 +29,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_27"
+	export FOX_VERSION="R12.1_28"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -37,7 +37,6 @@ export_build_vars(){
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
-	export OF_DEVICE_WITHOUT_PERSIST=1
 	export FOX_VARIANT="AOSP"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_HEXDUMP=1
@@ -45,7 +44,7 @@ export_build_vars(){
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	export OF_FORCE_DISABLE_DM_VERITY=1
+	#export OF_FORCE_DISABLE_DM_VERITY=1
 	#export OF_DISABLE_FORCED_ENCRYPTION=1
 	
 	# Tools and Utilities Configurations
@@ -53,14 +52,13 @@ export_build_vars(){
 	export OF_ENABLE_FS_COMPRESSION=1
 	export OF_USE_GREEN_LED=1
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
-	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/bootdevice/by-name/recovery"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export OF_HIDE_NOTCH=1
 	
 	# Binaries & Tools
-	export FOX_CUSTOM_BINS_TO_SDCARD=2
+	export FOX_CUSTOM_BINS_TO_SDCARD=3
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
@@ -80,10 +78,11 @@ export_build_vars(){
 	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DONT_KEEP_LOG_HISTORY=1
 	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
+	export OF_NO_SPLASH_CHANGE=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
-	export OF_SPLASH_MAX_SIZE=104
+	export OF_SPLASH_MAX_SIZE=128
 
 	# Specific Features Configurations
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1

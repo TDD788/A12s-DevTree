@@ -1,8 +1,4 @@
 #!/system/bin/sh
-#
-# A simple Samsung services disabler by Ian Macdonald.
-#
-# Use this to prime your device after installing TWRP.
 
 md5() {
   md5sum -b "$1"
@@ -53,12 +49,7 @@ disable_fbe() {
   local md5
   local i
   fstab_files=`grep -lr 'fileencryption' vendor/etc`
-
-  #
-  # Exynos devices = fstab.exynos*.
-  # MediaTek devices = fstab.mt*.
-  # Snapdragon devices = fstab.qcom, fstab.emmc, fstab.default
-  #
+  
   for i in $fstab_files; do
     if [ -f $i ]; then
       echo " - Disabling file-based encryption (FBE) for /data..."
@@ -75,12 +66,7 @@ disable_fde() {
   local md5
   local i
   fstab_files=`grep -lr 'forceencrypt' vendor/etc`
-
-  #
-  # Exynos devices = fstab.exynos*.
-  # MediaTek devices = fstab.mt*.
-  # Snapdragon devices = fstab.qcom, fstab.emmc, fstab.default
-  #
+  
   for i in $fstab_files; do
     if [ -f $i ]; then
       echo " - Disabling full-disk encryption (FDE) for /data..."

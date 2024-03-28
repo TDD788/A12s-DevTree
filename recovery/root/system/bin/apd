@@ -1,4 +1,5 @@
 #!/system/bin/sh
+
 APD_BIN="/data/adb/apd"
 
 show_help() {
@@ -21,14 +22,13 @@ fi
 case "$1" in
     -h | --help)
         show_help
-        exit 0
         ;;
     -p | --patch)
-    	cp /dev/block/by-name/boot /sdcard/boot-apatch-backup.img
-    	echo "Enter directory: "
-        read -p directory
+        cp /dev/block/by-name/boot /sdcard/boot-apatch-backup.img
+        echo "Enter directory: "
+        read directory
         echo "Enter superkey: "
-        read -p superkey
+        read superkey
         if [ -z "$superkey" ]; then
             echo "Superkey is empty."
             exit 1
@@ -42,153 +42,68 @@ case "$1" in
         bash /sbin/boot_extract.sh
         ;;
     -m | --manager)
-    
-main_menu() {
-	mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
-    echo "Main Menu:"
-    echo "1. Manage APatch modules"
-    echo "2. Trigger 'post-fs-data' event"
-    echo "3. Trigger 'services' event"
-    echo "4. Trigger 'boot-completed' event"
-    echo "5. Help"
-    echo "6. Exit"
-    echo "Select an option: "
-}
+        main_menu() {
+            mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
+            echo "Main Menu:"
+            echo "1. Manage APatch modules"
+            echo "2. Trigger 'post-fs-data' event"
+            echo "3. Trigger 'services' event"
+            echo "4. Trigger 'boot-completed' event"
+            echo "5. Help"
+            echo "6. Exit"
+            echo "Select an option: "
+        }
 
-manage_modules_menu() {
-    echo "APatch Modules Menu:"
-    echo "Usage: $APD_BIN module <COMMAND>"
-    echo ""
-    echo "Commands:"
-    echo "  1. Install module <ZIP>"
-    echo "  2. Uninstall module <id>"
-    echo "  3. Enable module <id>"
-    echo "  4. Disable module <id>"
-    echo "  5. List all modules"
-    echo "  6. Help"
-    echo ""
-    echo "Select an option: "
-}
+        manage_modules() {
+            while true; do
+                manage_modules_menu
+                read option
+                case "$option" in
+                    1)
+                        echo "Please enter the directory where the module is located: "
+                        read module_directory
+                        echo "Installing module from directory: $module_directory"
+                        $APD_BIN module install "$module_directory"
+                        break
+                        ;;
+                    *)
+                        echo "Invalid option. Please select a valid option."
+                        ;;
+                esac
+            done
+        }
 
-manage_modules() {
-    while true; do
-        manage_modules_menu
-        read option
-        case "$option" in
-            1)
-                echo "Please enter the directory where the module is located: "
-                read module_directory
-                echo "Installing module from directory: $module_directory"
-                $APD_BIN module install "$module_directory"
-                break
-                ;;
-            2)
-                echo "Please enter the module id: "
-                read module_id
-                echo "Uninstalling module with id: $module_id"
-                $APD_BIN module uninstall "$module_id"
-                break
-                ;;
-            3)
-                echo "Please enter the module id: "
-                read module_id
-                echo "Enabling module with id: $module_id"
-                $APD_BIN module enable "$module_id"
-                break
-                ;;
-            4)
-                echo "Please enter the module id: "
-                read module_id
-                echo "Disabling module with id: $module_id"
-                $APD_BIN module disable "$module_id"
-                break
-                ;;
-            5)
-                echo "Listing all modules..."
-                $APD_BIN module list
-                break
-                ;;
-            6)
-                echo "APatch Modules Menu:"
-                echo "Usage: $APD_BIN module <COMMAND>"
-                echo ""
-                echo "Commands:"
-                echo "  1. Install module <ZIP>"
-                echo "  2. Uninstall module <id>"
-                echo "  3. Enable module <id>"
-                echo "  4. Disable module <id>"
-                echo "  5. List all modules"
-                echo "  6. Help"
-                echo ""
-                echo "Select an option: "
-                ;;
-            *)
-                echo "Invalid option. Please select a valid option."
-                ;;
-        esac
-    done
-}
+        manage_modules_menu() {
+            echo "APatch Modules Menu:"
+            echo "Usage: $APD_BIN module <COMMAND>"
+            echo ""
+            echo "Commands:"
+            echo "  1. Install module <ZIP>"
+            echo "  2. Uninstall module <id>"
+            echo "  3. Enable module <id>"
+            echo "  4. Disable module <id>"
+            echo "  5. List all modules"
+            echo "  6. Help"
+            echo ""
+            echo "Select an option: "
+        }
 
-trigger_post_fs_data() {
-    echo "Triggering 'post-fs-data' event..."
-}
+        main() {
+            while true; do
+                main_menu
+                read option
+                case "$option" in
+                    1)
+                        manage_modules
+                        ;;
+                    *)
+                        echo "Invalid option. Please select a valid option."
+                        ;;
+                esac
+            done
+        }
 
-trigger_services() {
-    echo "Triggering 'services' event..."
-}
-
-trigger_boot_completed() {
-    echo "Triggering 'boot-completed' event..."
-}
-
-print_main_help() {
-    echo "APatch CLI"
-    echo ""
-    echo "Usage: $APD_BIN <COMMAND>"
-    echo ""
-    echo "Commands:"
-    echo "  1. Manage APatch modules"
-    echo "  2. Trigger 'post-fs-data' event"
-    echo "  3. Trigger 'services' event"
-    echo "  4. Trigger 'boot-completed' event"
-    echo "  5. Help"
-    echo "  6. Exit"
-    echo ""
-    echo "Select an option: "
-}
-
-main() {
-    while true; do
-        main_menu
-        read option
-        case "$option" in
-            1)
-                manage_modules
-                ;;
-            2)
-                trigger_post_fs_data
-                ;;
-            3)
-                trigger_services
-                ;;
-            4)
-                trigger_boot_completed
-                ;;
-            5)
-                print_main_help
-                ;;
-            6)
-                echo "Exiting..."
-                exit 0
-                ;;
-            *)
-                echo "Invalid option. Please select a valid option."
-                ;;
-        esac
-    done
-}
-
-main
+        main
         ;;
     *)
         echo "Invalid option: $1"

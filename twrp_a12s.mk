@@ -34,6 +34,7 @@ PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/ro
 
 # Target Device
 TARGET_DEVICE=""
+TARGET_DEVICE_ALT="a12s"
 
 # Release name
 PRODUCT_RELEASE_NAME := a12s
