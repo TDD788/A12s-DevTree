@@ -44,6 +44,7 @@ case "$1" in
     -m | --manager)
     
 main_menu() {
+	mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
     echo "Main Menu:"
     echo "1. Manage APatch modules"
     echo "2. Trigger 'post-fs-data' event"
@@ -72,7 +73,6 @@ manage_modules_menu() {
 manage_modules() {
     while true; do
         manage_modules_menu
-            mount -o loop,rw /data/adb/ap/modules.img /data/adb/modules/
         read option
         case "$option" in
             1)
