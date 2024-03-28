@@ -32,12 +32,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 
-# Release name
-PRODUCT_RELEASE_NAME := a12s
-
 ## Device identifier. This must come after all inclusions
-PRODUCT_NAME := twrp_a12s
 PRODUCT_DEVICE := a12s
+PRODUCT_NAME := twrp_a12s
 PRODUCT_MODEL := a12s
 PRODUCT_BRAND := samsung
 PRODUCT_MANUFACTURER := samsung

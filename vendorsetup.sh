@@ -21,14 +21,14 @@ export_build_vars(){
 	# Target Device
 	export FOX_TARGET_DEVICES="a12s"
 	export TARGET_DEVICES="a12s"
-	export TARGET_DEVICE_ALT="a12s, a12sub, twrp_a12s"
+	export TARGET_DEVICE_ALT="a12s,a12sub,twrp_a12s"
 	
 	# General Configurations
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_31"
+	export FOX_VERSION="R12.1_32"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -36,7 +36,7 @@ export_build_vars(){
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
-	export FOX_VARIANT="Tiramisu"
+	export FOX_VARIANT="AOSP"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_SAMSUNG_HAPTICS=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
@@ -49,7 +49,6 @@ export_build_vars(){
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/bootdevice/by-name/recovery"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
@@ -64,19 +63,14 @@ export_build_vars(){
 		export FOX_USE_TAR_BINARY=1
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
-		export FOX_REPLACE_BUSYBOX_PS=1
-		export FOX_REPLACE_TOOLBOX_GETPROP=1
 	fi
 	
 	# Important Functions
-	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export FOX_VANILLA_BUILD=1
 	export FOX_PORTS_TMP=1
-	export OF_DONT_PATCH_ON_FRESH_INSTALLATION=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
-	export OF_DONT_KEEP_LOG_HISTORY=1
-	export OF_LOOP_DEVICE_ERRORS_TO_LOG=1
 	export OF_NO_SPLASH_CHANGE=1
+	export OF_ENABLE_LPTOOLS=1
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
@@ -85,7 +79,6 @@ export_build_vars(){
 	# Specific Features Configurations
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export OF_TWRP_COMPATIBILITY_MODE=1
-	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	export FOX_PATCH_VBMETA_FLAG=1
