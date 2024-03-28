@@ -32,10 +32,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 
-# Target Device
-TARGET_DEVICE="a12s"
-TARGET_DEVICE_ALT="a12s, a12sub, twrp_a12s"
-
 # Release name
 PRODUCT_RELEASE_NAME := a12s
 

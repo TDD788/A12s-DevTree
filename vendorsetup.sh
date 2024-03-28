@@ -28,7 +28,7 @@ export_build_vars(){
 	export LC_ALL="C"
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_30"
+	export FOX_VERSION="R12.1_31"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -38,8 +38,6 @@ export_build_vars(){
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export FOX_VARIANT="Tiramisu"
 	export FOX_ENABLE_APP_MANAGER=1
-	export OF_USE_HEXDUMP=1
-	export FOX_INSTALLER_DEBUG_MODE=0
 	export OF_USE_SAMSUNG_HAPTICS=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
@@ -51,7 +49,6 @@ export_build_vars(){
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export OF_USE_GREEN_LED=1
 	export OF_NO_ADDITIONAL_MIUI_PROPS_CHECK=1
 	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/bootdevice/by-name/recovery"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
@@ -59,7 +56,7 @@ export_build_vars(){
 	export OF_HIDE_NOTCH=1
 	
 	# Binaries & Tools
-	export FOX_CUSTOM_BINS_TO_SDCARD=3
+	export FOX_CUSTOM_BINS_TO_SDCARD=1
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
@@ -90,7 +87,7 @@ export_build_vars(){
 	export OF_TWRP_COMPATIBILITY_MODE=1
 	export OF_DISABLE_MIUI_SPECIFIC_FEATURES=1
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-	export FOX_NO_SAMSUNG_SPECIAL=1
+	export FOX_NO_SAMSUNG_SPECIAL=2
 	export FOX_PATCH_VBMETA_FLAG=1
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1

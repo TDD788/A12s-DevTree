@@ -1,4 +1,4 @@
-#<mnt_point>    <type>  <src>                                   <mnt_flags and options>
+#<mnt_point>   		    <type>   <src>                                   <mnt_flags and options>
 /product_image  			emmc	/dev/block/mapper/product  			 flags=backup=1;flashimg;display="Product Image";wipeingui
 /system_image 			  emmc	/dev/block/mapper/system  			  flags=backup=1;flashimg;display="System Image";wipeingui
 /vendor_image   			emmc	/dev/block/mapper/vendor 			   flags=backup=1;flashimg;display="Vendor Image";wipeingui
@@ -18,5 +18,6 @@
 /optics        			 ext4    /dev/block/by-name/optics               flags=display="Optics";backup=0;
 /optics_image  			 emmc    /dev/block/by-name/optics               flags=display="Optics Image";backup=1;flashimg=1;
 /up_param     			  emmc    /dev/block/by-name/up_param             flags=display="Param";backup=1;flashimg=1;
+/sdcard					 f2fs	/data/media/							flags=display="Internal Storage";wipeingui
 /external_sd				vfat	/dev/block/mmcblk1p1 /dev/block/mmcblk1 flags=display="Micro SD Card";storage;wipeingui;removable
 /usb_otg					auto	/dev/block/sda1 /dev/block/sda		  flags=display="USB OTG";storage;wipeingui;removable

@@ -5,4 +5,3 @@ ro.boot.dynamic_partitions=true
 ro.boot.boot_devices=bootdevice,12100000.dwmmc0
 ro.crypto.volume.filenames_mode=aes-256-cts
 persist.sys.isUsbOtgEnabled=false
-ro.product.device=a12s
