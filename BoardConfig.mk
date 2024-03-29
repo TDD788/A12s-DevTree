@@ -190,5 +190,4 @@ TW_INCLUDE_RESETPROP	    := true
 TW_USE_SAMSUNG_HAPTICS	    := true
 TW_NO_SCREEN_TIMEOUT	    := true
 TW_SCREEN_BLANK_ON_BOOT	    := true
-TW_INCLUDE_FB2PNG	    := true
-TW_ALWAYS_RMRF 		    := true
+
