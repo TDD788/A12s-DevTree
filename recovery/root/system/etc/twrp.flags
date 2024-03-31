@@ -15,6 +15,7 @@
 /efs      		 	      ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui;flashimg
 /sec_efs   			      ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui;flashimg
 /modem     			      emmc    /dev/block/by-name/radio                flags=backup=1;display="Modem";
+/wifi						f2fs    /data/misc/apexdata/com.android.wifi    flags=display="Wifi Data";backup=1
 /misc      			      emmc    /dev/block/by-name/misc
 /dtbo       			    emmc    /dev/block/by-name/dtbo                 flags=display="DTBO Image";flashimg=1;backup=1;
 /prism       			    ext4    /dev/block/by-name/prism                flags=display="Prism";backup=0;
