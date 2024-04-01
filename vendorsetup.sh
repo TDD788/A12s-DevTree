@@ -54,10 +54,6 @@ export_build_vars(){
 	# Binaries & Tools
 	export FOX_CUSTOM_BINS_TO_SDCARD=2
 	
-	# Target Device
-	export TARGET_DEVICE_ALT="a12s, a12sub, Fox_a12s"
-	export OF_TARGET_DEVICES="a12s, a12sub, Fox_a12s"
-	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
 		export FOX_USE_SED_BINARY=1
@@ -87,6 +83,10 @@ export_build_vars(){
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
 	export OF_SPLASH_MAX_SIZE=128
+	
+	# Target Device
+	export TARGET_DEVICE_ALT="a12s, a12sub, Fox_a12s"
+	export FOX_TARGET_DEVICES="a12s, a12sub, Fox_a12s"
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
