@@ -38,7 +38,7 @@ printinfo() {
     msg "ID: $(getprop ro.build.id)"
 	msg "Kernel: $(uname -r)"
     msg""
-    msg "END OF OrangeFetch"
+    msg "END OF ORANGEFETCH"
     barrier_2
 }
 

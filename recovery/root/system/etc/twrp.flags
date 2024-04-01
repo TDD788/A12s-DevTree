@@ -14,6 +14,7 @@
 /cache    			      ext4    /dev/block/by-name/cache                flags=display="Cache";wipeingui;wipeduringfactoryreset
 /efs      		 	      ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui;flashimg
 /sec_efs   			      ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui;flashimg
+/app_data					f2fs	/data/data							  flags=backup=1;display="App Data";wipeingui
 /modem     			      emmc    /dev/block/by-name/radio                flags=backup=1;display="Modem";
 /wifi						f2fs    /data/misc/apexdata/com.android.wifi    flags=display="Wifi Data";backup=1
 /misc      			      emmc    /dev/block/by-name/misc

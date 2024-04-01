@@ -6,8 +6,8 @@ PRISMSIZE=30
 SGDISK="sh /system/etc/sgdisk"
 DISK=/dev/block/mmcblk0
 
-DISKCODE=`sh $SGDISK --print $DISK | grep super | awk '{printf $6}'`
-SECSIZE=`sh $SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}'`
+DISKCODE=`$SGDISK --print $DISK | grep super | awk '{printf $6}'`
+SECSIZE=`$SGDISK --print $DISK | grep 'sector size' | awk '{printf $4}'`
 
 
 function delete() {
