@@ -95,7 +95,7 @@ disable_recovery_restoration() {
 
     if [ -f $i/$r ]; then
       echo " -   Found $i/$r. Disabling..."
-      mv $i/$r $i/$r~
+      rm -rf recovery-from-boot.p
 
       if [ -f $i/$r~ ]; then
 	echo " -     ...succeeded."
