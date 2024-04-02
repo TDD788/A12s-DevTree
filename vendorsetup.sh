@@ -25,7 +25,7 @@ export_build_vars(){
 	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_33"
+	export FOX_VERSION="R12.1_34"
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -40,8 +40,8 @@ export_build_vars(){
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	#export OF_FORCE_DISABLE_DM_VERITY=1
-	#export OF_DISABLE_FORCED_ENCRYPTION=1
+	export OF_FORCE_DISABLE_DM_VERITY=1
+	export OF_DISABLE_FORCED_ENCRYPTION=1
 	
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
