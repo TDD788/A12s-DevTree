@@ -116,7 +116,7 @@ disable_fde() {
 echo " "
 echo "Multi-disabler v3.1 for Samsung devices"
 echo "running Android 9 or later."
-echo "by Ian Macdonald, enhanced by afaneh92"
+echo "by Ian Macdonald, enhanced by TheDarkDeath788"
 echo " "
 
 os=$(getprop ro.build.version.release)
@@ -178,9 +178,9 @@ if ! mount | grep /vendor >/dev/null; then
 fi
 
 vendor_free_size_check
+disable_recovery_restoration
 disable_fbe
 disable_fde
-disable_recovery_restoration
 
 echo " - Unmounting /vendor..."
 umount /vendor
