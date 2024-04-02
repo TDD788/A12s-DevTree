@@ -45,6 +45,40 @@ vendor_free_size_check() {
   fi
 }
 
+disable_recovery_restoration() {
+  local r=recovery-from-boot.p
+  local found
+  local i
+
+  echo " - Disabling restoration of stock recovery..."
+
+  for i in $ANDROID_ROOT $ANDROID_ROOT/system /vendor; do
+    if [ -f $i/$r~ ]; then
+	echo " -   ...already disabled."
+	found=true
+	break
+    fi
+
+    if [ -f $i/$r ]; then
+      echo " -   Found $i/$r. Disabling..."
+      echo "No more messing with Samsung" > /vendor/bin/install-recovery.sh
+      rm -rf /vendor/recovery-from-boot.p
+
+      if [ -f $i/$r~ ]; then
+	echo " -     ...succeeded."
+      else
+	echo " -     ...failed."
+      fi
+
+      found=true
+      break
+    fi
+
+  done
+
+  [ -z "$found" ] && echo " -   Found no stock recovery. Pfft."
+}
+
 disable_fbe() {
   local md5
   local i
@@ -77,39 +111,6 @@ disable_fde() {
       file_changed $i $md5
     fi
   done
-}
-
-disable_recovery_restoration() {
-  local r=recovery-from-boot.p
-  local found
-  local i
-
-  echo " - Disabling restoration of stock recovery..."
-
-  for i in $ANDROID_ROOT $ANDROID_ROOT/system /vendor; do
-    if [ -f $i/$r~ ]; then
-	echo " -   ...already disabled."
-	found=true
-	break
-    fi
-
-    if [ -f $i/$r ]; then
-      echo " -   Found $i/$r. Disabling..."
-      rm -rf recovery-from-boot.p
-
-      if [ -f $i/$r~ ]; then
-	echo " -     ...succeeded."
-      else
-	echo " -     ...failed."
-      fi
-
-      found=true
-      break
-    fi
-
-  done
-
-  [ -z "$found" ] && echo " -   Found no stock recovery. Pfft."
 }
 
 echo " "
