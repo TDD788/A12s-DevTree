@@ -149,29 +149,29 @@ disable_wsm() {
 
 disable_recovery_restoration() {
   local r=recovery-from-boot.p
-  local found
+  local found=false
   local i
 
   ui_print " - Disabling restoration of stock recovery..."
 
   for i in $ANDROID_ROOT $ANDROID_ROOT/system /vendor; do
-    if [ -f $i/$r ]; then
-	ui_print " -   ...already disabled."
-	found=false
-	break
-    fi
-
-    if [ -f $i/$r ]; then
-      ui_print " -   Found $i/$r. Disabling..."
-      rm -rf $i/$r
-	  ui_print " -     ...succeeded."
-	  echo '#!/vendor/bin/sh' > /vendor/bin/install-recovery.sh
-	  echo 'echo "No more messing with Samsung"' >> /vendor/bin/install-recovery.sh
+    if [ -f $(find $i -maxdepth 1 -type f -name "*recovery*") ]; then
+      ui_print " -   Found recovery file in $i. Disabling..."
+      rm -f $(find $i -maxdepth 1 -type f -name "*recovery*")
+      ui_print " -     ...succeeded."
+      echo '#!/vendor/bin/sh' > /vendor/bin/install-recovery.sh
+      echo 'echo "No more messing with Samsung"' >> /vendor/bin/install-recovery.sh
       found=true
       break
+    else
+      ui_print " -   No stock recovery patcher found in $i."
     fi
-
   done
+
+  if [ "$found" = false ]; then
+    ui_print " -   Stock recovery patcher file not found."
+  fi
+}
 
   [ -z "$found" ] && ui_print " -   Found no stock recovery. Pfft."
 }
