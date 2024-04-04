@@ -1,0 +1,81 @@
+#!/system/bin/sh
+#!/bin/env sh
+
+sys_rw() {
+    mount -o rw /system
+    pr=$?
+}
+
+sys_ro() {
+    mount -o ro /system
+    prc=$?
+}
+
+vendor_rw() {
+    mount -o rw,remount /vendor
+    procs=$?
+}
+
+vendor_ulock() {
+    if [ "$procs" == 0 ]; then
+        echo "Vendor Mounted successfully as RW"
+        data_ulock
+    else 
+        echo "Could not mount /vendor as rw, ABORT"
+        exit 1
+    fi
+}
+
+sys_ulock() {
+    sys_rw
+    if [ "$pr" == 0 ]; then 
+        echo "System mounted as RW"
+        vendor_ulock
+    else 
+        echo "Could not mount system as RW, switching to RO"
+        sys_ro
+        if [ "$prc" == 0 ]; then
+            echo "Mounted /system as RO"
+            vendor_ulock
+        else 
+            echo "Cant mount system as RO either..."
+            echo "Abort"
+            exit 1
+        fi
+    fi 
+
+}
+
+data_ulock() {
+    echo "Calling Process Multidisabler"
+    multidisabler
+    multidisabler
+    multidisabler
+    echo "DONE"
+}
+
+prompt_answer() {
+    echo "Are you sure you want to disable encryption measures on your /data?"
+    echo "Respond: [Y|y|N|n]:  "
+    read option
+    case "$option" in
+        [Yy])
+            clear 
+            sys_ulock
+            ;;
+        [Nn])
+            exit 
+            ;;
+        *)
+            echo "$option is invalid"
+            exit 1
+            ;;
+    esac
+}
+
+if [[ ! -f "/system/bin/multidisabler" ]]; then 
+    echo "Multidisabler is required to be present in /system/bin"
+    exit 1
+fi 
+
+prompt_answer
