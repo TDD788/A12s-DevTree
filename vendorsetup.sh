@@ -26,6 +26,14 @@ export_build_vars(){
 	export OF_MAINTAINER="TheDarkDeath788"
 	export FOX_BUILD_TYPE="Stable"
 	export FOX_VERSION="R12.1_35"
+        export FOX_VARIANT="AOSP"
+
+        # Target Device
+	export TARGET_DEVICE_ALT="a12s, a12sub, Fox_a12s"
+	export FOX_TARGET_DEVICES="a12s, a12sub, Fox_a12s"
+        export FOX_BUILD_DEVICE="a12s"
+
+        #Important Build Flags
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -33,9 +41,9 @@ export_build_vars(){
 	#export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
-	export FOX_VARIANT="AOSP"
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_SAMSUNG_HAPTICS=1
+        export OF_USE_SYSTEM_FINGERPRINT=0
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
@@ -83,11 +91,6 @@ export_build_vars(){
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
 	export OF_SPLASH_MAX_SIZE=128
-	
-	# Target Device
-	export TARGET_DEVICE_ALT="a12s, a12sub, Fox_a12s"
-	export FOX_TARGET_DEVICES="a12s, a12sub, Fox_a12s"
-        export FOX_BUILD_DEVICE="a12s"
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
