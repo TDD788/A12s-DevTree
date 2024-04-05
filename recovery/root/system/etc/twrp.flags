@@ -1,29 +1,32 @@
-#<mnt_point>   		    <type>   <src>                                   <mnt_flags and options>
-/product_image  			emmc	  /dev/block/mapper/product  			 flags=flashimg;display="Product Image"
-/system_image 			  emmc	  /dev/block/mapper/system  			  flags=flashimg;display="System Image"
-/vendor_image   			emmc	  /dev/block/mapper/vendor 			   flags=flashimg;display="Vendor Image"
-/odm_image  			    emmc	  /dev/block/mapper/odm 				  flags=flashimg;display="Odm Image"
-/product  			      ext4	  /dev/block/mapper/product  			 flags=backup=1;display="Product";wipeingui
-/system_root 			    ext4	  /dev/block/mapper/system  			  flags=backup=1;display="System";wipeingui
-/vendor   		      	ext4	  /dev/block/mapper/vendor 			   flags=backup=1;display="Vendor";wipeingui
-/odm  		      	    ext4  	/dev/block/mapper/odm 				  flags=backup=1;display="Odm";wipeingui
-/boot       			    emmc    /dev/block/by-name/boot                 flags=display="Boot";backup=1;flashimg=1;
-/recovery   			    emmc    /dev/block/by-name/recovery             flags=display="Recovery";backup=1;flashimg=1;
-/metadata   			    ext4    /dev/block/by-name/metadata             flags=display="Metadata";wipeingui;wipeduringfactoryreset
-/data     			      f2fs    /dev/block/by-name/userdata			 flags=length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2,keydirectory=/metadata/vold/metadata_encryption
-/cache    			      ext4    /dev/block/by-name/cache                flags=display="Cache";wipeingui;wipeduringfactoryreset
-/efs      		 	      ext4    /dev/block/by-name/efs                  flags=backup=1;display="Efs";wipeingui;flashimg
-/sec_efs   			      ext4    /dev/block/by-name/sec_efs              flags=backup=1;display="Sec Efs";wipeingui;flashimg
-/app_data			    		emmc	  /data/data							        flags=backup=1;display="App Data";wipeingui
-/modem     			      emmc    /dev/block/by-name/radio                flags=backup=1;display="Modem";
-/wifi						     emmc    /data/misc/apexdata/com.android.wifi    flags=display="Wifi Data";backup=1
-/misc      			      emmc    /dev/block/by-name/misc
-/dtbo       			    emmc    /dev/block/by-name/dtbo                 flags=display="DTBO Image";flashimg=1;backup=1;
-/prism       			    ext4    /dev/block/by-name/prism                flags=display="Prism";backup=0;
-/prism_image 		 	   emmc    /dev/block/by-name/prism                flags=display="Prism Image";backup=1;flashimg=1;
-/optics        	 		 ext4    /dev/block/by-name/optics               flags=display="Optics";backup=0;
-/optics_image  		 	 emmc    /dev/block/by-name/optics               flags=display="Optics Image";backup=1;flashimg=1;
-/up_param     			  emmc    /dev/block/by-name/up_param             flags=display="Param";backup=1;flashimg=1;
-#/sdcard					 auto	/data/media/							flags=display="Internal Storage";wipeingui
-/external_sd				auto	/dev/block/mmcblk1p1 /dev/block/mmcblk1 flags=display="Micro SD Card";storage;wipeingui;removable
-/usb_otg					auto	/dev/block/sda1 /dev/block/sda		  flags=display="USB OTG";storage;wipeingui;removable
+#<mnt_point>          <type>  <src>                                    <mnt_flags and options>
+/product_image        emmc    /dev/block/mapper/product                flags=flashimg;display="Product Image"
+/system_image         emmc    /dev/block/mapper/system                 flags=flashimg;display="System Image"
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=flashimg;display="Vendor Image"
+/odm_image            emmc    /dev/block/mapper/odm                    flags=flashimg;display="Odm Image"
+/product              ext4    /dev/block/mapper/product                flags=backup=1;display="Product";wipeingui
+/system_root          ext4    /dev/block/mapper/system                 flags=backup=1;display="System";wipeingui
+/vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;display="Vendor";wipeingui
+/odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;display="Odm";wipeingui
+/boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
+/recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
+/metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui;wipeduringfactoryreset
+/data                 f2fs    /dev/block/by-name/userdata              flags=length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2,keydirectory=/metadata/vold/metadata_encryption
+/cache                ext4    /dev/block/by-name/cache                 flags=display="Cache";wipeingui;wipeduringfactoryreset
+/efs                  ext4    /dev/block/by-name/efs                   flags=backup=1;display="Efs";wipeingui;flashimg
+/sec_efs              ext4    /dev/block/by-name/sec_efs               flags=backup=1;display="Sec Efs";wipeingui;flashimg
+/app_data             emmc    /data/data                               flags=backup=1;display="App Data";wipeingui
+/modem                emmc    /dev/block/by-name/radio                 flags=backup=1;display="Modem";
+/wifi                 emmc    /data/misc/apexdata/com.android.wifi     flags=display="Wifi Data";backup=1
+/misc                 emmc    /dev/block/by-name/misc
+/dtbo                 emmc    /dev/block/by-name/dtbo                  flags=display="DTBO Image";flashimg=1;backup=1;
+/prism                ext4    /dev/block/by-name/prism                 flags=display="Prism";backup=0;
+/prism_image          emmc    /dev/block/by-name/prism                 flags=display="Prism Image";backup=1;flashimg=1;
+/optics               ext4    /dev/block/by-name/optics                flags=display="Optics";backup=0;
+/optics_image         emmc    /dev/block/by-name/optics                flags=display="Optics Image";backup=1;flashimg=1;
+/up_param             emmc    /dev/block/by-name/up_param              flags=display="Param";backup=1;flashimg=1;
+#/sdcard              auto    /data/media/                             flags=display="Internal Storage";wipeingui
+/external_sd          auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable
+/external_sd1         auto    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable
+/usb_otg              auto    /dev/block/sda                           flags=display="USB OTG 1st";storage;wipeingui;removable
+/usb_otg              auto    /dev/block/sda1                          flags=display="USB OTG 2nd";storage;wipeingui;removable
+/usb_otg              auto    /dev/block/sda2                          flags=display="USB OTG 3rd";storage;wipeingui;removable
