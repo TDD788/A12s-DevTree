@@ -30,13 +30,9 @@ $(call inherit-product, device/samsung/a12s/device.mk)
 PRODUCT_PACKAGES += \
     charger_res_images
 
-# For parted
-cc_prebuilt_binary += $(DEVICE_PATH)/recovery/root/system/bin/parted:parted
-
-# For sgdisk
-cc_prebuilt_binary += $(DEVICE_PATH)/recovery/root/system/bin/sgdisk:sgdisk
-
-PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
+- PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
++ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, parted)
++ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
