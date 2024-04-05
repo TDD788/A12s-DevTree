@@ -13,25 +13,25 @@ RED="\e[91m"
 RESET="\e[0m"
 GREEN="\e[92m"
 
+echo "Important Value"
+export ALLOW_MISSING_DEPENDENCIES=true
+export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+export LC_ALL="C"
+export FOX_VANILLA_BUILD=1
+	
+echo "General Configurations"
+export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
+export OF_MAINTAINER="TheDarkDeath788"
+export FOX_BUILD_TYPE="Stable"
+export FOX_VERSION="R12.1_35"
+export FOX_VARIANT="AOSP"
+
+echo "Target Device"
+export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F, Fox_a12s"
+export FOX_BUILD_DEVICE="a12s"
+	
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
-	# Important Value
-	export ALLOW_MISSING_DEPENDENCIES=true
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
-	export LC_ALL="C"
-	export FOX_VANILLA_BUILD=1
-	
-	# General Configurations
-	export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
-	export OF_MAINTAINER="TheDarkDeath788"
-	export FOX_BUILD_TYPE="Stable"
-	export FOX_VERSION="R12.1_35"
-        export FOX_VARIANT="AOSP"
-
-        # Target Device
-	export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F, Fox_a12s"
-        export FOX_BUILD_DEVICE="a12s"
-
         #Important Build Flags
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
