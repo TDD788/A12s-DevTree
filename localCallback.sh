@@ -24,19 +24,19 @@ function main() {
         --first-call) # before ramdisk packing
             FOX_RAMDISK="$1"
             removeFonts
-            compressAllPNGs
-            addFBEFeatureToPartMgr
-            enableRebootToFastbootItemUnconditionally
-            addUSBStorageExporterToMount
-            addEMMCLifetimeToPartMgr
+            #compressAllPNGs
+            #addFBEFeatureToPartMgr
+            #enableRebootToFastbootItemUnconditionally
+            #addUSBStorageExporterToMount
+            #addEMMCLifetimeToPartMgr
             addFastbootItemToMenu
             increaseUIRenderingTo60FPS
             addDarkLightModeToggler
             makeLockscreenBGSemiTransparent
-            removeUnusedSplashImages
+            #removeUnusedSplashImages
             bindBatteryTempToShowCPUTemp
-            moveDepsAwayFromRamdisk
-            addDepsCheckPopup
+            #moveDepsAwayFromRamdisk
+            #addDepsCheckPopup
             ;;
         --last-call) # before .zip packing
             OF_WORKING_DIR="$1"
