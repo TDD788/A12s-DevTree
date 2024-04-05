@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-DEBUG=true
+DEBUG=false
 
 OUTFD=$2
 
