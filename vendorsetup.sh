@@ -44,6 +44,7 @@ export_build_vars(){
 	export OF_USE_SAMSUNG_HAPTICS=1
         export OF_USE_SYSTEM_FINGERPRINT=0
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
+        export FOX_LOCAL_CALLBACK_SCRIPT="$PWD/device/samsung/a12s/localCallback.sh"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
