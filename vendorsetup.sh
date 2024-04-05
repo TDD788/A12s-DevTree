@@ -87,6 +87,7 @@ export_build_vars(){
 	# Target Device
 	export TARGET_DEVICE_ALT="a12s, a12sub, Fox_a12s"
 	export FOX_TARGET_DEVICES="a12s, a12sub, Fox_a12s"
+        export FOX_BUILD_DEVICE="a12s"
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
