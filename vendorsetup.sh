@@ -7,8 +7,6 @@ COMMON_LUNCH_CHOICES := twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
-
 
 RED_BACK="\e[101m"
 RED="\e[91m"
@@ -48,7 +46,6 @@ export_build_vars(){
 	export OF_USE_SAMSUNG_HAPTICS=1
         export OF_USE_SYSTEM_FINGERPRINT=0
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
-        export FOX_LOCAL_CALLBACK_SCRIPT="$SCRIPT_DIR/localCallback.sh"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
@@ -74,14 +71,10 @@ export_build_vars(){
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
 	fi
-	
-	# Important Functions
-	#export FOX_PORTS_TMP=1
-	#export OF_NO_SPLASH_CHANGE=1
-	export OF_ENABLE_LPTOOLS=1
 
 	# Specific Features Configurations
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
+        export OF_ENABLE_LPTOOLS=1
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
