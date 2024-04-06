@@ -96,12 +96,7 @@ export_build_vars(){
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
 	export OF_SPLASH_MAX_SIZE=128
-
-        #Target Device
-        export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
-	export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
-        export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
-	
+ 
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
 	  export | grep "FOX" >> $FOX_BUILD_LOG_FILE
