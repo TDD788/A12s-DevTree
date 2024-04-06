@@ -7,7 +7,7 @@ add_lunch_combo twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)" && wget https://github.com/TDD788/A12s-DevTree/blob/DT-Builder/localCallback.sh
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 
 RED_BACK="\e[101m"
