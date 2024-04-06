@@ -4,12 +4,12 @@ scr_wdth=50
 
 debug_print() {
   if [ "$DEBUG" = true ]; then
-    ui_print "$1"
+    echo "$1"
   fi
 }
 
 print_full_bar() {
-  ui_print "$(printf '%*s\n' "$scr_wdth" | tr ' ' '=')"
+  echo "$(printf '%*s\n' "$scr_wdth" | tr ' ' '=')"
 }
 
 print_justified() {
@@ -19,7 +19,7 @@ print_justified() {
   local ljust="$(printf '%*s' "$padding_len")"
   local rjust="$(printf '%*s' "$((padding_len + $str_len % 2))")"
 
-  ui_print "=$ljust$str$rjust="
+  echo "=$ljust$str$rjust="
 }
 
 md5() {
@@ -52,7 +52,7 @@ rm_from_manifest() {
 	   "$ANDROID_ROOT"/system/etc/vintf/compatibility_matrix.device.xml \
 	   /vendor/etc/vintf/manifest/vaultkeeper_manifest.xml; do
     if [ -f "$i" ]; then
-      ui_print " -   Found $i."
+      echo " -   Found $i."
       md5=$(md5 "$i")
       sed -i -e "/<hal format=\"hidl\">/{N;/<name>vendor\.samsung${path_extra}\.security\.$service<\/name>/{:loop;N;/<\/hal>/!bloop;d}}" "$i"
       file_changed "$i" "$md5"
@@ -64,12 +64,12 @@ disable_fbe() {
   local md5
   local i
 
-  ui_print " - Disabling file-based encryption (FBE) for /data..."
+  echo " - Disabling file-based encryption (FBE) for /data..."
 
   for i in /vendor/etc/fstab.exynos* \
 	   /vendor/etc/fstab.qcom*; do
     if [ -f "$i" ]; then
-      ui_print " -   Found $i."
+      echo " -   Found $i."
       md5=$(md5 "$i")
       sed -i -e 's/^\([^#].*\)fileencryption=[^,]*\(.*\)$/# &\n\1encryptable\2/g' "$i"
       file_changed "$i" "$md5"
@@ -81,12 +81,12 @@ disable_vaultkeeper() {
   local md5
   local i
 
-  ui_print " - Disabling vaultkeeperd..."
+  echo " - Disabling vaultkeeperd..."
 
   if [ "$major" -gt 9 ]; then
     for i in "$ANDROID_ROOT"/system/etc/init/vk*.rc /vendor/etc/init/vk*.rc /vendor/etc/init/vaultkeeper*; do
       if [ -f "$i" ]; then
-        ui_print " -   Found $i."
+        echo " -   Found $i."
         md5=$(md5 "$i")
         sed -i -e 's/^[^#].*$/# &/' "$i"
         file_changed "$i" "$md5"
@@ -101,21 +101,36 @@ disable_vaultkeeper() {
 
   for i in "$ANDROID_ROOT"/system /vendor; do
     if [ -f "$i"/bin/vaultkeeperd ]; then
-      ui_print " -   Found $i/bin/vaultkeeperd. Disabling..."
+      echo " -   Found $i/bin/vaultkeeperd. Disabling..."
       chmod 0 "$i"/bin/vaultkeeperd
     fi
   done
+}
+
+disable_recovery_patching() {
+  echo " "
+  echo "Disabling recovery restoration..."
+  echo " "
+  
+  dd if=/dev/block/by-name/boot of=/tmp/old-boot.img
+  mkdir -p /tmp/unpacked_boot
+  cd /tmp/unpacked_boot
+  magiskboot unpack -h /tmp/old-boot.img
+  magiskboot repack /tmp/old-boot.img /tmp/new-boot.img
+  cd -
+  rm -rf /tmp/unpacked_boot
+  dd if=/tmp/new-boot.img of=/dev/block/by-name/boot
 }
 
 disable_cass() {
   local md5
   local i
 
-  ui_print " - Disabling cass..."
+  echo " - Disabling cass..."
 
   for i in "$ANDROID_ROOT"/init.rc /vendor/init/cass.rc /vendor/etc/init/cass.rc; do
     if [ -f "$i" ]; then
-      ui_print " -   Found $i. Disabling..."
+      echo " -   Found $i. Disabling..."
       md5=$(md5 "$i")
       sed -i -e 's/^[^#].*cass.*$/# &/' \
              -e '/\/(system|vendor)\/bin\/cass/,/^#?$/s/^[^#]*$/#&/' "$i"
@@ -128,11 +143,11 @@ disable_proca() {
   local md5
   local i
 
-  ui_print " - Disabling process authentication..."
+  echo " - Disabling process authentication..."
 
   for i in /vendor/etc/init/pa_daemon*.rc; do
     if [ -f "$i" ]; then
-      ui_print " -   Found $i. Disabling..."
+      echo " -   Found $i. Disabling..."
       sed -i -e 's/^[^#]/# &/' "$i"
       file_changed "$i" "$md5"
     fi
@@ -142,7 +157,7 @@ disable_proca() {
 }
 
 disable_wsm() {
-  ui_print " - Disabling wsm..."
+  echo " - Disabling wsm..."
   rm_from_manifest wsm
 }
 
@@ -151,24 +166,24 @@ disable_recovery_restoration() {
   local found=false
   local i
 
-  ui_print " - Disabling restoration of stock recovery..."
+  echo " - Disabling restoration of stock recovery..."
 
   for i in "$ANDROID_ROOT" "$ANDROID_ROOT"/system /vendor; do
     if [ -f "$(find "$i" -maxdepth 1 -type f -name "*recovery*")" ]; then
-      ui_print " -   Found recovery file in $i. Disabling..."
+      echo " -   Found recovery file in $i. Disabling..."
       rm -f "$(find "$i" -maxdepth 1 -type f -name "*recovery*")"
-      ui_print " -     ...succeeded."
+      echo " -     ...succeeded."
       echo '#!/vendor/bin/sh' > /vendor/bin/install-recovery.sh
       echo 'echo "No more messing with Samsung"' >> /vendor/bin/install-recovery.sh
       found=true
       break
     else
-      ui_print " -   No stock recovery patcher found in $i."
+      echo " -   No stock recovery patcher found in $i."
     fi
   done
 
   if [ "$found" = false ]; then
-    ui_print " -   Stock recovery patcher file not found."
+    echo " -   Stock recovery patcher file not found."
   fi
 }
 
@@ -180,9 +195,9 @@ patch_libbluetooth() {
   local f="$ANDROID_ROOT"/system/lib64/libbluetooth.so
   local tf=/tmp/f
 
-  ui_print " - Bluetooth fix requested via renamed zip."
-  ui_print " - Attempting to patch $f..."
-  ui_print "     This may take a while."
+  echo " - Bluetooth fix requested via renamed zip."
+  echo " - Attempting to patch $f..."
+  echo "     This may take a while."
 
   if echo "$device" | grep -E '[GN]9[67][03567][UW0]|F90(0[FN]|7[BN])|T86[05]' >/dev/null; then
     substitute='s/88000054691180522925c81a69000037e0030032/04000014691180522925c81a69000037e0031f2a/'
@@ -193,23 +208,23 @@ patch_libbluetooth() {
   xxd -p "$f" | tr -d '\n ' | sed -e "$substitute" | xxd -rp > "$tf"
 
   if ! cmp "$tf" "$f" >/dev/null && [ "$(stat -c '%s' "$tf")" -eq "$(stat -c '%s' "$f")" ]; then
-    ui_print " -   Patching succeeded."
+    echo " -   Patching succeeded."
     touch -r "$f" "$tf"
     chmod 644 "$tf"
     mv "$tf" "$f"
   else
-    ui_print " -   Patching failed. No change made."
+    echo " -   Patching failed. No change made."
     rm -f "$tf"
   fi
 }
 
-ui_print " "
+echo " "
 print_full_bar
 print_justified "Multi-disabler v4.0 for Samsung devices"
 print_justified "running Android 9 or later."
 print_justified "by TheDarkDeath788"
 print_full_bar
-ui_print " "
+echo " "
 
 os=$(getprop ro.build.version.release)
 major="${os%%.*}"
@@ -222,50 +237,51 @@ device="${bl:0:$((${#bl} - 8))}"
 mft=$(getprop ro.product.manufacturer | tr '[:upper:]' '[:lower:]')
 
 if [ "$mft" != "samsung" ]; then
-  ui_print " - Device appears not to be made by Samsung."
+  echo " - Device appears not to be made by Samsung."
   fatal=true
 elif [ -z "$device" ]; then
-  ui_print " - Could not determine device model."
+  echo " - Could not determine device model."
   fatal=true
 elif [ "$major" -lt 9 ]; then
-  ui_print " - This software is incompatible with Android $major."
+  echo " - This software is incompatible with Android $major."
   fatal=true
 fi
 
 if [ -n "$fatal" ]; then
-  ui_print " - Installation aborted."
-  ui_print " "
+  echo " - Installation aborted."
+  echo " "
   exit 1
 fi
 
-ui_print " - Detected a $device device with a $fw bootloader."
-ui_print " - The environment appears to be Android $major."
-ui_print " "
+echo " - Detected a $device device with a $fw bootloader."
+echo " - The environment appears to be Android $major."
+echo " "
 
-ui_print " - Mounting $ANDROID_ROOT..."
+echo " - Mounting $ANDROID_ROOT..."
 mount "$ANDROID_ROOT" 2>/dev/null
 mount -o remount,rw "$ANDROID_ROOT" 2>/dev/null
 
 if ! mount | grep "$ANDROID_ROOT" >/dev/null; then
   ANDROID_ROOT=/system_root
-  ui_print " -   Attempt failed. Mounting at $ANDROID_ROOT..."
+  echo " -   Attempt failed. Mounting at $ANDROID_ROOT..."
   mount -o rw "$ANDROID_ROOT"
   if ! mount | grep "$ANDROID_ROOT" >/dev/null; then
-    ui_print " -   Even that attempt failed. Aborting..."
+    echo " -   Even that attempt failed. Aborting..."
     exit 2
   fi
 fi
 
-ui_print " - Mounting /vendor..."
+echo " - Mounting /vendor..."
 mount /vendor
 mount -o remount,rw /vendor
 
 if ! mount | grep /vendor >/dev/null; then
-  ui_print " -   Mount failed. Aborting..."
+  echo " -   Mount failed. Aborting..."
   exit 3
 fi
 
 disable_recovery_restoration
+disable_recovery_patching
 disable_fbe
 
 if [ "$dp" != true ]; then
@@ -281,11 +297,12 @@ if [ "$major" -gt 9 ]; then
   fi
 fi
 
-ui_print " - Unmounting /vendor..."
+echo " - Unmounting /vendor..."
 umount /vendor
-ui_print " - Unmounting $ANDROID_ROOT..."
+echo " - Unmounting $ANDROID_ROOT..."
 umount "$ANDROID_ROOT"
 
-ui_print " "
-ui_print " - Finished."
-ui_print " "
+echo " "
+echo " - Finished."
+echo " "
+
