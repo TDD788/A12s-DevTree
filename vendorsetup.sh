@@ -15,15 +15,12 @@ GREEN="\e[92m"
 
 echo "Important Value"
 export ALLOW_MISSING_DEPENDENCIES=true
-export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 export LC_ALL="C"
-export FOX_VANILLA_BUILD=1
 	
 echo "General Configurations"
-export OF_DONT_PATCH_ENCRYPTED_DEVICE=1
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_35"
+export FOX_VERSION="R12.1_36"
 export FOX_VARIANT="AOSP"
 
 echo "Target Device"
@@ -33,6 +30,8 @@ export FOX_BUILD_DEVICE="a12s"
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
         #Important Build Flags
+        export FOX_VANILLA_BUILD=1
+	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_STATUS_INDENT_RIGHT=48
@@ -64,10 +63,12 @@ export_build_vars(){
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
+                export FOX_REPLACE_BUSYBOX_PS=1
 		export FOX_USE_SED_BINARY=1
 		export FOX_USE_TAR_BINARY=1
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
+                export OF_ENABLE_LPTOOLS=1
 	fi
 	
 	# Important Functions
