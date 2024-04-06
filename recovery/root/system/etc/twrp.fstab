@@ -9,9 +9,9 @@
 /odm                  ext4    /dev/block/mapper/odm                    flags=display="Odm";wipeingui
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
-/metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui;wipeduringfactoryreset
+/metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui
 /data                 f2fs    /dev/block/by-name/userdata              flags=length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2,keydirectory=/metadata/vold/metadata_encryption
-/cache                ext4    /dev/block/by-name/cache                 flags=display="Cache";wipeingui;wipeduringfactoryreset
+/cache                ext4    /dev/block/by-name/cache                 flags=display="Cache";wipeingui
 /efs                  ext4    /dev/block/by-name/efs                   flags=backup=1;display="Efs";wipeingui;flashimg
 /sec_efs              ext4    /dev/block/by-name/sec_efs               flags=backup=1;display="Sec Efs";wipeingui;flashimg
 /app_data             emmc    /data/data                               flags=backup=1;display="App Data";wipeingui
