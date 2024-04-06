@@ -41,7 +41,7 @@ export_build_vars(){
 	export OF_QUICK_BACKUP_LIST="/system_root;/vendor;/data;/boot;"
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
-	#export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
+	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
 	export OF_OPTIONS_LIST_NUM=8
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export FOX_ENABLE_APP_MANAGER=1
