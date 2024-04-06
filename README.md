@@ -23,6 +23,11 @@ A127MUBSBDWI1
 ```
 source build/envsetup.sh; export ALLOW_MISSING_DEPENDENCIES=true; lunch twrp_a12s-eng; mka recoveryimage
 ```
+
+## Device Image
+
+![Samsung Galaxy A12 Nacho](https://github.com/TDD788/A12s-DevTree/blob/DT-Builder/.github/pictures/device-png-a12s.jpg)
+
 ## Copyright (C)
 
 ```
