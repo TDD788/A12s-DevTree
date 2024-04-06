@@ -76,7 +76,7 @@ export_build_vars(){
 	fi
 	
 	# Important Functions
-	export FOX_PORTS_TMP=1
+	#export FOX_PORTS_TMP=1
 	#export OF_NO_SPLASH_CHANGE=1
 	export OF_ENABLE_LPTOOLS=1
 
