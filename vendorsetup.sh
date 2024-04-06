@@ -7,6 +7,8 @@ add_lunch_combo twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+
 
 RED_BACK="\e[101m"
 RED="\e[91m"
@@ -24,8 +26,9 @@ export FOX_VERSION="R12.1_36"
 export FOX_VARIANT="AOSP"
 
 echo "Target Device"
-export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F, Fox_a12s"
-export FOX_BUILD_DEVICE="a12s"
+export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
+export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
+export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 	
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
@@ -34,6 +37,8 @@ export_build_vars(){
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
+        export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	export OF_QUICK_BACKUP_LIST="/system_root;/vendor;/data;/persist;/boot;"
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	#export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
@@ -43,7 +48,7 @@ export_build_vars(){
 	export OF_USE_SAMSUNG_HAPTICS=1
         export OF_USE_SYSTEM_FINGERPRINT=0
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
-        export FOX_LOCAL_CALLBACK_SCRIPT="$PWD/device/samsung/a12s/localCallback.sh"
+        export FOX_LOCAL_CALLBACK_SCRIPT="$SCRIPT_DIR/localCallback.sh"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
@@ -59,7 +64,7 @@ export_build_vars(){
 	export OF_HIDE_NOTCH=1
 	
 	# Binaries & Tools
-	export FOX_CUSTOM_BINS_TO_SDCARD=2
+	export FOX_CUSTOM_BINS_TO_SDCARD=3
 	
 	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
 		export FOX_USE_NANO_EDITOR=1
@@ -68,7 +73,6 @@ export_build_vars(){
 		export FOX_USE_TAR_BINARY=1
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
-                export OF_ENABLE_LPTOOLS=1
 	fi
 	
 	# Important Functions
@@ -94,8 +98,9 @@ export_build_vars(){
 	export OF_SPLASH_MAX_SIZE=128
 
         #Target Device
-        export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F, Fox_a12s"
-        export FOX_BUILD_DEVICE="a12s"
+        export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
+	export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
+        export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 	
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then
