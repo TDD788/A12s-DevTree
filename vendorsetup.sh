@@ -7,6 +7,7 @@
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
+SDCARD_BINS=true
 
 RED_BACK="\e[101m"
 RED="\e[91m"
@@ -61,15 +62,14 @@ export_build_vars(){
 	export OF_HIDE_NOTCH=1
 	
 	# Binaries & Tools
-	export FOX_CUSTOM_BINS_TO_SDCARD=3
-	
-	if [ "$FOX_CUSTOM_BINS_TO_SDCARD" != "" ]; then
+	if [ "$SDCARD_BINS" != "true" ]; then
 		export FOX_USE_NANO_EDITOR=1
                 export FOX_REPLACE_BUSYBOX_PS=1
 		export FOX_USE_SED_BINARY=1
 		export FOX_USE_TAR_BINARY=1
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
+                export FOX_CUSTOM_BINS_TO_SDCARD=3
 	fi
 
 	# Specific Features Configurations
