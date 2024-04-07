@@ -23,6 +23,7 @@ export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
 export FOX_VERSION="R12.1_37"
 export FOX_VARIANT="AOSP"
+export FOX_CUSTOM_BINS_TO_SDCARD=3
 
 echo "Target Device"
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
@@ -69,7 +70,6 @@ export_build_vars(){
 		export FOX_USE_TAR_BINARY=1
 		export FOX_USE_UNZIP_BINARY=1
 		export FOX_USE_XZ_UTILS=1
-                export FOX_CUSTOM_BINS_TO_SDCARD=3
 	fi
 
 	# Specific Features Configurations
