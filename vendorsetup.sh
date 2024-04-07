@@ -1,9 +1,9 @@
 # Mkbootimage
-#sudo apt install nano
-#git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
-#sudo chmod +rwx out/host/linux-x86/bin/avbtool
-#chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
-#COMMON_LUNCH_CHOICES := twrp_a12s-eng
+sudo apt install nano
+git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
+sudo chmod +rwx out/host/linux-x86/bin/avbtool
+chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
+COMMON_LUNCH_CHOICES := twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
@@ -27,7 +27,7 @@ export FOX_VARIANT="AOSP"
 echo "Target Device"
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
 export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
-export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
+export FOX_BUILD_DEVICE="a12s"
 	
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
