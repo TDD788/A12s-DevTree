@@ -81,11 +81,11 @@ TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
 TARGET_PREBUILT_KERNEL       := $(DEVICE_PATH)/prebuilt/twrp-kernel
 #TARGET_PREBUILT_KERNEL	     := $(DEVICE_PATH)/prebuilt/Image.gz
-TARGET_PREBUILT_DTB 	     := $(DEVICE_PATH)/prebuilt/twrp-dtb
-BOARD_MKBOOTIMG_ARGS 	     += --dtb $(TARGET_PREBUILT_DTB)
-BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_PREBUILT_DTBOIMAGE     := $(DEVICE_PATH)/prebuilt/twrp-dtbo
-BOARD_KERNEL_SEPARATED_DTBO  := true
+#TARGET_PREBUILT_DTB 	     := $(DEVICE_PATH)/prebuilt/twrp-dtb
+#BOARD_MKBOOTIMG_ARGS 	     += --dtb $(TARGET_PREBUILT_DTB)
+#BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+#BOARD_PREBUILT_DTBOIMAGE     := $(DEVICE_PATH)/prebuilt/twrp-dtbo
+#BOARD_KERNEL_SEPARATED_DTBO  := true
 endif
 
 # Partitions
@@ -98,7 +98,7 @@ BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := f2fs
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE   := ext4
 
 # Rsync error fix or Fixing trying to copy non-existance files
-TARGET_COPY_OUT_VENDOR := vendor
+TARGET_COPY_OUT_VENDOR                         := vendor
 
 BOARD_SUPER_PARTITION_SIZE		       := 9126805504
 BOARD_GOOGLE_DYNAMIC_PARTITIONS_SIZE           := 9126805504
@@ -110,7 +110,7 @@ BOARD_GOOGLE_DYNAMIC_PARTITIONS_PARTITION_LIST := \
     odm
 
 # Platform
-TARGET_BOARD_PLATFORM	   := universal3830    
+TARGET_BOARD_PLATFORM	    := universal3830    
 
 # Recovery
 BOARD_INCLUDE_RECOVERY_DTBO := true
@@ -144,7 +144,7 @@ TARGET_SCREEN_HEIGHT 	  := 1600
 RECOVERY_SDCARD_ON_DATA   := true
 
 # Screen
-TARGET_RECOVERY_PIXEL_FORMAT := "ABGR_8888"
+TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 TW_BRIGHTNESS_PATH	     := "/sys/class/backlight/panel/brightness"
 TW_MAX_BRIGHTNESS            := 306
 TW_DEFAULT_BRIGHTNESS        := 153
@@ -189,4 +189,6 @@ TW_INCLUDE_FUSE_EXFAT	    := true
 TW_INCLUDE_RESETPROP	    := true
 TW_NO_SCREEN_TIMEOUT	    := true
 TW_SCREEN_BLANK_ON_BOOT	    := true
+TW_DISABLE_TTF              := true
+
 
