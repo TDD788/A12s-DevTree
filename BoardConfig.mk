@@ -63,7 +63,7 @@ BOARD_KERNEL_CMDLINE += \
 	androidboot.usbconfigfs=true
 
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_KERNEL_SEPARATED_DTBO  := true
+BOARD_KERNEL_SEPARATED_DTBO  := false
 
 TARGET_KERNEL_CONFIG	  := a12s_defconfig
 TARGET_KERNEL_SOURCE	  := kernel/samsung/a12s
@@ -80,12 +80,11 @@ BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
 TARGET_PREBUILT_KERNEL       := $(DEVICE_PATH)/prebuilt/rissu-kernel
-#TARGET_PREBUILT_KERNEL	     := $(DEVICE_PATH)/prebuilt/Image.gz
 TARGET_PREBUILT_DTB 	     := $(DEVICE_PATH)/prebuilt/twrp-dtb
 BOARD_MKBOOTIMG_ARGS 	     += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_PREBUILT_DTBOIMAGE     := $(DEVICE_PATH)/prebuilt/twrp-dtbo
-BOARD_KERNEL_SEPARATED_DTBO  := true
+#BOARD_PREBUILT_DTBOIMAGE     := $(DEVICE_PATH)/prebuilt/twrp-dtbo
+BOARD_KERNEL_SEPARATED_DTBO  := false
 endif
 
 # Partitions
