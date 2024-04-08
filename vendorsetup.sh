@@ -77,6 +77,7 @@ export_build_vars(){
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
+        export OF_NO_SPLASH_CHANGE=1
 
 	# File Paths Configurations
 	export OF_FL_PATH1="/system/flashlight"
