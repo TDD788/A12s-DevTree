@@ -4,3 +4,5 @@ ro.boot.usbcontroller=13600000.dwc3
 ro.boot.dynamic_partitions=true
 ro.boot.boot_devices=bootdevice,12100000.dwmmc0
 persist.sys.isUsbOtgEnabled=false
+ro.crypto.volume.filenames_mode=aes-256-cts
+fbe.metadata.wrappedkey=true
