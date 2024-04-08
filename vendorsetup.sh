@@ -21,8 +21,10 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_37"
+export FOX_VERSION="R12.1_38"
 export FOX_VARIANT="AOSP"
+
+# Binaries & Tools
 export FOX_CUSTOM_BINS_TO_SDCARD=3
 export FOX_USE_NANO_EDITOR=1
 export FOX_REPLACE_BUSYBOX_PS=1
@@ -68,16 +70,6 @@ export_build_vars(){
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export OF_HIDE_NOTCH=1
 	
-	# Binaries & Tools
-	if [ "$SDCARD_BINS" != "true" ]; then
-		export FOX_USE_NANO_EDITOR=1
-                export FOX_REPLACE_BUSYBOX_PS=1
-		export FOX_USE_SED_BINARY=1
-		export FOX_USE_TAR_BINARY=1
-		export FOX_USE_UNZIP_BINARY=1
-		export FOX_USE_XZ_UTILS=1
-	fi
-
 	# Specific Features Configurations
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
         export OF_ENABLE_LPTOOLS=1
@@ -85,7 +77,6 @@ export_build_vars(){
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
-        export FOX_PATCH_VBMETA_FLAG=1
 
 	# File Paths Configurations
 	export OF_FL_PATH1="/system/flashlight"
