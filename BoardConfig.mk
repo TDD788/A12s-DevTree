@@ -79,7 +79,7 @@ BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-TARGET_PREBUILT_KERNEL       := $(DEVICE_PATH)/prebuilt/twrp-kernel
+TARGET_PREBUILT_KERNEL       := $(DEVICE_PATH)/prebuilt/rissu-kernel
 #TARGET_PREBUILT_KERNEL	     := $(DEVICE_PATH)/prebuilt/Image.gz
 TARGET_PREBUILT_DTB 	     := $(DEVICE_PATH)/prebuilt/twrp-dtb
 BOARD_MKBOOTIMG_ARGS 	     += --dtb $(TARGET_PREBUILT_DTB)
