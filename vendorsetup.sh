@@ -26,12 +26,39 @@ export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
 export FOX_CUSTOM_BINS_TO_SDCARD=3
-export FOX_USE_NANO_EDITOR=1
-export FOX_REPLACE_BUSYBOX_PS=1
-export FOX_USE_SED_BINARY=1
-export FOX_USE_TAR_BINARY=1
-export FOX_USE_UNZIP_BINARY=1
-export FOX_USE_XZ_UTILS=1
+#export FOX_USE_NANO_EDITOR=1
+#export FOX_REPLACE_BUSYBOX_PS=1
+#export FOX_USE_SED_BINARY=1
+#export FOX_USE_TAR_BINARY=1
+#export FOX_USE_UNZIP_BINARY=1
+#export FOX_USE_XZ_UTILS=1
+
+# Check if FOX_CUSTOM_BINS_TO_SDCARD is set to 3
+if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "3" ]; then
+    # Enable necessary options
+    export FOX_USE_NANO_EDITOR=1
+    export FOX_REPLACE_BUSYBOX_PS=1
+    export FOX_USE_SED_BINARY=1
+    export FOX_USE_TAR_BINARY=1
+    export FOX_USE_UNZIP_BINARY=1
+    export FOX_USE_XZ_UTILS=1
+
+    # Check which specific option got enabled
+    if [ "$FOX_USE_NANO_EDITOR" = "1" ]; then
+        # Enable FOX_CUSTOM_BINS_TO_SDCARD and the specific option together
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    elif [ "$FOX_REPLACE_BUSYBOX_PS" = "1" ]; then
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    elif [ "$FOX_USE_SED_BINARY" = "1" ]; then
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    elif [ "$FOX_USE_TAR_BINARY" = "1" ]; then
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    elif [ "$FOX_USE_UNZIP_BINARY" = "1" ]; then
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    elif [ "$FOX_USE_XZ_UTILS" = "1" ]; then
+        export FOX_CUSTOM_BINS_TO_SDCARD=3
+    fi
+fi
 
 echo "Target Device"
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
