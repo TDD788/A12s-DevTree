@@ -164,7 +164,7 @@ jobs:
           * ${{ env.MD5_ZIP }} for ZIP file.
           * ${{ env.MD5_TAR }} for ODIN TAR file. 
           
-build_vendorboot:
+  build_vendorboot:
     name: Build OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
@@ -275,7 +275,7 @@ build_vendorboot:
           * ${{ env.MD5_R-RAMDISK }} for RECOVERY file.
           * ${{ env.MD5_ZIP }} for ZIP file.
           * ${{ env.MD5_TAR }} for ODIN TAR file. 
-build_boot:
+  build_boot:
     name: Build OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
