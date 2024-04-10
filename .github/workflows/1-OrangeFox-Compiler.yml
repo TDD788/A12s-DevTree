@@ -172,7 +172,7 @@ jobs:
           * ${{ env.MD5_TAR }} for ODIN TAR file.
 
     - name: Send to Telegram
-      if: success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.ref_type != 'tag' && inputs.post_telegram != 'false'
+      if: github.event.inputs.RELEASE_TYPE == 'oficial'
       env:
         TELEGRAM_BOT_TOKEN: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
         TELEGRAM_CHAT_ID: -1001643052289
