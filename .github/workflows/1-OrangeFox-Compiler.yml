@@ -153,16 +153,16 @@ jobs:
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: ${{ github.run_id }}
         body: |
-          ## OrangeFox Recovery Build - Unofficial
+          ## OrangeFox Recovery Build - Unofficial RECOVERY
           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMG file.
-          * ${{ env.MD5_RAMDISK }} for IMG file.
-          * ${{ env.MD5_R-RAMDISK }} for IMG file.
+          * ${{ env.MD5_IMG }} for IMAGE file.
+          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
+          * ${{ env.MD5_R-RAMDISK }} for RECOVERY file.
           * ${{ env.MD5_ZIP }} for ZIP file.
-          * ${{ env.MD5_TAR }} for TAR file. 
+          * ${{ env.MD5_TAR }} for ODIN TAR file. 
           
 build_vendorboot:
     name: Build OFR by ${{ github.actor }}
@@ -265,16 +265,16 @@ build_vendorboot:
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: ${{ github.run_id }}
         body: |
-          ## OrangeFox Recovery Build - Unofficial
+          ## OrangeFox Recovery Build - Unofficial VENDOR BOOT
           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMG file.
-          * ${{ env.MD5_RAMDISK }} for IMG file.
-          * ${{ env.MD5_R-RAMDISK }} for IMG file.
+          * ${{ env.MD5_IMG }} for IMAGE file.
+          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
+          * ${{ env.MD5_R-RAMDISK }} for RECOVERY file.
           * ${{ env.MD5_ZIP }} for ZIP file.
-          * ${{ env.MD5_TAR }} for TAR file.
+          * ${{ env.MD5_TAR }} for ODIN TAR file. 
 build_boot:
     name: Build OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
@@ -376,13 +376,13 @@ build_boot:
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: ${{ github.run_id }}
         body: |
-          ## OrangeFox Recovery Build - Unofficial
+          ## OrangeFox Recovery Build - Unofficial BOOT
           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMG file.
-          * ${{ env.MD5_RAMDISK }} for IMG file.
-          * ${{ env.MD5_R-RAMDISK }} for IMG file.
+          * ${{ env.MD5_IMG }} for IMAGE file.
+          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
+          * ${{ env.MD5_R-RAMDISK }} for RECOVERY file.
           * ${{ env.MD5_ZIP }} for ZIP file.
-          * ${{ env.MD5_TAR }} for TAR file.          
+          * ${{ env.MD5_TAR }} for ODIN TAR file. 
