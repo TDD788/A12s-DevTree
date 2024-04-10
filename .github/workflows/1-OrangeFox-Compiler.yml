@@ -146,6 +146,7 @@ jobs:
         echo "MD5_R-RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        cd ${GITHUB_WORKSPACE}
 
     - name: Upload to Telegram
       uses: appleboy/telegram-action@master
