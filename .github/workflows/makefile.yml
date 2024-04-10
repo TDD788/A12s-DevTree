@@ -56,8 +56,8 @@ jobs:
         uses: appleboy/telegram-upload-file@v1
         with:
           host: api.telegram.org
-          token: ${{ secrets.7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY }}
-          chat_id: ${{ secrets.-1001643052289 }}
+          token: "7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY"
+          chat_id: -1001643052289
           caption: |
             ## OrangeFox Recovery Build - Unofficial
             Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
