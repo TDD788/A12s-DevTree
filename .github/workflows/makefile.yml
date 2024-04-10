@@ -56,8 +56,8 @@ jobs:
       - name: Upload to Telegram
         uses: appleboy/telegram-action@master
         with:
-          token: ${{ secrets.7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY }}
-          chat_id: ${{ secrets.-1001643052289 }}
+          token: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
+          chat_id: -1001643052289
           document: |
             OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
             OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
