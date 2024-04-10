@@ -172,25 +172,25 @@ jobs:
           * ${{ env.MD5_TAR }} for ODIN TAR file.
 
     - name: Upload to Telegram
-      uses: appleboy/telegram-upload-file@v1
+      uses: appleboy/telegram-action@master
       with:
-        host: api.telegram.org
-        token: ${{ secrets.7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY }}
-        chat_id: ${{ secrets.-1001643052289 }}
-        files: |
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
-          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
-        caption: |
+        to : -1001643052289
+        token: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
+        message: |
           ## OrangeFox Recovery Build - Unofficial
           Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMG file.
+          ```* ${{ env.MD5_IMG }} for IMG file.
           * ${{ env.MD5_RAMDISK }} for IMG file.
           * ${{ env.MD5_R-RAMDISK }} for IMG file.
           * ${{ env.MD5_ZIP }} for ZIP file.
-          * ${{ env.MD5_TAR }} for TAR file.
+          * ${{ env.MD5_TAR }} for TAR file.```
+        document: |
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+        
