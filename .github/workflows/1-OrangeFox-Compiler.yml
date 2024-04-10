@@ -75,6 +75,7 @@ jobs:
     - name: Build Environment
       run: |
         sudo apt install lz4
+        sudo apt install docker
         sudo apt install gzip
         sudo apt install nodejs
         sudo apt install lzma
