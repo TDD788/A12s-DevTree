@@ -146,6 +146,7 @@ jobs:
         echo "MD5_R-RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        
     - name: Upload to Release
       if: github.event.inputs.RELEASE_TYPE == 'oficial'
       uses: softprops/action-gh-release@v1
@@ -169,3 +170,19 @@ jobs:
           * ${{ env.MD5_R-RAMDISK }} for RECOVERY RAMDISK file.
           * ${{ env.MD5_ZIP }} for ORANGE FOX ZIP file.
           * ${{ env.MD5_TAR }} for ODIN TAR file.
+
+    - name: Send to Telegram
+      if: success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && github.ref_type != 'tag' && inputs.post_telegram != 'false'
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: a12schat  # Replace this with your @a12schat channel ID
+        IMAGE: "OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img"
+        RAMDISK: "OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img"
+        RECOVERY_RAMDISK: "OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img"
+        ODIN_TAR: "OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar"
+        FOX_ZIP: "OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip"
+        COMMIT_URL: ${{ github.event.head_commit.url }}
+      run: |
+        if [ ! -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]; then
+          curl -v "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMediaGroup?chat_id=${TELEGRAM_CHAT_ID}&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${IMAGE}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${RAMDISK}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${RECOVERY_RAMDISK}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${ODIN_TAR}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${FOX_ZIP}%22%2C%22caption%22:%22${{ github.event.head_commit.url }}%22%7D%5D"
+        fi
