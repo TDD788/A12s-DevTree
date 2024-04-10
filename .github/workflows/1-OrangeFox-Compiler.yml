@@ -104,7 +104,7 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd recovery image
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd recoveryimage
 
     - name: Upload files
       if: github.event.inputs.RELEASE_TYPE == 'experimental'
@@ -216,7 +216,7 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd vendorboot image
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd vendorbootimage
 
     - name: Upload files
       if: github.event.inputs.RELEASE_TYPE == 'experimental'
@@ -327,7 +327,7 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         set -e
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd boot image
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd bootimage
 
     - name: Upload files
       if: github.event.inputs.RELEASE_TYPE == 'experimental'
