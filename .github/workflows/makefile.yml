@@ -13,6 +13,7 @@ jobs:
       - name: Upload to Telegram
         uses: appleboy/telegram-action@master
         with:
+          to: -1001643052289
           token: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
           message: |
             ## OrangeFox Recovery Build - Unofficial
