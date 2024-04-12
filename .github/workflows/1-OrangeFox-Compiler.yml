@@ -153,28 +153,29 @@ jobs:
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
         cd ${GITHUB_WORKSPACE}
 
-    - name: Upload To Telegram
+    - name: Send data
+      uses: BorisTestov/tg_sender_action@latest
       env:
-        GITHUB_WORKSPACE: ${{ github.workspace }}
-        BOT_TOKEN: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
-        CHANNEL_ID: -1001643052289
-        COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
-        COMMIT_URL: ${{ github.event.head_commit.url }}
-        MANIFEST_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
-        DEVICE_NAME: ${{ github.event.inputs.DEVICE_NAME }}
-      run: |
-        TEXT_MESSAGE="## OrangeFox Recovery Build - Unofficial
-                      Build: fox_${MANIFEST_BRANCH}
-                      Device: [Device Tree/Branch](${GITHUB_WORKSPACE}/OrangeFox/fox_${MANIFEST_BRANCH}/out/target/product/${DEVICE_NAME})/tree/${GITHUB_WORKSPACE}/OrangeFox/fox_${MANIFEST_BRANCH}/out/target/product/${DEVICE_NAME}/ramdisk-recovery.img
-                      Commit: Most recent [commit](${GITHUB_WORKSPACE}/OrangeFox/fox_${MANIFEST_BRANCH}/out/target/product/${DEVICE_NAME}/ramdisk-recovery.img) during building.
-                      ## MD5SUM
-                      ```* ${{ env.MD5_IMG }} for IMG file.
-                      * ${{ env.MD5_RAMDISK }} for IMG file.
-                      * ${{ env.MD5_R-RAMDISK }} for IMG file.
-                      * ${{ env.MD5_ZIP }} for ZIP file.
-                      * ${{ env.MD5_TAR }} for TAR file.```
-        curl -v "https://api.telegram.org/bot${BOT_TOKEN}/sendMediaGroup?chat_id=${CHANNEL_ID}&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${IMG_FILE}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${RAMDISK_FILE}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${RAMDISK_RECOVERY_FILE}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${TAR_FILE}%22%7D%2C%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2F${ZIP_FILE}%22%2C%22caption%22:${ESCAPED}%7D%5D&text=${TEXT_MESSAGE}"
-        
+        TG_SENDER_TG_CHAT_ID: ${{ secrets.CHANNEL_ID }}
+        TG_SENDER_TG_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        TG_SENDER_PAYLOAD_MESSAGE: |
+            ## OrangeFox Recovery Build - Unofficial
+            Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+            Device: [Device Tree/Branch](${{ github.workspace }}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }})/tree/${{ github.workspace }}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
+            Commit: Most recent [commit](${{ github.workspace }}/OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img) during building.
+            ## MD5SUM
+            ```* ${{ env.MD5_IMG }} for IMG file.
+            * ${{ env.MD5_RAMDISK }} for IMG file.
+            * ${{ env.MD5_R-RAMDISK }} for IMG file.
+            * ${{ env.MD5_ZIP }} for ZIP file.
+            * ${{ env.MD5_TAR }} for TAR file.```
+        TG_SENDER_PAYLOAD_FILE_PATH: |
+            OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+            OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
+            OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
+            OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
+            OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+           
     - name: Upload to Release
       if: github.event.inputs.RELEASE_TYPE == 'oficial'
       uses: softprops/action-gh-release@v1
