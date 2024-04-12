@@ -156,8 +156,8 @@ jobs:
     - name: Upload To Telegram
       env:
         GITHUB_WORKSPACE: ${{ github.workspace }}
-        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-        CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        BOT_TOKEN: 7046470389:AAGujKQfAvtB9oeXogGWOJRlfNOSC8jsCOY
+        CHANNEL_ID: -1001643052289
         COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         COMMIT_URL: ${{ github.event.head_commit.url }}
         MANIFEST_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
