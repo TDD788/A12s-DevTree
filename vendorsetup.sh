@@ -73,7 +73,6 @@ export_build_vars(){
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
         export OF_CHECK_OVERWRITE_ATTEMPTS=1
-	export OF_QUICK_BACKUP_LIST="/system_root;/vendor;/data;/boot;"
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
