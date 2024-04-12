@@ -78,18 +78,31 @@ jobs:
       
     - name: Build Environment
       run: |
-        sudo apt install lz4
-        sudo apt install docker
-        sudo apt install gzip
-        sudo apt install nodejs
-        sudo apt install lzma
-        sudo apt install git aria2 -y
-        sudo apt install nodejs
-        git clone https://gitlab.com/OrangeFox/misc/scripts
-        cd scripts
-        sudo bash setup/android_build_env.sh
-        sed -i 's/cd -/cd ../g' setup/install_android_sdk.sh
-        sudo bash setup/install_android_sdk.sh
+       sudo apt-get update
+       sudo apt-get install -y ca-certificates curl
+       sudo install -m 0755 -d /etc/apt/keyrings
+       sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+       sudo chmod a+r /etc/apt/keyrings/docker.asc
+       echo \
+         "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+       sudo apt-get update
+       sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+       sudo apt install lz4
+       sudo apt install gzip
+       sudo apt install nodejs
+       sudo apt install lzma
+       sudo apt install git aria2 -y
+       sudo apt install nodejs
+       git clone https://gitlab.com/OrangeFox/misc/scripts
+       cd scripts
+       sudo bash setup/android_build_env.sh
+       sed -i 's/cd -/cd ../g' setup/install_android_sdk.sh
+       sudo bash setup/install_android_sdk.sh
+       sudo bash setup/android_build_env.sh
+       sed -i 's/cd -/cd ../g' setup/install_android_sdk.sh
+       sudo bash setup/install_android_sdk.sh
       
     - name: Set-up Manifest
       if: github.event.inputs.MANIFEST_BRANCH == '11.0' || github.event.inputs.MANIFEST_BRANCH == '12.1'
@@ -153,8 +166,9 @@ jobs:
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
         cd ${GITHUB_WORKSPACE}
 
-    - name: Send data
+    - name: Upload To Telegram
       uses: BorisTestov/tg_sender_action@latest
+      continue-on-error: true
       env:
         TG_SENDER_TG_CHAT_ID: ${{ secrets.CHANNEL_ID }}
         TG_SENDER_TG_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
