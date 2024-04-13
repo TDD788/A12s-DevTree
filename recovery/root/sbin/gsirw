@@ -1,0 +1,128 @@
+#!/system/bin/sh
+
+perform_resize_and_unshare_blocks() {
+    resize2fs "system.img" 7G
+    e2fsck -E unshare_blocks "system.img"
+    resize2fs -M "system.img"
+}
+
+list_directory_contents() {
+    directory=$1
+    if [ -d "$directory" ]; then
+        cd "$directory" || return 1
+        ls -d -A -I '.*' *.{img,zip,xz} */ 2>/dev/null --format=single-column
+    else
+        echo "Directory not found: $directory"
+    fi
+}
+
+process_user_selected_image() {
+    echo "Enter the full path of the image file or directory:"
+    echo -n "> "
+    read -e image_path
+
+    selected_index=1
+    selected_symbol="O"
+
+    while true; do
+        clear
+        echo "Contents of $image_path:"
+
+        list_directory_contents "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR==idx) print sym, $0; else print " ", $0}'
+
+        read -rsn1 input
+
+        if [ "$input" = "q" ]; then
+            break
+        elif [ "$input" = $'\x1b' ]; then
+            read -rsn2 input
+            if [ "$input" = $'\x5b\x41' ]; then
+                if [ "$selected_index" -gt 1 ]; then
+                    ((selected_index--))
+                fi
+            elif [ "$input" = $'\x5b\x42' ]; then
+                ((selected_index++))
+            elif [ "$input" = $'\x5b\x44' ]; then
+                cd "$(dirname "$image_path")"
+                image_path=$(pwd)
+                echo "Current directory: $image_path"
+                selected_index=1
+            elif [ "$input" = $'\x5b\x43' ]; then
+                selected_file=$(ls -1 "$image_path" | sed -n "${selected_index}p")
+                if [ -d "$image_path/$selected_file" ]; then
+                    image_path="$image_path/$selected_file"
+                    echo "Current directory: $image_path"
+                    selected_index=1
+                elif [ -f "$image_path/$selected_file" ]; then
+                    if [[ "$selected_file" == *.img ]]; then
+                        echo "Procesando el archivo: $image_path/$selected_file"
+                        echo "Press any key to continue..."
+                        read -rsn1
+                        mv "$image_path/$selected_file" "$image_path/system.img"
+                        perform_resize_and_unshare_blocks
+                        list_directory_contents "$image_path"
+                        break
+                    elif [[ "$selected_file" == *.zip ]]; then
+                        echo "Descomprimiendo el archivo: $image_path/$selected_file..."
+                        unzip "$image_path/$selected_file" -d "$image_path"
+                        selected_file=$(ls -t "$image_path" | head -1)
+                        if [[ "$selected_file" == *.img ]]; then
+                            echo "Procesando el archivo descomprimido: $image_path/$selected_file"
+                            echo "Press any key to continue..."
+                            read -rsn1
+                            mv "$image_path/$selected_file" "$image_path/system.img"
+                            perform_resize_and_unshare_blocks
+                            list_directory_contents "$image_path"
+                            break
+                        fi
+                    elif [[ "$selected_file" == *.xz ]]; then
+                        echo "Descomprimiendo el archivo: $image_path/$selected_file..."
+                        tar -xf "$image_path/$selected_file" -C "$image_path"
+                        selected_file=$(ls -t "$image_path" | head -1)
+                        if [[ "$selected_file" == *.img ]]; then
+                            echo "Procesando el archivo descomprimido: $image_path/$selected_file"
+                            echo "Press any key to continue..."
+                            read -rsn1
+                            mv "$image_path/$selected_file" "$image_path/system.img"
+                            perform_resize_and_unshare_blocks
+                            list_directory_contents "$image_path"
+                            break
+                        fi
+                    fi
+                fi
+            fi
+        fi
+    done
+}
+
+process_copied_system_image() {
+    echo "Copying system image..."
+    cp /dev/block/mapper/system /sdcard/system.img
+
+    perform_resize_and_unshare_blocks
+}
+
+echo "Select an option:"
+echo "1. Process the user-selected image."
+echo "2. Process a copy of the installed system image."
+
+read option
+
+case $option in
+    1)
+        process_user_selected_image
+        ;;
+    2)
+        echo "Enter the directory path where the image is located:"
+        echo -n "> "
+        read directory_path
+
+        echo "Enter the filter for listing directory contents (leave empty for all files):"
+        echo -n "> "
+        read filter
+
+        list_directory_contents "$directory_path"
+        ;;
+    *)
+        echo "Invalid option."
+esac        
