@@ -164,7 +164,7 @@ jobs:
         echo "MD5_R-RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_ZIP=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
-       
+     
     - name: Upload to Release
       if: github.event.inputs.RELEASE_TYPE == 'oficial'
       uses: softprops/action-gh-release@v1
@@ -188,4 +188,24 @@ jobs:
           * ${{ env.MD5_R-RAMDISK }} for RECOVERY RAMDISK file.
           * ${{ env.MD5_ZIP }} for ORANGE FOX ZIP file.
           * ${{ env.MD5_TAR }} for ODIN TAR file.
+
+    - name: Send Telegram
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}  
+        message: |
+          ## OrangeFox Recovery Build - Unofficial
+          Build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+          Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+          Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+          ## MD5SUM
+          * ${{ env.MD5_IMG }} for IMAGE file.
+          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
+          * ${{ env.MD5_R-RAMDISK }} for RECOVERY RAMDISK file.
+          * ${{ env.MD5_ZIP }} for ORANGE FOX ZIP file.
+          * ${{ env.MD5_TAR }} for ODIN TAR file.
+
+          Download 
+          https://github.com/${{ github.actor }}/A12s-DevTree/releases/tag/${{ github.run_id }}
 
