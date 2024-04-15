@@ -14,7 +14,7 @@ RED="\e[91m"
 RESET="\e[0m"
 GREEN="\e[92m"
 
-echo "Important Value"
+# Important Value
 export ALLOW_MISSING_DEPENDENCIES=true
 export LC_ALL="C"
 	
@@ -38,19 +38,19 @@ if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2
     export FOX_USE_XZ_UTILS=1
 fi
 
-echo "Target Device"
+# Target Device
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
 export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
 export FOX_BUILD_DEVICE="a12s"
 	
 export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
-        #Important Build Flags
-        export FOX_VANILLA_BUILD=1
+	#Important Build Flags
+	export FOX_VANILLA_BUILD=1
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
-        export OF_CHECK_OVERWRITE_ATTEMPTS=1
+	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
@@ -58,7 +58,7 @@ export_build_vars(){
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_SAMSUNG_HAPTICS=1
-        export OF_USE_SYSTEM_FINGERPRINT=0
+	export OF_USE_SYSTEM_FINGERPRINT=1
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
@@ -76,12 +76,12 @@ export_build_vars(){
 	
 	# Specific Features Configurations
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-        export OF_ENABLE_LPTOOLS=1
+	export OF_ENABLE_LPTOOLS=1
 	export FOX_NO_SAMSUNG_SPECIAL=2
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
-        export OF_NO_SPLASH_CHANGE=1
+	export OF_NO_SPLASH_CHANGE=1
 
 	# File Paths Configurations
 	export OF_FL_PATH1="/system/flashlight"
@@ -90,7 +90,7 @@ export_build_vars(){
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
-	export OF_SPLASH_MAX_SIZE=128
+	#export OF_SPLASH_MAX_SIZE=128
  
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then

@@ -16,7 +16,7 @@ Display  | LCD , 60Hz , 6.5 inch , 720 × 1600 pixels , 20:9 ratio
 
 ## Base Version
 ```
-A127MUBSBDWI1
+A127MUBUBDWK2-A127FXXSADWK2
 ```
 
 ## Build
