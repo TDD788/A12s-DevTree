@@ -3,7 +3,7 @@ sudo apt install nano
 git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
 sudo chmod +rwx out/host/linux-x86/bin/avbtool
 chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
-COMMON_LUNCH_CHOICES := twrp_a12s-eng
+add_lunch_combo twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
@@ -25,15 +25,9 @@ export FOX_VERSION="R12.1_41"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
-export FOX_CUSTOM_BINS_TO_SDCARD=2
-#export FOX_USE_NANO_EDITOR=1
-#export FOX_REPLACE_BUSYBOX_PS=1
-#export FOX_USE_SED_BINARY=1
-#export FOX_USE_TAR_BINARY=1
-#export FOX_USE_UNZIP_BINARY=1
-#export FOX_USE_XZ_UTILS=1
+export FOX_CUSTOM_BINS_TO_SDCARD=1
 
-# Check if FOX_CUSTOM_BINS_TO_SDCARD is set to 3
+# Check if FOX_CUSTOM_BINS_TO_SDCARD is enabled
 if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "3" ]; then
     # Enable necessary options
     export FOX_USE_NANO_EDITOR=1
@@ -42,22 +36,6 @@ if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2
     export FOX_USE_TAR_BINARY=1
     export FOX_USE_UNZIP_BINARY=1
     export FOX_USE_XZ_UTILS=1
-
-    # Check which specific option got enabled
-    if [ "$FOX_USE_NANO_EDITOR" = "1" ]; then
-        # Enable FOX_CUSTOM_BINS_TO_SDCARD and the specific option together
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    elif [ "$FOX_REPLACE_BUSYBOX_PS" = "1" ]; then
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    elif [ "$FOX_USE_SED_BINARY" = "1" ]; then
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    elif [ "$FOX_USE_TAR_BINARY" = "1" ]; then
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    elif [ "$FOX_USE_UNZIP_BINARY" = "1" ]; then
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    elif [ "$FOX_USE_XZ_UTILS" = "1" ]; then
-        export FOX_CUSTOM_BINS_TO_SDCARD=3
-    fi
 fi
 
 echo "Target Device"
