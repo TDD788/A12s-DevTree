@@ -21,7 +21,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_41"
+export FOX_VERSION="R12.1_42"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
@@ -47,7 +47,7 @@ export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
 	#Important Build Flags
 	export FOX_VANILLA_BUILD=1
-	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	#export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
@@ -63,8 +63,8 @@ export_build_vars(){
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	export OF_FORCE_DISABLE_DM_VERITY=0
-	export OF_DISABLE_FORCED_ENCRYPTION=0
+	#export OF_FORCE_DISABLE_DM_VERITY=0
+	#export OF_DISABLE_FORCED_ENCRYPTION=0
 	
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
