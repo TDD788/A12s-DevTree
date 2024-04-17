@@ -39,7 +39,7 @@ if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2
 fi
 
 # Target Device
-export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
+export FOX_TARGET_DEVICES="a12s"
 export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
 export FOX_BUILD_DEVICE="a12s"
 	
