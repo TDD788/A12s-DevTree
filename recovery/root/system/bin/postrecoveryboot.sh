@@ -2,11 +2,11 @@
 
 [ -f /sbin/from_fox_sd.sh ] && source /sbin/from_fox_sd.sh
 
-gzip -d /system/lib/libiconv.so.gz
-gzip -d /system/lib/libandroid-support.so.gz
-gzip -d /system/lib/libgmp.so.gz
+gzip -d /system/lib64/libiconv.so.gz
+gzip -d /system/lib64/libandroid-support.so.gz
+gzip -d /system/lib64/libgmp.so.gz
 
-export LD_LIBRARY_PATH=/system/lib/
+export LD_LIBRARY_PATH=/system/lib64/
 
 coreutils_dir="/system/bin"
 target_dir="/system/bin/"
