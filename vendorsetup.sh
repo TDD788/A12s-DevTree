@@ -7,7 +7,6 @@ add_lunch_combo twrp_a12s-eng
 
 FDEVICE1="a12s"
 CURR_DEVICE="a12s"
-SDCARD_BINS="false"
 
 RED_BACK="\e[101m"
 RED="\e[91m"
@@ -21,7 +20,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_42"
+export FOX_VERSION="R12.1_43"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
