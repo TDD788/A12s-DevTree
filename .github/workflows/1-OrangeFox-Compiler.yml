@@ -207,5 +207,16 @@ jobs:
       run: |
         TELEGRAM_CHAT_ID="$TELEGRAM_TO"
         TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
-        MESSAGE="## OrangeFox Recovery Build - Unofficial\nBuild: fox_${MANIFEST_BRANCH}\nDevice: [Device Tree/Branch](${DEVICE_TREE}/tree/${DEVICE_TREE_BRANCH})\nCommit: Most recent [commit](${DEVICE_TREE}/commit/${COMMIT_ID}) during building.\n## MD5SUM\n* ${MD5_IMG} for IMAGE file.\n* ${MD5_RAMDISK} for RAMDISK file.\n* ${MD5_R-RAMDISK} for RECOVERY RAMDISK file.\n* ${MD5_ZIP} for ORANGE FOX ZIP file.\n* ${MD5_TAR} for ODIN TAR file.\n\nDownload\nhttps://github.com/${GITHUB_ACTOR}/A12s-DevTree/releases/tag/${GITHUB_RUN_ID}"
+        MESSAGE="## orangefox recovery build - unofficial
+                 build: fox_${{ github.event.inputs.MANIFEST_BRANCH }}
+                 Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+                 Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
+                 ## MD5SUM
+                 * ${{ env.MD5_IMG }} for IMAGE file.
+                 * ${{ env.MD5_RAMDISK }} for RAMDISK file.
+                 * ${{ env.MD5_R-RAMDISK }} for RECOVERY RAMDISK file.
+                 * ${{ env.MD5_ZIP }} for ORANGE FOX ZIP file.
+                 * ${{ env.MD5_TAR }} for ODIN TAR file.
+                 [Download](https://github.com/${{ github.actor }}/A12s-DevTree/releases/tag/${{ github.run_id }})
+          
         curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
