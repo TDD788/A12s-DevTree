@@ -206,15 +206,15 @@ jobs:
       run: |
         TELEGRAM_CHAT_ID="$TELEGRAM_TO"
         TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
-        MESSAGE="
+        MESSAGE='
         **## Orange Fox Recovery Build - Unofficial**
         *build:* fox_${{ github.event.inputs.MANIFEST_BRANCH }}
         
         **Device:**
-        Device Tree/Branch : ${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
+        Device Tree/Branch : ${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }}
         
         **Commit:**
-        Most recent commit : ${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }})
+        Most recent commit : ${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}
         
         \`\`\`*MD5SUM:*
         *${{ env.MD5_IMG }}* for IMAGE file.
@@ -224,7 +224,7 @@ jobs:
         *${{ env.MD5_TAR }}* for ODIN TAR file.\`\`\`
         
         **Download Link:**
-        ${{ github.event.inputs.DEVICE_TREE }}/releases/tag/${{ github.run_id }})"
+        ${{ github.event.inputs.DEVICE_TREE }}/releases/tag/${{ github.run_id }}"'
       
         curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
     
