@@ -217,6 +217,6 @@ jobs:
                  * ${{ env.MD5_R-RAMDISK }} for RECOVERY RAMDISK file.
                  * ${{ env.MD5_ZIP }} for ORANGE FOX ZIP file.
                  * ${{ env.MD5_TAR }} for ODIN TAR file.
-                 [Download](https://github.com/${{ github.actor }}/A12s-DevTree/releases/tag/${{ github.run_id }})
+                 [Download](https://github.com/${{ github.actor }}/A12s-DevTree/releases/tag/${{ github.run_id }})"
           
         curl -s -X POST https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage -d chat_id=$TELEGRAM_CHAT_ID -d text="$MESSAGE"
