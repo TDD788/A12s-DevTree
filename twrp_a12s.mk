@@ -35,7 +35,7 @@ PRODUCT_PACKAGES += \
 
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, parted)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gsirw)
+#+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gsirw)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
