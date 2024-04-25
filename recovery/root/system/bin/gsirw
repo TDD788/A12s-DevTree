@@ -1,0 +1,175 @@
+#!/system/bin/sh
+
+perform_resize_and_unshare_blocks() {
+    resize2fs "$image_path/system.img" 7G
+    e2fsck -E unshare_blocks "$image_path/system.img"
+    resize2fs -M "$image_path/system.img"
+}
+
+extract_image_from_archive() {
+    local archive="$1"
+    local extracted_dir="$(dirname "$archive")/extracted"
+    mkdir -p "$extracted_dir"
+    
+    echo "Extracting $archive..."
+    case "$archive" in
+        *.zip)
+            unzip -q "$archive" -d "$extracted_dir"
+            ;;
+        *.tar.gz | *.tgz)
+            tar -xzf "$archive" -C "$extracted_dir"
+            ;;
+        *.tar.xz)
+            tar -xJf "$archive" -C "$extracted_dir"
+            ;;
+        *)
+            echo "Unsupported archive format: $archive"
+            return 1
+            ;;
+    esac
+}
+
+find_image_in_directory() {
+    local directory="$1"
+    echo "Searching for image in $directory..."
+    local image_file="$(find "$directory" -type f -iname '*.img' | head -n 1)"
+    if [ -n "$image_file" ]; then
+        echo "Found image: $image_file"
+    else
+        echo "No image found in $directory"
+    fi
+}
+
+list_directories_and_files() {
+    directory="$1"
+    ls -1p "$directory" | grep -E '/$|.*\.(img|gzip|xz|tar|zip)$' | sed 's:/$::'
+}
+
+detect_partition_type() {
+    local image_file="$1"
+    local partition_type="Unknown"
+    partition_info=$(parted "$image_file" print)
+    if echo "$partition_info" | grep -q "System"; then
+        export partition_type="System"
+        partition_type="System"
+    elif echo "$partition_info" | grep -q "Vendor"; then
+        export 
+		partition_type="Vendor"
+    elif echo "$partition_info" | grep -q "ODM"; then
+        export 
+		partition_type="ODM"
+    elif echo "$partition_info" | grep -q "Product"; then
+        export 
+		partition_type="Product"
+    fi
+
+    echo "$partition_type"
+}
+
+confirm_flash() {
+    echo "Do you want to proceed with flashing the image? (y/n)"
+    read -rsn1 input
+    if [ "$input" = "y" ]; then
+        selected_partition_type=$(detect_partition_type "$image_path")
+        echo "Selected partition type: $selected_partition_type"
+        dd if="$image_path" of="/dev/block/mapper/$partition_type"
+    else
+        exit
+    fi
+}
+
+
+process_user_selected_image() {
+    echo "Enter the full path of the image file or directory (default: /sdcard):"
+    echo "Enter '.' to use the default directory."
+    echo -n "> "
+    read -r image_path
+
+    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
+        image_path="/sdcard"
+    fi
+
+    selected_index=1
+    selected_symbol=">"
+    original_file=""
+
+    while true; do
+        clear
+        echo "Guide to Move
+        echo ""
+        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows. 
+        echo "Also in the style of PC games you can use the WASD keys
+        echo "W (UP)   A(LEFT)   S(DOWN)   D(RIGHT)    Q(Exit GSIRW)
+        echo ""
+        echo "Contents of $image_path:"
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+
+        read -rsn1 input
+
+        if [ "$input" = "q" ]; then
+            break
+        elif [ "$input" = $'\x1b' ]; then
+            read -rsn2 input
+            if [ "$input" = $'\x5b\x44' ] || [ "$input" = "a" ]; then
+                image_path=$(dirname "$image_path")
+            elif [ "$input" = $'\x5b\x43' ] || [ "$input" = "d" ]; then
+                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
+                if [ -d "$image_path/$selected_file" ]; then
+                    image_path="$image_path/$selected_file"
+                    selected_index=1
+                else
+                    original_file="$selected_file"
+                    echo "Selected directory or file: $original_file"
+                    if [ "${original_file##*.}" = "img" ]; then
+                        perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                        confirm_flash
+                        break
+                    elif [ "${original_file##*.}" = "zip" ] || [ "${original_file##*.}" = "tar.gz" ] || [ "${original_file##*.}" = "tgz" ] || [ "${original_file##*.}" = "tar.xz" ]; then
+                        extract_image_from_archive "$image_path/$original_file"
+                        find_image_in_directory "$(dirname "$image_path/$original_file")"
+                    fi
+                fi
+            elif [ "$input" = $'\x5b\x41' ] || [ "$input" = "w" ]; then
+                ((selected_index--))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+            elif [ "$input" = $'\x5b\x42' ] || [ "$input" = "s" ]; then
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                ((selected_index++))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+            fi
+        fi
+
+        if [ "$selected_index" -lt 1 ]; then
+            selected_index=1
+        fi
+    done
+}
+
+perform_copied_system_image() {
+    cp /dev/block/mapper/system /sdcard/system.img
+
+    perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
+    dd if="/sdcard/system.img" of="/dev/block/mapper/system"
+}
+
+echo "Select an option:"
+echo "1. Process the user-selected image."
+echo "2. Process a copy of the installed system image."
+echo " "
+echo -n "Choose one of the 2 options:"
+read -r option
+
+case $option in
+    1)
+        process_user_selected_image
+        ;;
+    2)
+        perform_copied_system_image
+        ;;
+    *)
+        echo "Invalid option."
+esac
