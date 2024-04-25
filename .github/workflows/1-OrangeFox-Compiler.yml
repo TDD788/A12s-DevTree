@@ -216,12 +216,12 @@ jobs:
         **Commit:**
         Most recent commit : ${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }})
         
-        ```*MD5SUM:*
+        \`\`\`*MD5SUM:*
         *${{ env.MD5_IMG }}* for IMAGE file.
         *${{ env.MD5_RAMDISK }}* for RAMDISK file.
         *${{ env.MD5_R_RAMDISK }}* for RECOVERY RAMDISK file.
         *${{ env.MD5_ZIP }}* for ORANGE FOX ZIP file.
-        *${{ env.MD5_TAR }}* for ODIN TAR file.```
+        *${{ env.MD5_TAR }}* for ODIN TAR file.\`\`\`
         
         **Download Link:**
         ${{ github.event.inputs.DEVICE_TREE }}/releases/tag/${{ github.run_id }})"
