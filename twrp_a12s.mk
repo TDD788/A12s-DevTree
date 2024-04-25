@@ -21,7 +21,7 @@ PRODUCT_RELEASE_NAME := a12s
 
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit_only.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 # Inherit some common TWRP stuff.
 $(call inherit-product, vendor/twrp/config/common.mk)
@@ -29,13 +29,8 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 # Inherit device configuration
 $(call inherit-product, device/samsung/a12s/device.mk)
 
-# Charger
-PRODUCT_PACKAGES += \
-    charger_res_images
-
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, parted)
-#+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gsirw)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
