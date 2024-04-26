@@ -32,13 +32,6 @@ on:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
-      release_type:
-        description: 'If true, it is an official release; if false, it is not.'
-        required: true
-        type: boolean
-      POST_TO_TELEGRAM:
-        description: 'Post to Telegram'
-        required: true
       BUILD_TARGET:
         description: 'Specify your Build Target'
         required: true
@@ -48,7 +41,15 @@ on:
         - boot
         - recovery
         - vendorboot
-        - you_mom
+      RELEASE_TYPE:
+        description: 'Oficial Build'
+        required: true
+        type: boolean
+      POST_TO_TELEGRAM:
+        description: 'Post to Telegram'
+        required: true
+        type: boolean
+      
 
 jobs:
   build:
