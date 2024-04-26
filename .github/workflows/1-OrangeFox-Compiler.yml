@@ -49,6 +49,9 @@ on:
         required: true
         default: true
         type: boolean
+    outputs:
+      RELEASE_TYPE:
+        value: ${{ github.event.inputs.RELEASE_TYPE }}
       
 jobs:
   Build-OrangeFox:
