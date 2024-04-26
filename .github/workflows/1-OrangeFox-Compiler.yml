@@ -29,7 +29,7 @@ on:
       TW_MANIFEST:
         description: 'OrangeFox Manifest Branch'
         required: true
-        default: '12.1'
+        default: 'twrp-12.1'
         type: choice
         options:
         - twrp-12.1
@@ -49,7 +49,7 @@ on:
       DEVICE_NAME:
         description: 'Specify your Device Codename'
         required: true
-        default: 'a12s
+        default: 'a12s'
       RELEASE_TYPE:
         description: 'Official Build'
         required: true
