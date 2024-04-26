@@ -193,7 +193,6 @@ jobs:
 
     - name: Upload to Telegram
       if: ${{ github.event.inputs.RELEASE_TYPE == 'true' && github.event.inputs.POST_TO_TELEGRAM == 'true' }}
-  
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
