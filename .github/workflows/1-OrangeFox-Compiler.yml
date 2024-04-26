@@ -327,7 +327,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          TQRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          TW unRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
