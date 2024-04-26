@@ -33,7 +33,13 @@ on:
         - boot
         - recovery
         - vendorboot
+      ORANGE_FOX:
+        description: 'Build-Orange-Fox'
+        required: true
+        default: true
+        type: boolean  
       RELEASE_TYPE:
+        if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
         description: 'Oficial Build'
         required: true
         default: true
@@ -43,13 +49,7 @@ on:
         required: true
         default: true
         type: boolean
-      ORANGE_FOX:
-        description: 'Build-Orange-Fox'
-        required: true
-        default: true
-        type: boolean  
       
-
 jobs:
   Build-OrangeFox:
     name: Build OFR by ${{ github.actor }}
