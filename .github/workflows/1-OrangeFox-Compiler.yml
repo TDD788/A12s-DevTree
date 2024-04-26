@@ -39,20 +39,17 @@ on:
         default: true
         type: boolean  
       RELEASE_TYPE:
-        if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
         description: 'Official Build'
         required: true
         default: true
         type: boolean
+        if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
       POST_TO_TELEGRAM:
         description: 'Post to Telegram'
         required: true
         default: true
         type: boolean
-    outputs:
-      RELEASE_TYPE:
-        value: ${{ github.event.inputs.RELEASE_TYPE }}
-      
+
 jobs:
   Build-OrangeFox:
     name: Build OFR by ${{ github.actor }}
