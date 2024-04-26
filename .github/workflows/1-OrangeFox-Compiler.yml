@@ -44,10 +44,12 @@ on:
       RELEASE_TYPE:
         description: 'Oficial Build'
         required: true
+        default: true
         type: boolean
       POST_TO_TELEGRAM:
         description: 'Post to Telegram'
         required: true
+        default: true
         type: boolean
       
 
