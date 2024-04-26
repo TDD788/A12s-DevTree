@@ -32,13 +32,13 @@ on:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
-      RELEASE_TYPE:
-        description: 'Release type'
+      release_type:
+        description: 'If true, it is an official release; if false, it is not.'
         required: true
-        type: choice
-        options:
-          - oficial
-          - experimental
+        type: boolean
+      POST_TO_TELEGRAM:
+        description: 'Post to Telegram'
+        required: true
       BUILD_TARGET:
         description: 'Specify your Build Target'
         required: true
@@ -131,7 +131,7 @@ jobs:
       continue-on-error: true
 
     - name: Upload files
-      if: github.event.inputs.RELEASE_TYPE == 'experimental'
+      if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
@@ -139,7 +139,7 @@ jobs:
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
         
     - name: Upload files
-      if: github.event.inputs.RELEASE_TYPE == 'experimental'
+      if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Zip
@@ -147,7 +147,7 @@ jobs:
         OrangeFox/fox_${{ github.event.inputs.MANIFEST_BRANCH }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
         
     - name: Upload files
-      if: github.event.inputs.RELEASE_TYPE == 'experimental'
+      if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
       uses: actions/upload-artifact@v2
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Tar
@@ -165,7 +165,7 @@ jobs:
         echo "MD5_TAR=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar | cut -d ' ' -f 1)" >> $GITHUB_ENV
      
     - name: Upload to Release
-      if: github.event.inputs.RELEASE_TYPE == 'oficial'
+      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' }}
       uses: softprops/action-gh-release@v1
       with:
         files: |
@@ -189,6 +189,8 @@ jobs:
           * ${{ env.MD5_TAR }} for ODIN TAR file.
 
     - name: Upload to Telegram
+      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' && github.event.inputs.POST_TO_TELEGRAM == 'true' }}
+  
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
