@@ -218,9 +218,9 @@ jobs:
         <b><pre>MD5SUM:</pre></b>
         <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
         <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
-        <pre><b>${{ env.MD5_RECOVERY_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
+        <pre><b>${{ env.MD5_R_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
         <pre><b>${{ env.MD5_ZIP }}</b> for ORANGE FOX ZIP file.</pre>
         <pre><b>${{ env.MD5_TAR }}</b> for ODIN TAR file.</pre>
-        <b>Download:</b> <a href=\"${{ env.DEVICE_TREE }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download</a>"
+        <b>Download:</b> <a href=\"https://github.com/${{ github.actor }}/${{ github.repository }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
 
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
