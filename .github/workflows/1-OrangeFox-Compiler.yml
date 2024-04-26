@@ -61,7 +61,8 @@ jobs:
   Build-OrangeFox:
     name: Build OFR by ${{ github.actor }}
     runs-on: ubuntu-latest
-    if: github.event.repository.owner.id == github.event.sender.id && ${{ github.event.inputs.ORANGE_FOX == 'true' }}
+    if: github.event.repository.owner.id == github.actor && ${{ github.event.inputs.ORANGE_FOX == 'true' }}
+    
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CCACHE_BASEDIR: "${{ github.workspace }}"
