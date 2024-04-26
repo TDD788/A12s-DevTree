@@ -34,13 +34,13 @@ on:
         - recovery
         - vendorboot
       ORANGE_FOX:
-        description: 'Build-Orange-Fox'
+        description: 'Build Orange Fox'
         required: true
         default: true
         type: boolean  
       RELEASE_TYPE:
         if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
-        description: 'Oficial Build'
+        description: 'Official Build'
         required: true
         default: true
         type: boolean
