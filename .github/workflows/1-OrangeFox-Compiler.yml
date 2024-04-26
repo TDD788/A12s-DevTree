@@ -203,7 +203,7 @@ jobs:
         COMMIT_ID: ${{ env.COMMIT_ID }}
         MD5_IMG: ${{ env.MD5_IMG }}
         MD5_RAMDISK: ${{ env.MD5_RAMDISK }}
-        MD5_R_RAMDISK: ${{ env.MD5_R_RAMDISK }}
+        MD5_RECOVERY_RAMDISK: ${{ env.MD5_R_RAMDISK }}
         MD5_ZIP: ${{ env.MD5_ZIP }}
         MD5_TAR: ${{ env.MD5_TAR }}
         GITHUB_ACTOR: ${{ github.actor }}
@@ -219,7 +219,7 @@ jobs:
         <b><pre>MD5SUM:</pre></b>
         <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
         <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
-        <pre><b>${{ env.MD5_R_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
+        <pre><b>${{ env.MD5_RECOVERY_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
         <pre><b>${{ env.MD5_ZIP }}</b> for ORANGE FOX ZIP file.</pre>
         <pre><b>${{ env.MD5_TAR }}</b> for ODIN TAR file.</pre>
         <b>Download:</b> <a href=\"${{ env.DEVICE_TREE }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download</a>"
