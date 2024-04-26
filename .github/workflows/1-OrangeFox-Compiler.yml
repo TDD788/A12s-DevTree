@@ -49,16 +49,7 @@ on:
       DEVICE_NAME:
         description: 'Specify your Device Codename'
         required: true
-        default: 'a12s'
-      BUILD_TARGET:
-        description: 'Specify your Build Target'
-        required: true
-        default: 'recovery'
-        type: choice
-        options:
-        - boot
-        - recovery
-        - vendorboot
+        default: 'a12s
       RELEASE_TYPE:
         description: 'Official Build'
         required: true
