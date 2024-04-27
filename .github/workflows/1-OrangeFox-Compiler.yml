@@ -32,7 +32,7 @@ on:
         default: 'twrp-12.1'
         type: choice
         options:
-        - twrp-12.1q
+        - twrp-12.1
         - twrp-11
       DEVICE_TREE:
         description: 'Device Tree'
