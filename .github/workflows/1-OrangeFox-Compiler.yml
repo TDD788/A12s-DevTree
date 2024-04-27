@@ -46,7 +46,7 @@ on:
         description: 'Specify your Device Path'
         required: true
         default: 'device/samsung/a12s'
-      DEVICE_NAME:
+      DEVICE_NAM:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
@@ -243,19 +243,25 @@ jobs:
     permissions:
       contents: write
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        submodules: "recursive"
-        fetch-depth: 0
-              
-    - name: Clean-up
+    - name: Display Run Parameters
+      run: |
+        echo "::group::User Environment Variables"
+        echo "Manifest URL: ${{ github.event.inputs.MANIFEST_URL }}"
+        echo "Manifest Branch: ${{ github.event.inputs.MANIFEST_BRANCH }}"
+        echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE_URL }}"
+        echo "Device Tree Branch: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}"
+        echo "Device Path: ${{ github.event.inputs.DEVICE_PATH }}"
+        echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
+        echo "Makefile Name: ${{ github.event.inputs.MAKEFILE_NAME }}"
+        echo "Build Target: ${{ github.event.inputs.BUILD_TARGET }}.img"
+        echo "::endgroup::"
+
+    - name: Check Out
+      uses: actions/checkout@v3
+     
+    - name: Cleanup
       uses: rokibhasansagar/slimhub_actions@main
 
-    - name: Swap Space
-      uses: pierotofy/set-swap-space@master
-      with:
-        swap-size-gb: 32
     - name: Prepare the environment
       run: |
         sudo apt update
@@ -267,7 +273,16 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: '8'
-   
+
+    - name: Setup SSH Keys
+      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') || 
+          startsWith(github.event.inputs.DEVICE_TREE_URL, 'git@github.com') ||
+          startsWith(github.event.inputs.COMMON_TREE_URL, 'git@github.com') }}
+      uses: webfactory/ssh-agent@v0.5.4
+      with:
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+
     - name: Install repo
       run: |
         mkdir ~/bin
@@ -275,36 +290,51 @@ jobs:
         chmod a+x ~/bin/repo
         sudo ln -sf ~/bin/repo /usr/bin/repo
       
-    - name: Set-up Manifest
-      if: github.event.inputs.TW_MANIFEST == 'twrp-11.0' || github.event.inputs.TW_MANIFEST == 'twrp-12.1'
+    - name: Initialize repo
       run: |
-        mkdir -p ${GITHUB_WORKSPACE}/TWRP
-        cd ${GITHUB_WORKSPACE}/TWRP
+        mkdir workspace
+        cd workspace
+        echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        git clone https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b ${{ github.event.inputs.TW_MANIFEST }} ./tw_${{ github.event.inputs.TW_MANIFEST }}
+        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.event.inputs.TW_MAINFEST }}
       id: pwd
           
     - name: Repo Sync
       run: |
         repo sync -j$(nproc --all) --force-sync
       working-directory: workspace
-        
-    - name: Clone Device Tree
+      
+    - name: Clone device tree
       run: |
-        cd ${GITHUB_WORKSPACE}/TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
-        cd ${{ github.event.inputs.DEVICE_PATH }}
-        echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
-        
-    - name: Building OrangeFox
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      
+    - name: Check Build Tree
+      uses: haya14busa/action-cond@v1
+      id: buildtree
+      with:
+        cond: ${{ github.event.inputs.TW_MANIFEST == 'twrp-11' || github.event.inputs.TW_MANIFEST == 'twrp-12.1' }}
+        if_true: twrp
+        if_false: omni
+
+    - name: Sync Device Dependencies
       run: |
-        cd ${GITHUB_WORKSPACE}/TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}
-        set +e
+        bash ${GITHUB_WORKSPACE}/scripts/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
+        repo sync -j$(nproc --all)
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+
+    - name: Set Swap Space
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 12
+
+    - name: Building recovery
+      run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        set -e
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload files
       if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
@@ -317,19 +347,19 @@ jobs:
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
-        cd ${GITHUB_WORKSPACE}/TWRP/tw_${{ github.event.inputs.FOX_MANIFEST }}
-        echo "MD5_IMG=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_R-RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        cd ${GITHUB_WORKSPACE}
+        echo "MD5_IMG=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        echo "MD5_RAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
+        echo "MD5_R-RAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         
     - name: Upload to Release
       if: ${{ github.event.inputs.RELEASE_TYPE == 'true' }}
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          TW unRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
-          TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: ${{ github.run_id }}
         body: |
