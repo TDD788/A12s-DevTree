@@ -46,7 +46,7 @@ on:
         description: 'Specify your Device Path'
         required: true
         default: 'device/samsung/a12s'
-      DEVICE_NAM:
+      DEVICE_NAME:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
