@@ -230,7 +230,7 @@ jobs:
         <pre><b>${{ env.MD5_R_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
         <pre><b>${{ env.MD5_ZIP }}</b> for ORANGE FOX ZIP file.</pre>
         <pre><b>${{ env.MD5_TAR }}</b> for ODIN TAR file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.actor }}/${{ github.repository }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
+        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
 
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
 
@@ -259,7 +259,7 @@ jobs:
 
     - name: Check Out
       uses: actions/checkout@v3
-     
+    
     - name: Cleanup
       uses: rokibhasansagar/slimhub_actions@main
 
@@ -276,13 +276,11 @@ jobs:
         java-version: '8'
 
     - name: Setup SSH Keys
-      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') || 
-          startsWith(github.event.inputs.DEVICE_TREE_URL, 'git@github.com') ||
-          startsWith(github.event.inputs.COMMON_TREE_URL, 'git@github.com') }}
+      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') }}
       uses: webfactory/ssh-agent@v0.5.4
       with:
           ssh-private-key: |
-            ${{ secrets.SSH_PRIVATE_KEY }}
+              ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Install repo
       run: |
@@ -298,7 +296,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.event.inputs.TW_MAINFEST }}
+        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.event.inputs.TW_MANIFEST }}
       id: pwd
           
     - name: Repo Sync
@@ -308,14 +306,14 @@ jobs:
       
     - name: Clone device tree
       run: |
-        git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
+        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      
+
     - name: Check Build Tree
       uses: haya14busa/action-cond@v1
       id: buildtree
       with:
-        cond: ${{ github.event.inputs.TW_MANIFEST == 'twrp-11' || github.event.inputs.TW_MANIFEST == 'twrp-12.1' }}
+        cond: ${{ github.event.inputs.TW_MANIFEST == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
         if_true: twrp
         if_false: omni
 
@@ -324,17 +322,18 @@ jobs:
         bash ${GITHUB_WORKSPACE}/.github/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
         repo sync -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
+      continue-on-error: true
 
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 12
+        swap-size-gb: 32
 
     - name: Building recovery
       run: |
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make recoveryimage -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload files
@@ -343,7 +342,7 @@ jobs:
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
        path: |
-        TWRP/tw_${{ github.event.inputs.TW_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
+        workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
 
     - name: Set Release Properties
       run: |
@@ -399,7 +398,7 @@ jobs:
         <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
         <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
         <pre><b>${{ env.MD5_R_RAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.actor }}/${{ github.repository }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
+        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
 
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
