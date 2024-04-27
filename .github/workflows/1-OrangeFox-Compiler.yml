@@ -282,7 +282,7 @@ jobs:
         cd ${GITHUB_WORKSPACE}/TWRP
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.event.inputs.TW_MANIFEST }} ./tw_${{ github.event.inputs.TW_MANIFEST }}
+        git clone https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b ${{ github.event.inputs.TW_MANIFEST }} ./tw_${{ github.event.inputs.TW_MANIFEST }}
       id: pwd
           
     - name: Repo Sync
