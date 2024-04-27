@@ -32,8 +32,8 @@ on:
         default: 'twrp-12.1'
         type: choice
         options:
-        - twrp-12.1
-        - twrp-11.0  
+        - twrp-12.1q
+        - twrp-11
       DEVICE_TREE:
         description: 'Device Tree'
         required: true
@@ -63,7 +63,7 @@ on:
 
 jobs:
   Build-OrangeFox:
-    name: Build OFR by ${{ github.actor }}
+    name: Build OFRP by ${{ github.actor }}
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
     env:
@@ -247,14 +247,11 @@ jobs:
     - name: Display Run Parameters
       run: |
         echo "::group::User Environment Variables"
-        echo "Manifest URL: ${{ github.event.inputs.MANIFEST_URL }}"
-        echo "Manifest Branch: ${{ github.event.inputs.MANIFEST_BRANCH }}"
+        echo "Manifest Branch: ${{ github.event.inputs.TW_MANIFEST }}"
         echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE_URL }}"
         echo "Device Tree Branch: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}"
         echo "Device Path: ${{ github.event.inputs.DEVICE_PATH }}"
         echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
-        echo "Makefile Name: ${{ github.event.inputs.MAKEFILE_NAME }}"
-        echo "Build Target: ${{ github.event.inputs.BUILD_TARGET }}.img"
         echo "::endgroup::"
 
     - name: Check Out
@@ -276,7 +273,6 @@ jobs:
         java-version: '8'
 
     - name: Setup SSH Keys
-      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') }}
       uses: webfactory/ssh-agent@v0.5.4
       with:
           ssh-private-key: |
