@@ -1,10 +1,9 @@
-name: OrangeFox - Build
+name: Recovery - Build
 
 # Credits to:
 # https://github.com/TeamWin
 # https://gitlab.com/OrangeFox
-# https://github.com/azwhikaru for Recovery Builder Template
-# And all Contributors in every repositories I used
+
 on:
   workflow_dispatch:
     inputs:
