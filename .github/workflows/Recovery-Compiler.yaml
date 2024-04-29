@@ -190,7 +190,7 @@ jobs:
         tag_name: ${{ github.run_id }}
         body: |
           ## OrangeFox Recovery Build - Unofficial
-          Build: fox_${{ github.event.inputs.FOX_MAINFEST }}
+          Build: fox_${{ github.event.inputs.FOX_MANIFEST }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
@@ -205,7 +205,7 @@ jobs:
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        FOX_MANIFEST: ${{ github.event.inputs.FOX_MAINFEST }}
+        FOX_MANIFEST: ${{ github.event.inputs.FOX_MANIFEST }}
         DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
         DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
         COMMIT_ID: ${{ env.COMMIT_ID }}
@@ -248,7 +248,7 @@ jobs:
       run: |
         echo "::group::User Environment Variables"
         echo "Manifest Branch: ${{ github.event.inputs.TW_MANIFEST }}"
-        echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE_URL }}"
+        echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE }}"
         echo "Device Tree Branch: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}"
         echo "Device Path: ${{ github.event.inputs.DEVICE_PATH }}"
         echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
@@ -419,7 +419,7 @@ jobs:
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        TW_MAINFEST: ${{ github.event.inputs.TW_MAINFEST }}
+        TW_MANIFEST: ${{ github.event.inputs.TW_MANIFEST }}
         DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
         DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
         COMMIT_ID: ${{ env.COMMIT_ID }}
@@ -433,7 +433,7 @@ jobs:
         TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
         MESSAGE="
         <b>TWRP Recovery Build - Unofficial</b>
-        <b>Build:</b> ${{ env.TW_MAINFEST }}
+        <b>Build:</b> ${{ env.TW_MANIFEST }}
         <b>Device:</b> <a href=\"${{ env.DEVICE_TREE }}/tree/${{ env.DEVICE_TREE_BRANCH }}\">Device Tree/Branch</a>
         <b>Commit:</b> Most recent <a href=\"${{ env.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}\">commit</a> during building.
         <b><pre>MD5SUM:</pre></b>
