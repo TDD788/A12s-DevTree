@@ -339,7 +339,7 @@ jobs:
         for i in "${!vars[@]}" ; do
             value=$(grep "${vars[$i]}" "$file" | cut -d '"' -f4)
             if [ "$value" != "" ]; then
-                declare -a "${vars[$i]}_val=( $value )"
+                declare -a ${vars[$i]}_val=( $value )
             fi
         done
 
