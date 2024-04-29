@@ -132,15 +132,15 @@ TW_INCLUDE_FBE_METADATA_DECRYPT := false
 BOARD_USES_METADATA_PARTITION := true
 
 # TWRP
-TW_DEVICE_VERSION := "Last-On-Resource"
-TW_THEME := "portrait_hdpi"
+TW_DEVICE_VERSION := Last-On-Resource
+TW_THEME := portrait_hdpi
 TW_FRAMERATE := 60
 TARGET_SCREEN_WIDTH := 720
 TARGET_SCREEN_HEIGHT := 1600
 
 # Screen
-TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel/brightness"
+TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
+TW_BRIGHTNESS_PATH := /sys/class/backlight/panel/brightness
 TW_MAX_BRIGHTNESS := 306
 TW_DEFAULT_BRIGHTNESS:= 153
 
@@ -152,7 +152,7 @@ TW_HAS_DOWNLOAD_MODE:= true
 BOARD_RAMDISK_USE_LZMA := true
 TW_MTP_DEVICE := "Galaxy MTP"
 TW_USE_NEW_MINADBD := true
-TW_INPUT_BLACKLIST := "hbtp_vm"
+TW_INPUT_BLACKLIST := hbtp_vm
 TARGET_USES_MKE2FS := true
 
 # Making the recovery.img smaller
