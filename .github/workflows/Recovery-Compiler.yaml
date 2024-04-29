@@ -382,7 +382,7 @@ jobs:
       if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
       uses: actions/upload-artifact@v2
       with:
-       name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
+       name: TWRP Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
        path: |
         workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
 
