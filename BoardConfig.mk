@@ -184,3 +184,5 @@ TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_RESETPROP := true
 TW_NO_SCREEN_TIMEOUT := true
 TW_SCREEN_BLANK_ON_BOOT := true
+PB_TORCH_PATH := /sys/devices/virtual/camera/flash/rear_flash
+PB_FORCE_DD_FLASH := TRUE
