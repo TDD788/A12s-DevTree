@@ -64,6 +64,7 @@ rename_image() {
 }
 
 process_user_selected_image() {
+	echo ""
     echo "Enter the full path of the image file or directory (default: /sdcard):"
     echo "Enter '.' to use the default directory."
     echo -n "> "
@@ -83,7 +84,7 @@ process_user_selected_image() {
         echo ""
         echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
         echo "Also in the style of PC games you can use the WASD keys"
-        echo "W=UP   A=LEFT   S=DOWN   D=RIGHT   Q=Exit GSIRW"
+        echo "ARROW-W=UP   ARROW-A=LEFT   ARROW-S=DOWN   ARROW-D=RIGHT   Q=Exit GSIRW"
         echo ""
         echo "UP : You will go up in the list of Files or Folders" 
         echo "LEFT : You will go to the previous or higher directory"
@@ -95,13 +96,59 @@ process_user_selected_image() {
 
         read -rsn1 input
 
-        if [ "$input" = "q" ]; then
-            break
-        elif [ "$input" = $'\x1b' ]; then
-            read -rsn2 input
-            if [ "$input" = $'\x5b\x44' ] || [ "$input" = "A" ] || [ "$input" = "a" ]; then
+        case "$input" in
+            "q")
+                break
+                ;;
+            $'\x1b')
+                read -rsn2 input
+                case "$input" in
+                    '[A')
+                        flag="UP"
+                        ;;
+                    '[B')
+                        flag="DOWN"
+                        ;;
+                    '[C')
+                        flag="RIGHT"
+                        ;;
+                    '[D')
+                        flag="LEFT"
+                        ;;
+                esac
+                ;;
+            "W" | "w")
+                flag="UP"
+                ;;
+            "A" | "a")
+                flag="LEFT"
+                ;;
+            "S" | "s")
+                flag="DOWN"
+                ;;
+            "D" | "d")
+                flag="RIGHT"
+                ;;
+        esac
+
+        case "$flag" in
+            "UP")
+                ((selected_index--))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+                ;;
+            "LEFT")
                 image_path=$(dirname "$image_path")
-            elif [ "$input" = $'\x5b\x43' ] || [ "$input" = "D" ] || [ "$input" = "d" ]; then
+                ;;
+            "DOWN")
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                ((selected_index++))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+                ;;
+            "RIGHT")
                 selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
                 if [ -d "$image_path/$selected_file" ]; then
                     image_path="$image_path/$selected_file"
@@ -124,19 +171,8 @@ process_user_selected_image() {
                         break
                     fi
                 fi
-            elif [ "$input" = $'\x5b\x41' ] || [ "$input" = "W" ] || [ "$input" = "w" ]; then
-                ((selected_index--))
-                if [ "$selected_index" -lt 1 ]; then
-                    selected_index=1
-                fi
-            elif [ "$input" = $'\x5b\x42' ] || [ "$input" = "S" ] || [ "$input" = "s" ]; then
-                total_items=$(list_directories_and_files "$image_path" | wc -l)
-                ((selected_index++))
-                if [ "$selected_index" -gt "$total_items" ]; then
-                    selected_index="$total_items"
-                fi
-            fi
-        fi
+                ;;
+        esac
 
         if [ "$selected_index" -lt 1 ]; then
             selected_index=1
@@ -150,6 +186,7 @@ perform_copied_system_image() {
     perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
     dd if="/sdcard/system.img" of="$device_mapper_path"
 }
+
 echo -e "\e[1m\e[3m
             ____ ____ ___                    
           / ___/ ___|_ _|     _ ____      __
@@ -163,7 +200,7 @@ echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
 echo " "
 echo -n "Choose one of the 2 options:"
-read -r option
+read -rsn4 option
 
 if [ -z "$option" ] || [ "$option" = "." ]; then
    option="1"
@@ -179,3 +216,4 @@ case $option in
     *)
         echo "Invalid option."
 esac
+
