@@ -19,7 +19,7 @@ extract_image_from_archive() {
         *.tar.gz | *.tgz)
             tar -xzf "$archive" -C "$extracted_dir"
             ;;
-        *.tar.xz)
+        *.tar.xz | *.xz)
             tar -xJf "$archive" -C "$extracted_dir"
             ;;
         *)
@@ -46,17 +46,22 @@ list_directories_and_files() {
 }
 
 confirm_flash() {
-    echo "Do you want to proceed with flashing the image? (y/n)"
+    echo "Do you want to proceed with flashing the image $original_file? (y/n)"
     read -rsn1 input
     if [ "$input" = "y" ]; then
-        echo "Flashing new RW-SYSTEM"
-        dd if="$image_path" of="/dev/block/mapper/system"
-        break
+        device_mapper_path="/dev/block/mapper/system"
+        echo "Selected partition type: system"
+        dd if="$image_path/$original_file" of="$device_mapper_path"
     else
-        break
+        exit
     fi
 }
 
+rename_image() {
+    local original_file="$1"
+    local new_name="$2"
+    mv "$original_file" "$new_name"
+}
 
 process_user_selected_image() {
     echo "Enter the full path of the image file or directory (default: /sdcard):"
@@ -70,7 +75,7 @@ process_user_selected_image() {
 
     selected_index=1
     selected_symbol=">"
-    original_file=""
+    archivo_seleccionado=""
 
     while true; do
         clear
@@ -94,18 +99,75 @@ process_user_selected_image() {
             break
         elif [ "$input" = $'\x1b' ]; then
             read -rsn2 input
-            if [ "$input" = $'\x5b\x44' ] || [ "$input" = "a" ]; then
+            if [ "$input" = $'\x5b\x44' ] || [ "$input" = "A" ] || [ "$input" = "a" ]; then
                 image_path=$(dirname "$image_path")
-            elif [ "$input" = $'\x5b\x43' ] || [ "$input" = "d" ]; then
+            elif [ "$input" = $'\x5b\x43' ] || [ "$input" = "D" ] || [ "$input" = "d" ]; then
                 selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
                 if [ -d "$image_path/$selected_file" ]; then
                     image_path="$image_path/$selected_file"
                     selected_index=1
                 else
-                    original_file="$selected_file"
-                    echo "Selected directory or file: $original_file"
-                    if [ "${original_file##*.}" = "img" ]; then
+                    archivo_seleccionado="$selected_file"
+                    if [ "${archivo_seleccionado##*.}" = "img" ]; then
+                        original_file="$archivo_seleccionado" 
+                        new_name="$image_path/system.img"
+                        rename_image "$image_path/$archivo_seleccionado" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                        rename_image "$image_path/$new_name" "$original_file"
+                        confirm_flash
+                        break
+                    elif [ "${archivo_seleccionado##*.}" != "zip" ] && [ "${archivo_seleccionado##*.}" != "tar.gz" ] && [ "${archivo_seleccionado##*.}" != "tgz" ] && [ "${archivo_seleccionado##*.}" != "tar.xz" ]; then
+                        echo "Unsupported file format: $archivo_seleccionado"
+                        continue
+                    else
+                        extract_image_from_archive "$image_path/$archivo_seleccionado"
+                        break
+                    fi
+                fi
+            elif [ "$input" = $'\x5b\x41' ] || [ "$input" = "W" ] || [ "$input" = "w" ]; then
+                ((selected_index--))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+            elif [ "$input" = $'\x5b\x42' ] || [ "$input" = "S" ] || [ "$input" = "s" ]; then
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                ((selected_index++))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+            fi
+        fi
+
+        if [ "$selected_index" -lt 1 ]; then
+            selected_index=1
+        fi
+    done
+}
+
+perform_copied_system_image() {
+    cp "$device_mapper_path" "/sdcard/system.img"
+
+    perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
+    dd if="/sdcard/system.img" of="$device_mapper_path"
+}
+
+echo "Select an option:"
+echo "1. Process the user-selected image."
+echo "2. Process a copy of the installed system image."
+echo " "
+echo -n "Choose one of the 2 options:"
+read -r option
+
+case $option in
+    1)
+        process_user_selected_image
+        ;;
+    2)
+        perform_copied_system_image
+        ;;
+    *)
+        echo "Invalid option."
+esac
                         confirm_flash
                     elif [ "${original_file##*.}" = "zip" ] || [ "${original_file##*.}" = "tar.gz" ] || [ "${original_file##*.}" = "tgz" ] || [ "${original_file##*.}" = "tar.xz" ]; then
                         extract_image_from_archive "$image_path/$original_file"
