@@ -113,7 +113,7 @@ process_user_selected_image() {
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
-                        rename_image "$image_path/$new_name" "$original_file"
+                        rename_image "$new_name" "$original_file"
                         confirm_flash
                         break
                     elif [ "${archivo_seleccionado##*.}" != "zip" ] && [ "${archivo_seleccionado##*.}" != "tar.gz" ] && [ "${archivo_seleccionado##*.}" != "tgz" ] && [ "${archivo_seleccionado##*.}" != "tar.xz" ]; then
