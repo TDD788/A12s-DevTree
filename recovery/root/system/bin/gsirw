@@ -116,11 +116,11 @@ process_user_selected_image() {
                         rename_image "$new_name" "$original_file"
                         confirm_flash
                         break
-                    elif [ "${archivo_seleccionado##*.}" != "zip" ] && [ "${archivo_seleccionado##*.}" != "tar.gz" ] && [ "${archivo_seleccionado##*.}" != "tgz" ] && [ "${archivo_seleccionado##*.}" != "tar.xz" ]; then
-                        echo "Unsupported file format: $archivo_seleccionado"
+                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.gz" ] && [ "${compressed_file##*.}" != "tgz" ] && [ "${compressed_file##*.}" != "tar.xz" ]; then
+                        echo "Unsupported file format: $compressed_file"
                         continue
                     else
-                        extract_image_from_archive "$image_path/$archivo_seleccionado"
+                        extract_image_from_archive "$image_path/$compressed_file"
                         break
                     fi
                 fi
@@ -150,13 +150,24 @@ perform_copied_system_image() {
     perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
     dd if="/sdcard/system.img" of="$device_mapper_path"
 }
-
+echo -e "\e[1m\e[3m
+            ____ ____ ___                    
+          / ___/ ___|_ _|     _ ____      __
+         | |  _\___ \| |_____| '__\ \ /\ / /
+        | |_| |___) | |_____| |   \ V  V /
+        \____|____/___|    |_|    \_/\_/  
+\e[0m"
+echo ""
 echo "Select an option:"
 echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
 echo " "
 echo -n "Choose one of the 2 options:"
 read -r option
+
+if [ -z "$option" ] || [ "$option" = "." ]; then
+   option="1"
+fi
 
 case $option in
     1)
