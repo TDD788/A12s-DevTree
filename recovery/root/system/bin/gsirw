@@ -51,7 +51,7 @@ confirm_flash() {
     if [ "$input" = "y" ]; then
         device_mapper_path="/dev/block/mapper/system"
         echo "Selected partition type: system"
-        dd if="$image_path/$original_file" of="$device_mapper_path"
+        dd if="$original_file" of="$device_mapper_path"
     else
         exit
     fi
@@ -188,11 +188,11 @@ perform_copied_system_image() {
 }
 
 echo -e "\e[1m\e[3m
-            ____ ____ ___                    
-          / ___/ ___|_ _|     _ ____      __
-         | |  _\___ \| |_____| '__\ \ /\ / /
+          ____ ____ ___
+         / ___/ ___|_ _|     _ ____      __
+        | |  _\___ \| |_____| '__\ \ /\ / /
         | |_| |___) | |_____| |   \ V  V /
-        \____|____/___|    |_|    \_/\_/  
+         \____|____/___|    |_|    \_/\_/  
 \e[0m"
 echo ""
 echo "Select an option:"
@@ -216,4 +216,3 @@ case $option in
     *)
         echo "Invalid option."
 esac
-
