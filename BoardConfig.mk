@@ -184,5 +184,22 @@ TW_INCLUDE_FUSE_EXFAT := true
 TW_INCLUDE_RESETPROP := true
 TW_NO_SCREEN_TIMEOUT := true
 TW_SCREEN_BLANK_ON_BOOT := true
-PB_TORCH_PATH := /sys/devices/virtual/camera/flash/rear_flash
+
+# PBRP
 PB_FORCE_DD_FLASH := TRUE
+
+#SHRP
+SHRP_PATH := device/samsung/a12s
+SHRP_MAINTAINER := TheDarkDeath788
+SHRP_DEVICE_CODE := a12s
+SHRP_REC_TYPE := Treble
+SHRP_DEVICE_TYPE := A_Only
+SHRP_DARK := true
+SHRP_EXPRESS := true
+SHRP_STATUSBAR_RIGHT_PADDING := 40
+SHRP_STATUSBAR_LEFT_PADDING := 40
+SHRP_EXTERNAL := /external_sd
+SHRP_INTERNAL := /sdcard
+SHRP_OTG := /usb_otg
+SHRP_REC := /dev/block/by-name/recovery
+
