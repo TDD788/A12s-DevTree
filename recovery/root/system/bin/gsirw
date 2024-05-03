@@ -6,6 +6,37 @@ perform_resize_and_unshare_blocks() {
     resize2fs -M "$image_path/system.img"
 }
 
+perform_ota() {
+	local image="$1"
+    resize2fs "$image" 7G
+    e2fsck -E unshare_blocks "$image"
+    resize2fs -M "$image"
+}
+
+identify_device() {
+    if ls /dev/block/mapper >/dev/null 2>&1; then
+        export DYNAMIC="true"
+        export GENERIC=""
+        export DEVICE_MAPPER="/dev/block/mapper"
+    elif ls /dev/block/by-name >/dev/null 2>&1; then
+        export DYNAMIC=""
+        export GENERIC="true"
+        export DEVICE_MAPPER="/dev/block/by-name"
+    else
+        exit 1
+    fi
+    
+    if ls $DEVICE_MAPPER | grep -q "system_a"; then
+        export A_B="true"
+        export A_O=""
+    elif ls $DEVICE_MAPPER | grep -q "system"; then
+        export A_B=""
+        export A_O="true"
+    else
+        exit 1
+    fi
+}
+
 extract_image_from_archive() {
     local archive="$1"
     local extracted_dir="$(dirname "$archive")/extracted"
@@ -49,11 +80,36 @@ confirm_flash() {
     echo "Do you want to proceed with flashing the image $original_file? (y/n)"
     read -rsn1 input
     if [ "$input" = "y" ]; then
-        device_mapper_path="/dev/block/mapper/system"
-        echo "Selected partition type: system"
-        dd if="$original_file" of="$device_mapper_path"
+        if [ "$A_B" = "true" ]; then
+            if [ "$GENERIC" = "true" ]; then
+                echo "Selected partition type: system (using by-name)"
+                dd if="$original_file" of="/dev/block/by-name/system_a"
+                dd if="$original_file" of="/dev/block/by-name/system_b"
+            elif [ "$DYNAMIC" = "true" ]; then
+                echo "Selected partition type: system (using device mapper)"
+                dd if="$original_file" of="/dev/block/mapper/system_a"
+                dd if="$original_file" of="/dev/block/mapper/system_b"
+            else
+                echo "Invalid device type specified."
+                exit 1
+            fi
+        elif [ "$A_O" = "true" ]; then
+            if [ "$GENERIC" = "true" ]; then
+                echo "Selected partition type: system (using by-name)"
+                dd if="$original_file" of="/dev/block/by-name/system"
+            elif [ "$DYNAMIC" = "true" ]; then
+                echo "Selected partition type: system (using device mapper)"
+                dd if="$original_file" of="/dev/block/mapper/system"
+            else
+                echo "Invalid device type specified."
+                exit 1
+            fi
+        else
+            echo "Partition type could not be determined."
+            exit 1
+        fi
     else
-        exit
+        exit 1
     fi
 }
 
@@ -84,7 +140,8 @@ process_user_selected_image() {
         echo ""
         echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
         echo "Also in the style of PC games you can use the WASD keys"
-        echo "ARROW-W=UP   ARROW-A=LEFT   ARROW-S=DOWN   ARROW-D=RIGHT   Q=Exit GSIRW"
+        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
+        echo "                   Q=Exit GSIRW"
         echo ""
         echo "UP : You will go up in the list of Files or Folders" 
         echo "LEFT : You will go to the previous or higher directory"
@@ -180,26 +237,158 @@ process_user_selected_image() {
     done
 }
 
-perform_copied_system_image() {
-    cp "$device_mapper_path" "/sdcard/system.img"
-
-    perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
-    dd if="/sdcard/system.img" of="$device_mapper_path"
+ota_rw() {
+    if [ "$A_B" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            cp "/dev/block/by-name/system_a" "/sdcard/system.img"
+            cp "/dev/block/by-name/vendor_a" "/sdcard/vendor.img"
+            cp "/dev/block/by-name/product_a" "/sdcard/product.img"
+            cp "/dev/block/by-name/odm_a" "/sdcard/odm.img"
+        elif [ "$DYNAMIC" = "true" ]; then
+            cp "/dev/block/mapper/system_a" "/sdcard/system.img"
+            cp "/dev/block/mapper/vendor_a" "/sdcard/vendor.img"
+            cp "/dev/block/mapper/product_a" "/sdcard/product.img"
+            cp "/dev/block/mapper/odm_a" "/sdcard/odm.img"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    elif [ "$A_O" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            cp "/dev/block/by-name/system" "/sdcard/system.img"
+            cp "/dev/block/by-name/vendor" "/sdcard/vendor.img"
+            cp "/dev/block/by-name/product" "/sdcard/product.img"
+            cp "/dev/block/by-name/odm" "/sdcard/odm.img"
+        elif [ "$DYNAMIC" = "true" ]; then
+            cp "/dev/block/mapper/system" "/sdcard/system.img"
+            cp "/dev/block/mapper/vendor" "/sdcard/vendor.img"
+            cp "/dev/block/mapper/product" "/sdcard/product.img"
+            cp "/dev/block/mapper/odm" "/sdcard/odm.img"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    else
+        echo "Partition type could not be determined."
+        exit 1
+    fi
+    
+    perform_ota "/sdcard/system.img"
+    perform_ota "/sdcard/vendor.img"
+    perform_ota "/sdcard/product.img"
+    perform_ota "/sdcard/odm.img"
+    
+    if [ "$A_B" = "true" ]; then
+        if [ "$DYNAMIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system_a"
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system_b"
+            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor_a"
+            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor_b"
+            dd if="/sdcard/product.img" of="/dev/block/mapper/product_a"
+            dd if="/sdcard/product.img" of="/dev/block/mapper/product_b"
+            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm_a"
+            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm_b"
+        elif [ "$GENERIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system_a"
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system_b"
+            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor_a"
+            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor_b"
+            dd if="/sdcard/product.img" of="/dev/block/by-name/product_a"
+            dd if="/sdcard/product.img" of="/dev/block/by-name/product_b"
+            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm_a"
+            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm_b"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    elif [ "$A_O" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system"
+            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor"
+            dd if="/sdcard/product.img" of="/dev/block/by-name/product"
+            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm"
+        elif [ "$DYNAMIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system"
+            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor"
+            dd if="/sdcard/product.img" of="/dev/block/mapper/product"
+            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    else
+        echo "Partition type could not be determined."
+        exit 1
+    fi
 }
 
-echo -e "\e[1m\e[3m
+perform_copied_system_image() {
+    if [ "$A_B" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            cp "/dev/block/by-name/system_a" "/sdcard/system.img"
+        elif [ "$DYNAMIC" = "true" ]; then
+            cp "/dev/block/mapper/system_a" "/sdcard/system.img"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    elif [ "$A_O" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            cp "/dev/block/by-name/system" "/sdcard/system.img"
+        elif [ "$DYNAMIC" = "true" ]; then
+            cp "/dev/block/mapper/system" "/sdcard/system.img"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    else
+        echo "Partition type could not be determined."
+        exit 1
+    fi
+    
+    perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
+    
+    if [ "$A_B" = "true" ]; then
+        if [ "$DYNAMIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system_a"
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system_b"
+        elif [ "$GENERIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system_a"
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system_b"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    elif [ "$A_O" = "true" ]; then
+        if [ "$GENERIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/by-name/system"
+        elif [ "$DYNAMIC" = "true" ]; then
+            dd if="/sdcard/system.img" of="/dev/block/mapper/system"
+        else
+            echo "Invalid device type specified."
+            exit 1
+        fi
+    else
+        echo "Partition type could not be determined."
+        exit 1
+    fi
+}
+
+identify_device
+echo -e "
           ____ ____ ___
          / ___/ ___|_ _|     _ ____      __
         | |  _\___ \| |_____| '__\ \ /\ / /
         | |_| |___) | |_____| |   \ V  V /
          \____|____/___|    |_|    \_/\_/  
-\e[0m"
+"
 echo ""
 echo "Select an option:"
 echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
+echo "3. Process to return the ota in rw."
 echo " "
-echo -n "Choose one of the 2 options:"
+echo -n "Choose one of the 3 options:"
 read -rsn4 option
 
 if [ -z "$option" ] || [ "$option" = "." ]; then
@@ -211,8 +400,14 @@ case $option in
         process_user_selected_image
         ;;
     2)
+        echo ""
         perform_copied_system_image
+        ;;
+    3)  
+        echo ""
+        ota_rw
         ;;
     *)
         echo "Invalid option."
 esac
+
