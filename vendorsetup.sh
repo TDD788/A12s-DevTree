@@ -20,11 +20,11 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_43"
+export FOX_VERSION="R12.1_44"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
-export FOX_CUSTOM_BINS_TO_SDCARD=1
+export FOX_CUSTOM_BINS_TO_SDCARD=2
 
 # Check if FOX_CUSTOM_BINS_TO_SDCARD is enabled
 if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "3" ]; then
