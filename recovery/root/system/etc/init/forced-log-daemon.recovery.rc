@@ -1,5 +1,0 @@
-service forced-log-daemon /system/bin/forced-log-daemon.sh
-    class main
-    user root
-    group root
-    oneshot
