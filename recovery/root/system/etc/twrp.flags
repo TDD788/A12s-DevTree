@@ -26,8 +26,8 @@
 /optics_image         emmc    /dev/block/by-name/optics                flags=display="Optics Image";backup=1;flashimg=1;
 /up_param             emmc    /dev/block/by-name/up_param              flags=display="Param";backup=1;flashimg=1;
 #/sdcard              auto    /data/media/                             flags=display="Internal Storage";wipeingui
-/external_sd          auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable;external;force_external_storage=1
-/external_sd1         auto    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable;external;force_external_storage=1
-/usb_otg              auto    /dev/block/sda                           flags=display="USB OTG 1st";storage;wipeingui;removable;external;force_external_storage=1
-/usb_otg1             auto    /dev/block/sda1                          flags=display="USB OTG 2nd";storage;wipeingui;removable;external;force_external_storage=1
-/usb_otg2             auto    /dev/block/sda2                          flags=display="USB OTG 3rd";storage;wipeingui;removable;external;force_external_storage=1
+/external_sd          auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable
+/external_sd1         auto    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable
+/usb_otg              auto    /dev/block/sda                           flags=display="USB OTG 1st";storage;wipeingui;removable
+/usb_otg1             auto    /dev/block/sda1                          flags=display="USB OTG 2nd";storage;wipeingui;removable
+/usb_otg2             auto    /dev/block/sda2                          flags=display="USB OTG 3rd";storage;wipeingui;removable
