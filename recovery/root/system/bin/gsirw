@@ -1,9 +1,15 @@
 #!/system/bin/sh
 
 perform_resize_and_unshare_blocks() {
-    resize2fs "$image_path/system.img" 7G
+    resize2fs "$image_path/system.img" 6G
     e2fsck -E unshare_blocks "$image_path/system.img"
     resize2fs -M "$image_path/system.img"
+}
+
+perform_resize_and_unshare_blocks_v2() {
+    resize2fs "$found_dir/system.img" 6G
+    e2fsck -E unshare_blocks "$found_dir/system.img"
+    resize2fs -M "$found_dir/system.img"
 }
 
 perform_ota() {
@@ -11,6 +17,11 @@ perform_ota() {
     resize2fs "$image" 7G
     e2fsck -E unshare_blocks "$image"
     resize2fs -M "$image"
+}
+
+ask() {
+	echo "Press any key to continue..."
+	read -rsn1
 }
 
 identify_device() {
@@ -45,13 +56,16 @@ extract_image_from_archive() {
     echo "Extracting $archive..."
     case "$archive" in
         *.zip)
-            unzip -q "$archive" -d "$extracted_dir"
+            unzip "$archive" -d "$extracted_dir"
             ;;
         *.tar.gz | *.tgz)
-            tar -xzf "$archive" -C "$extracted_dir"
+            gunzip -c "$archive" | tar -xf - -C "$extracted_dir"
             ;;
         *.tar.xz | *.xz)
-            tar -xJf "$archive" -C "$extracted_dir"
+            xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)"
+            ;;
+        *.gz)
+            gunzip -k "$archive" -d "$extracted_dir"
             ;;
         *)
             echo "Unsupported archive format: $archive"
@@ -60,14 +74,50 @@ extract_image_from_archive() {
     esac
 }
 
-find_image_in_directory() {
-    local directory="$1"
-    echo "Searching for image in $directory..."
-    local image_file="$(find "$directory" -type f -iname '*.img' | head -n 1)"
-    if [ -n "$image_file" ]; then
-        echo "Found image: $image_file"
+process_image() {
+    if [ "$type" = "1" ]; then
+      $ask
+      local found_dir=$found_dir
+      local found_file=$found_file
+      original="$found_dir/$found_file"
+      new="$found_dir/system.img"
+      rename_image "$original" "$new"
+      perform_resize_and_unshare_blocks_v2 || echo "Failed to resize and unshare blocks."
+      rename_image "$new" "$original"
+      confirm_flash_v2
+    elif [ "$type" = "4" ]; then
+      $ask
+      if [ ! -d "/cache/system" ]; then
+          mkdir -p "/cache/system"
+      fi
+      original_file="$found_dir/$found_file" 
+      new_name="$found_dir/system.img"
+      rename_image "$image_path/$select_file" "$new_name"
+      perform_resize_and_unshare_blocks_v2 || echo "Failed to resize and unshare blocks."
+      resize2fs "$new_name" 6G
+      mount -o loop,rw "$new_name" /cache/system/
+      echo "Mounted Image On /cache/system to modify"
+      echo "Press any key to indicate that you have finished the process... "
+      read -rsn4 finish
+      e2fsck -f "$new_name"
+      resize2fs -M "$new_name"
+      umount /cache/system/
+      echo "Compressed Image and Removed Montage"
+      rename_image "$new_name" "$original_file"
     else
-        echo "No image found in $directory"
+        echo "Invalid TYPE value."
+    fi
+}
+
+find_image_in_directory() {
+    local recent_image_file=$(find "$image_path" -type f -name '*.img' -mmin -5)
+    if [ -n "$recent_image_file" ]; then
+        export found_dir=$(dirname "$recent_image_file")
+        export found_file=$(basename "$recent_image_file")
+        echo "Found recent image: $found_file in $found_dir"
+        process_image
+    else
+        echo "No recent image found in $image_path"
     fi
 }
 
@@ -113,14 +163,183 @@ confirm_flash() {
     fi
 }
 
+confirm_flash_v2() {
+    echo "Do you want to proceed with flashing the image $original? (y/n)"
+    read -rsn1 input
+    if [ "$input" = "y" ]; then
+        if [ "$A_B" = "true" ]; then
+            if [ "$GENERIC" = "true" ]; then
+                echo "Selected partition type: system (using by-name)"
+                dd if="$original" of="/dev/block/by-name/system_a"
+                dd if="$original" of="/dev/block/by-name/system_b"
+            elif [ "$DYNAMIC" = "true" ]; then
+                echo "Selected partition type: system (using device mapper)"
+                dd if="$original" of="/dev/block/mapper/system_a"
+                dd if="$original" of="/dev/block/mapper/system_b"
+            else
+                echo "Invalid device type specified."
+                exit 1
+            fi
+        elif [ "$A_O" = "true" ]; then
+            if [ "$GENERIC" = "true" ]; then
+                echo "Selected partition type: system (using by-name)"
+                dd if="$original" of="/dev/block/by-name/system"
+            elif [ "$DYNAMIC" = "true" ]; then
+                echo "Selected partition type: system (using device mapper)"
+                dd if="$original" of="/dev/block/mapper/system"
+            else
+                echo "Invalid device type specified."
+                exit 1
+            fi
+        else
+            echo "Partition type could not be determined."
+            exit 1
+        fi
+    else
+        exit 1
+    fi
+}
+
 rename_image() {
     local original_file="$1"
     local new_name="$2"
     mv "$original_file" "$new_name"
 }
 
+user_modification() {
+    echo "Enter the full path of the image file or directory (default: /sdcard)"
+    echo "Enter '.' to use the default directory."
+    echo -n "> "
+    read -r image_path
+
+    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
+        image_path="/sdcard"
+    fi
+
+    selected_index=1
+    selected_symbol=">"
+    select_file=""
+
+    while true; do
+        clear
+        echo "Guide to Move"
+        echo ""
+        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
+        echo "Also in the style of PC games you can use the WASD keys"
+        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
+        echo "                   Q=Exit GSIRW"
+        echo ""
+        echo "UP : You will go up in the list of Files or Folders" 
+        echo "LEFT : You will go to the previous or higher directory"
+        echo "RIGHT : Enter folder or select file"
+        echo "DOWN : Go down the list of Files or Folders"
+        echo ""
+        echo "Contents of $image_path:"
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+
+        read -rsn1 input
+
+        case "$input" in
+            "q")
+                break
+                ;;
+            $'\x1b')
+                read -rsn2 input
+                case "$input" in
+                    '[A')
+                        flag="UP"
+                        ;;
+                    '[B')
+                        flag="DOWN"
+                        ;;
+                    '[C')
+                        flag="RIGHT"
+                        ;;
+                    '[D')
+                        flag="LEFT"
+                        ;;
+                esac
+                ;;
+            "W" | "w")
+                flag="UP"
+                ;;
+            "A" | "a")
+                flag="LEFT"
+                ;;
+            "S" | "s")
+                flag="DOWN"
+                ;;
+            "D" | "d")
+                flag="RIGHT"
+                ;;
+        esac
+
+        case "$flag" in
+            "UP")
+                ((selected_index--))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+                ;;
+            "LEFT")
+                image_path=$(dirname "$image_path")
+                ;;
+            "DOWN")
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                ((selected_index++))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+                ;;
+            "RIGHT")
+                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
+                if [ -d "$image_path/$selected_file" ]; then
+                    image_path="$image_path/$selected_file"
+                    selected_index=1
+                else
+                    select_file="$selected_file"
+                    compressed_file="$select_file"
+                    if [ "${select_file##*.}" = "img" ]; then
+                    	$ask
+                        if [ ! -d "/cache/system" ]; then
+   						 mkdir -p "/cache/system"
+						fi
+                        original_file="$image_path/$select_file" 
+                        new_name="$image_path/system.img"
+                        rename_image "$image_path/$select_file" "$new_name"
+                        perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                        resize2fs "$new_name" 6G
+   					 mount -o loop,rw "$new_name" /cache/system/
+    					echo "Mounted Image On /cache/system to modify"
+                        echo "Price to any key to indicate that you have finished the process... "
+                        read -rsn4 finish
+                        e2fsck -f "$new_name"
+                        resize2fs -M "$new_name"
+                        umount /cache/system/
+                        echo "Compressed Image and Removed Montage"
+                        rename_image "$new_name" "$original_file"
+                        break
+                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.xz" ] && [ "${compressed_file##*.}" != "gz" ] && [ "${compressed_file##*.}" != "xz" ]; then
+						$ask
+                        echo "Unsupported file format: $compressed_file"
+                        continue
+                    else
+                        $ask
+                        extract_image_from_archive "$image_path/$compressed_file"
+                        find_image_in_directory
+                        break
+                    fi
+                fi
+                ;;
+        esac
+
+        if [ "$selected_index" -lt 1 ]; then
+            selected_index=1
+        fi
+    done
+}
+
 process_user_selected_image() {
-	echo ""
     echo "Enter the full path of the image file or directory (default: /sdcard):"
     echo "Enter '.' to use the default directory."
     echo -n "> "
@@ -212,7 +431,9 @@ process_user_selected_image() {
                     selected_index=1
                 else
                     select_file="$selected_file"
+                    compressed_file="$select_file"
                     if [ "${select_file##*.}" = "img" ]; then
+                        $ask
                         original_file="$image_path/$select_file" 
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
@@ -220,11 +441,14 @@ process_user_selected_image() {
                         rename_image "$new_name" "$original_file"
                         confirm_flash
                         break
-                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.gz" ] && [ "${compressed_file##*.}" != "tgz" ] && [ "${compressed_file##*.}" != "tar.xz" ]; then
+                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.xz" ] && [ "${compressed_file##*.}" != "gz" ] && [ "${compressed_file##*.}" != "xz" ]; then
+                        $ask
                         echo "Unsupported file format: $compressed_file"
                         continue
                     else
+                        $ask
                         extract_image_from_archive "$image_path/$compressed_file"
+                        find_image_in_directory
                         break
                     fi
                 fi
@@ -238,6 +462,7 @@ process_user_selected_image() {
 }
 
 ota_rw() {
+	$ask
     if [ "$A_B" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
             cp "/dev/block/by-name/system_a" "/sdcard/system.img"
@@ -387,9 +612,11 @@ echo "Select an option:"
 echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
 echo "3. Process to return the ota in rw."
+echo "4. Modify images."
 echo " "
-echo -n "Choose one of the 3 options:"
-read -rsn4 option
+echo -n "Choose one of the 4 options:"
+read -rsn5 option
+echo ""
 
 if [ -z "$option" ] || [ "$option" = "." ]; then
    option="1"
@@ -397,17 +624,19 @@ fi
 
 case $option in
     1)
+        type=1
         process_user_selected_image
         ;;
     2)
-        echo ""
         perform_copied_system_image
         ;;
-    3)  
-        echo ""
+    3)
         ota_rw
+        ;;
+    4)
+        type=4
+        user_modification
         ;;
     *)
         echo "Invalid option."
 esac
-
