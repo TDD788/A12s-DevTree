@@ -1,12 +1,12 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
-/product_image        emmc    /dev/block/mapper/product                flags=backup=1;flashimg;display="Product Image";logical
-/system_image         emmc    /dev/block/mapper/system                 flags=backup=1;flashimg;display="System Image";logical
-/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=1;flashimg;display="Vendor Image";logical
-/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=1;flashimg;display="Odm Image";logical
-/product              ext4    /dev/block/mapper/product                flags=display="Product";wipeingui;logical
-/system_root          ext4    /dev/block/mapper/system                 flags=display="System";wipeingui;logical
-/vendor               ext4    /dev/block/mapper/vendor                 flags=display="Vendor";wipeingui;logical
-/odm                  ext4    /dev/block/mapper/odm                    flags=display="Odm";wipeingui;logical
+/product_image        emmc    /dev/block/mapper/product                flags=backup=1;flashimg;display="Product Image"
+/system_image         emmc    /dev/block/mapper/system                 flags=backup=1;flashimg;display="System Image"
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=1;flashimg;display="Vendor Image"
+/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=1;flashimg;display="Odm Image"
+/product              ext4    /dev/block/mapper/product                flags=display="Product";wipeingui
+/system_root          ext4    /dev/block/mapper/system                 flags=display="System";wipeingui
+/vendor               ext4    /dev/block/mapper/vendor                 flags=display="Vendor";wipeingui
+/odm                  ext4    /dev/block/mapper/odm                    flags=display="Odm";wipeingui
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
 /metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui
@@ -14,10 +14,10 @@
 /cache                ext4    /dev/block/by-name/cache                 flags=display="Cache";wipeingui
 /efs                  ext4    /dev/block/by-name/efs                   flags=backup=1;display="Efs";wipeingui;flashimg
 /sec_efs              ext4    /dev/block/by-name/sec_efs               flags=backup=1;display="Sec Efs";wipeingui;flashimg
-/app_data             emmc    /data/data/                              flags=backup=1;display="App Data";wipeingui
-/app                  emmc    /data/app/                               flags=backup=1;display="Apps";wipeingui
+/app_data             f2fs    /data/data/                              flags=backup=1;display="App Data";wipeingui
+/app                  f2fs    /data/app/                               flags=backup=1;display="Apps";wipeingui
 /modem                emmc    /dev/block/by-name/radio                 flags=backup=1;display="Modem";
-/wifi                 emmc    /data/misc/apexdata/com.android.wifi/    flags=display="Wifi Data";backup=1
+/wifi                 f2fs    /data/misc/apexdata/com.android.wifi/    flags=display="Wifi Data";backup=1
 /misc                 emmc    /dev/block/by-name/misc
 /dtbo                 emmc    /dev/block/by-name/dtbo                  flags=display="DTBO Image";flashimg=1;backup=1;
 /prism                ext4    /dev/block/by-name/prism                 flags=display="Prism";backup=0;
