@@ -1,6 +1,6 @@
 <src>                           <mnt_point>          <type>  <mnt_flags and options>                                           <fs_mgr_flags>
-system                           /system              ext4        	ro    avb=vbmeta,logical,first_stage_mount,display="System EXT4"
-system                           /system              f2fs        	ro    avb=vbmeta,logical,first_stage_mount,display="System F2FS"
+system                           /system_root         ext4        	ro    avb=vbmeta,logical,first_stage_mount,display="System EXT4"
+system                           /system_root         f2fs        	ro    avb=vbmeta,logical,first_stage_mount,display="System F2FS"
 vendor                           /vendor              ext4          ro    avb,logical,first_stage_mount,display="VENDOR EXT4"
 vendor                           /vendor              f2fs          ro    avb,logical,first_stage_mount,display="VENDOR F2FS"
 product                          /product             ext4          ro    avb,logical,first_stage_mount
