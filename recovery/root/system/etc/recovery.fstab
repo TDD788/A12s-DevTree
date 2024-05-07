@@ -4,7 +4,7 @@
 /dev/block/mapper/system       /system_image       emmc      flags=backup=0;flashimg=1;display="System EMMC Image"     
 /dev/block/mapper/vendor       /vendor_image       emmc      flags=backup=0;flashimg=1;display="Vendor Image"     
 /dev/block/mmcblk1p1           /external_sd        vfat      flags=storage;wipeingui;removable      /dev/block/mmcblk1
-/dev/block/mapper/system       /system             ext4      flags=display="System Logic Partition";backup=1;wipeingui     
+/dev/block/mapper/system       /system_root        ext4      flags=display="System Logic Partition";backup=1;wipeingui     
 /dev/block/mapper/vendor       /vendor             ext4      flags=display="Vendor Logic Partition";wipeingui;backup=1     
 /dev/block/mapper/product      /product            ext4      flags=display="Product Logic Partition";backup=1;flashimg=1;wipeingui     
 /dev/block/mapper/odm          /odm                ext4      flags=display="ODM LOGIC Partition";wipeingui;backup=1     
