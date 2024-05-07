@@ -20,11 +20,11 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_44"
+export FOX_VERSION="R12.1_45"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
-export FOX_CUSTOM_BINS_TO_SDCARD=2
+export FOX_CUSTOM_BINS_TO_SDCARD=1
 
 # Check if FOX_CUSTOM_BINS_TO_SDCARD is enabled
 if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "3" ]; then
@@ -46,7 +46,7 @@ export_build_vars(){
 	echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
 	#Important Build Flags
 	export FOX_VANILLA_BUILD=1
-	#export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
@@ -57,18 +57,18 @@ export_build_vars(){
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_SAMSUNG_HAPTICS=1
-	export OF_USE_SYSTEM_FINGERPRINT=1
+	export OF_USE_SYSTEM_FINGERPRINT=0
 	export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/magisk/magdelta.zip"
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	#export OF_FORCE_DISABLE_DM_VERITY=0
-	#export OF_DISABLE_FORCED_ENCRYPTION=0
+	export OF_FORCE_DISABLE_DM_VERITY=0
+	export OF_DISABLE_FORCED_ENCRYPTION=0
 	
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
 	export OF_ENABLE_FS_COMPRESSION=1
-	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/bootdevice/by-name/recovery"
+	export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
 	export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export OF_HIDE_NOTCH=1
