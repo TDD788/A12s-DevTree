@@ -1,4 +1,4 @@
-#<mnt_point>          <type>  <src>                                    <mnt_flags and options>
+#<mnt_point>         <type>  <src>                                    <mnt_flags and options>
 /product_image        emmc    /dev/block/mapper/product                flags=backup=1;flashimg;display="Product Image"
 /system_image         emmc    /dev/block/mapper/system                 flags=backup=1;flashimg;display="System Image"
 /vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=1;flashimg;display="Vendor Image"
