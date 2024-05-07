@@ -1,16 +1,12 @@
-#<mnt_point>         <type>   <src>                                    <mnt_flags and options>
-/product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
-/product              f2fs    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
+#<mnt_point>          <type>  <src>                                    <mnt_flags and options>
 /product_image        emmc    /dev/block/mapper/product                flags=backup=1;flashimg;display="Product Image"
-/system_root          f2fs    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
-/system_root          ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
 /system_image         emmc    /dev/block/mapper/system                 flags=backup=1;flashimg;display="System Image"
-/vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
-/vendor               f2fs    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
 /vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=1;flashimg;display="Vendor Image"
-/odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
-/odm                  f2fs    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
 /odm_image            emmc    /dev/block/mapper/odm                    flags=backup=1;flashimg;display="Odm Image"
+/product              ext4    /dev/block/mapper/product                flags=display="Product";wipeingui
+/system               ext4    /dev/block/mapper/system                 flags=display="System";wipeingui
+/vendor               ext4    /dev/block/mapper/vendor                 flags=display="Vendor";wipeingui
+/odm                  ext4    /dev/block/mapper/odm                    flags=display="Odm";wipeingui
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
 /metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui
@@ -27,7 +23,8 @@
 /optics_image         emmc    /dev/block/by-name/optics                flags=display="Optics Image";backup=1;flashimg=1;
 /up_param             emmc    /dev/block/by-name/up_param              flags=display="Param";backup=1;flashimg=1;
 #/sdcard              auto    /data/media/                             flags=display="Internal Storage";wipeingui
-/external_sd          vfat    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable
-/external_sd1         vfat    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable
+/external_sd          auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable
+/external_sd1         auto    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable
 /usb_otg              auto    /dev/block/sda                           flags=display="USB OTG 1st";storage;wipeingui;removable
 /usb_otg1             auto    /dev/block/sda1                          flags=display="USB OTG 2nd";storage;wipeingui;removable
+/usb_otg2             auto    /dev/block/sda2                          flags=display="USB OTG 3rd";storage;wipeingui;removable
