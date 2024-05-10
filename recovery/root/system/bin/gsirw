@@ -6,6 +6,175 @@ perform_resize_and_unshare_blocks() {
     resize2fs -M "$image_path/system.img"
 }
 
+load_saved_configurations() {
+    local config_file="/cache/recovery.conf"
+    if [ -f "$config_file" ]; then
+        echo "Loading saved configurations from $config_file..."
+        source "$config_file"
+    else
+        config_file="~/recovery.conf"
+        if [ -f "$config_file" ]; then
+            echo "Loading saved configurations from $config_file..."
+            source "$config_file"
+        else
+            echo "No saved configurations found."
+        fi
+    fi
+}
+
+save_configurations() {
+    local config_file="/cache/recovery.conf"
+    if [ -w "/cache" ]; then
+        echo "Saving configurations to $config_file..."
+        {
+            echo "# Recovery configurations"
+            echo "export A_B=\"$A_B\""
+            echo "export A_O=\"$A_O\""
+            echo "export DYNAMIC=\"$DYNAMIC\""
+            echo "export GENERIC=\"$GENERIC\""
+            echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
+            echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+        } >"$config_file"
+    else
+        config_file="~/recovery.conf"
+        echo "Saving configurations to $config_file..."
+        {
+            echo "# Recovery configurations"
+            echo "export A_B=\"$A_B\""
+            echo "export A_O=\"$A_O\""
+            echo "export DYNAMIC=\"$DYNAMIC\""
+            echo "export GENERIC=\"$GENERIC\""
+            echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
+            echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+        } >"$config_file"
+    fi
+}
+
+configure_manually() {
+    while true; do
+        clear
+        echo "Manual Configuration:"
+        echo "1. Set A/B or A Only flags"
+        echo "2. Choose Device Mapper or other parameters"
+        echo "3. Customize mount point"
+        echo "4. Done"
+        echo ""
+        echo -n "Enter your choice (1-4): "
+        read -rsn1 choice
+        echo ""
+
+        case $choice in
+            1)
+                while true; do
+                    clear
+                    echo "Set A/B or A Only flags:"
+                    echo "a. A/B"
+                    echo "b. A Only"
+                    echo "c. Go back"
+                    echo ""
+                    echo -n "Enter your choice (a/b/c): "
+                    read -rsn1 flag_choice
+                    echo ""
+
+                    case $flag_choice in
+                        a)
+                            export A_B="true"
+                            export A_O=""
+                            break
+                            ;;
+                        b)
+                            export A_B=""
+                            export A_O="true"
+                            break
+                            ;;
+                        c)
+                            break
+                            ;;
+                        *)
+                            echo "Invalid choice. Press any key to try again..."
+                            read -rsn1
+                            ;;
+                    esac
+                    save_configurations
+                done
+                ;;
+            2)
+                while true; do
+                    clear
+                    echo "Choose Device Mapper or other parameters:"
+                    echo "a. Device Mapper"
+                    echo "b. Other parameters"
+                    echo "c. Go back"
+                    echo ""
+                    echo -n "Enter your choice (a/b/c): "
+                    read -rsn1 param_choice
+                    echo ""
+
+                    case $param_choice in
+                        a)
+                            export DYNAMIC="true"
+                            export GENERIC=""
+                            export DEVICE_MAPPER="/dev/block/mapper"
+                            break
+                            ;;
+                        b)
+                            echo "Custom parameters configuration."
+                            echo "Press any key to continue..."
+                            read -rsn1
+                            ;;
+                        c)
+                            break
+                            ;;
+                        *)
+                            echo "Invalid choice. Press any key to try again..."
+                            read -rsn1
+                            ;;
+                    esac
+                    save_configurations
+                done
+                ;;
+            3)
+                while true; do
+                    clear
+                    echo "Customize mount point:"
+                    echo "Enter custom mount point (or leave empty to cancel):"
+                    echo -n "> "
+                    read -r custom_mount_point
+
+                    if [ -z "$custom_mount_point" ]; then
+                        echo "Mount point cannot be empty. Press any key to try again..."
+                        read -rsn1
+                    else
+                        export CUSTOM_MOUNT_POINT="$custom_mount_point"
+                        echo "Mount point set to: $CUSTOM_MOUNT_POINT"
+                        echo "Press any key to continue..."
+                        read -rsn1
+                        break
+                    fi
+                    save_configurations
+                done
+                ;;
+            4)
+                save_configurations
+                break
+                ;;
+            *)
+                echo "Invalid choice. Press any key to try again..."
+                read -rsn1
+                ;;
+        esac
+    done
+}
+
+set_default_configurations() {
+    : ${A_B:="true"}
+    : ${A_O:=""}
+    : ${DYNAMIC:="true"}
+    : ${GENERIC:=""}
+    : ${DEVICE_MAPPER:="/dev/block/mapper"}
+    : ${CUSTOM_MOUNT_POINT:=""}
+}
+
 perform_resize_and_unshare_blocks_v2() {
     resize2fs "$found_dir/system.img" 6G
     e2fsck -E unshare_blocks "$found_dir/system.img"
@@ -600,6 +769,7 @@ perform_copied_system_image() {
 }
 
 identify_device
+load_saved_configurations
 echo -e "
           ____ ____ ___
          / ___/ ___|_ _|     _ ____      __
@@ -613,8 +783,9 @@ echo "1. Process the user-selected image."
 echo "2. Process a copy of the installed system image."
 echo "3. Process to return the ota in rw."
 echo "4. Modify images."
+echo "5. Manually configure options."
 echo " "
-echo -n "Choose one of the 4 options:"
+echo -n "Choose one of the 5 options:"
 read -rsn5 option
 echo ""
 
@@ -636,6 +807,10 @@ case $option in
     4)
         type=4
         user_modification
+        ;;
+    5)
+        set_default_configurations
+        configure_manually
         ;;
     *)
         echo "Invalid option."
