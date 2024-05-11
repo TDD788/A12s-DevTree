@@ -73,6 +73,10 @@ export_build_vars(){
 	export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 	export OF_HIDE_NOTCH=1
 	
+	# maximum permissible splash image size
+	# (in kilobytes); do *NOT* increase!
+	export OF_SPLASH_MAX_SIZE=128
+	
 	# Specific Features Configurations
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
 	export OF_ENABLE_LPTOOLS=1
@@ -80,16 +84,12 @@ export_build_vars(){
 	export OF_PATCH_AVB20=1
 	export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
 	export OF_SCREEN_H=2400
-	export OF_NO_SPLASH_CHANGE=1
+	export OF_NO_SPLASH_CHANGE=0
 
 	# File Paths Configurations
 	export OF_FL_PATH1="/system/flashlight"
 	export OF_FL_PATH2=""
 	export OF_FLASHLIGHT_ENABLE=1
-	
-	# maximum permissible splash image size
-	# (in kilobytes); do *NOT* increase!
-	#export OF_SPLASH_MAX_SIZE=128
  
 	# let's see what are our build VARs
 	if [ -n "$FOX_BUILD_LOG_FILE" -a -f "$FOX_BUILD_LOG_FILE" ]; then

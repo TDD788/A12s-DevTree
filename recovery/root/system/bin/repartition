@@ -3,7 +3,7 @@ echo "Set a custom SUPER size in MiB"
 read SUPERSIZE
 PRISMSIZE=30
 
-SGDISK="sh /system/etc/sgdisk"
+SGDISK=/system/bin/sgdisk
 DISK=/dev/block/mmcblk0
 
 DISKCODE=`$SGDISK --print $DISK | grep super | awk '{printf $6}'`

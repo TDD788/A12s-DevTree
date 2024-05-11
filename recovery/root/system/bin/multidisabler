@@ -272,6 +272,7 @@ if ! mount | grep "$ANDROID_ROOT" >/dev/null; then
 fi
 
 echo " - Mounting /vendor..."
+e2fsck -fp /dev/block/mapper/vendor
 mount /vendor
 mount -o remount,rw /vendor
 

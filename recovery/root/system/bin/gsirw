@@ -1,9 +1,116 @@
 #!/system/bin/sh
 
+export DEFAULT_SYSTEM_NAME="system"
+export DEFAULT_VENDOR_NAME="vendor"
+export DEFAULT_PRODUCT_NAME="product"
+export DEFAULT_ODM_NAME="odm"
+export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
+export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
+export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
+export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
+
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+DEVICE_NAME=$(getprop ro.product.vendor.device)
+DEVICE_MODEL=$(getprop ro.product.vendor.model)
+SOC=$(getprop ro.soc.model)
+
 perform_resize_and_unshare_blocks() {
     resize2fs "$image_path/system.img" 6G
     e2fsck -E unshare_blocks "$image_path/system.img"
     resize2fs -M "$image_path/system.img"
+}
+
+generate_random_message() {
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
+}
+
+simulate_bootloader_patch() {
+    echo -e "${NC}Generating specialized patch keys for $DEVICE_MODEL${NC}"
+    echo -e "${NC}Modifying kernel for library adjustment${NC}"
+    echo -e "${NC}Proceeding with the process for user adaptation${NC}"
+    sleep 3
+    echo -e "${BLUE}Attempting to remove security patches from $DEVICE_NAME's Bootloader"
+    echo -e "${GREEN}Removal successful."
+    sleep 3
+}
+
+prank() {
+	clear
+	echo -e "${GREEN}Initializing attempt to remove Bootloader security patches on ${DEVICE_NAME}...${NC}"
+	simulate_bootloader_patch
+
+	echo ""
+	echo -e "${RED}-----------------------------------------------------------"
+	echo -e "${RED}ERROR: A critical problem has been detected in the system.${NC}"
+	echo -e "${RED}Please do not turn off the device and wait for instructions.${NC}"
+	echo -e "${RED}-----------------------------------------------------------"
+	echo ""
+
+	echo -e "Bootloader SOC Log: ${RED}$(generate_random_message)${NC}"
+	echo -e "${RED}Checking total integrity of SELinux${NC}"
+	sleep 2
+	echo -e "${RED}Failed: Do not restart your device${NC}"
+	echo -e "${RED}Please press any key to try to repair your device${NC}"
+	read -rsn1
+
+	echo 1 > /sys/class/graphics/fb0/blank
+
+	sleep 10
+
+	echo 0 > /sys/class/graphics/fb0/blank
+
+	reboot
+}
+
+
+set_partition_names() {
+    clear
+    echo "Partition Names Configuration:"
+    echo "1. System partition name: $CUSTOM_SYSTEM_NAME"
+    echo "2. Vendor partition name: $CUSTOM_VENDOR_NAME"
+    echo "3. Product partition name: $CUSTOM_PRODUCT_NAME"
+    echo "4. ODM partition name: $CUSTOM_ODM_NAME"
+    echo "5. Restore default values"
+    echo "6. Save and exit"
+    echo "Select the partition number you want to modify (or 'q' to quit):"
+
+    read -rsn1 input
+
+    case "$input" in
+        "q")
+            clear
+            exit 0
+            ;;
+        "1")
+            echo -n "New name for system partition (current: $CUSTOM_SYSTEM_NAME): "
+            read -r CUSTOM_SYSTEM_NAME
+            ;;
+        "2")
+            echo -n "New name for vendor partition (current: $CUSTOM_VENDOR_NAME): "
+            read -r CUSTOM_VENDOR_NAME
+            ;;
+        "3")
+            echo -n "New name for product partition (current: $CUSTOM_PRODUCT_NAME): "
+            read -r CUSTOM_PRODUCT_NAME
+            ;;
+        "4")
+            echo -n "New name for ODM partition (current: $CUSTOM_ODM_NAME): "
+            read -r CUSTOM_ODM_NAME
+            ;;
+        "5")
+            CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
+            CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
+            CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
+            CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
+            ;;
+        "6")
+            save_and_exit
+            ;;
+    esac
 }
 
 load_saved_configurations() {
@@ -12,7 +119,7 @@ load_saved_configurations() {
         echo "Loading saved configurations from $config_file..."
         source "$config_file"
     else
-        config_file="~/recovery.conf"
+        config_file="$HOME/recovery.conf"
         if [ -f "$config_file" ]; then
             echo "Loading saved configurations from $config_file..."
             source "$config_file"
@@ -58,6 +165,7 @@ configure_manually() {
         echo "2. Choose Device Mapper or other parameters"
         echo "3. Customize mount point"
         echo "4. Done"
+        echo "5. Enable super secret settings in $SOC"
         echo ""
         echo -n "Enter your choice (1-4): "
         read -rsn1 choice
@@ -103,13 +211,14 @@ configure_manually() {
                     clear
                     echo "Choose Device Mapper or other parameters:"
                     echo "a. Device Mapper"
-                    echo "b. Other parameters"
-                    echo "c. Go back"
+                    echo "b. Generic By-Name"
+                    echo "c. Other parameters"
+                    echo "d. Go back"
                     echo ""
-                    echo -n "Enter your choice (a/b/c): "
+                    echo -n 'Enter your choice (a/b/c/d):'
                     read -rsn1 param_choice
                     echo ""
-
+                    
                     case $param_choice in
                         a)
                             export DYNAMIC="true"
@@ -117,12 +226,20 @@ configure_manually() {
                             export DEVICE_MAPPER="/dev/block/mapper"
                             break
                             ;;
-                        b)
+                        d)
+                            export DYNAMIC=""
+                            export GENERIC="true"
+                            export DEVICE_MAPPER="/dev/block/by-name"
+                            break
+                            ;;
+                        c)
                             echo "Custom parameters configuration."
                             echo "Press any key to continue..."
                             read -rsn1
+                            set_partition_names
+                            break
                             ;;
-                        c)
+                        d)
                             break
                             ;;
                         *)
@@ -142,8 +259,11 @@ configure_manually() {
                     read -r custom_mount_point
 
                     if [ -z "$custom_mount_point" ]; then
-                        echo "Mount point cannot be empty. Press any key to try again..."
+                        export CUSTOM_MOUNT_POINT="/cache/system"
+                        echo "Mount point cannot be empty. Setting default in /cache/system"
+                        echo "Press any key to continue..."
                         read -rsn1
+                        break
                     else
                         export CUSTOM_MOUNT_POINT="$custom_mount_point"
                         echo "Mount point set to: $CUSTOM_MOUNT_POINT"
@@ -157,6 +277,9 @@ configure_manually() {
             4)
                 save_configurations
                 break
+                ;;
+            5)
+                prank
                 ;;
             *)
                 echo "Invalid choice. Press any key to try again..."
