@@ -25,17 +25,12 @@ export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
 export FOX_CUSTOM_BINS_TO_SDCARD=2
-
-# Check if FOX_CUSTOM_BINS_TO_SDCARD is enabled
-if [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "1" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "2" ] || [ "$FOX_CUSTOM_BINS_TO_SDCARD" = "3" ]; then
-    # Enable necessary options
-    export FOX_USE_NANO_EDITOR=1
-    export FOX_REPLACE_BUSYBOX_PS=1
-    export FOX_USE_SED_BINARY=1
-    export FOX_USE_TAR_BINARY=1
-    export FOX_USE_UNZIP_BINARY=1
-    export FOX_USE_XZ_UTILS=1
-fi
+export FOX_USE_NANO_EDITOR=1
+export FOX_REPLACE_BUSYBOX_PS=1
+export FOX_USE_SED_BINARY=1
+export FOX_USE_TAR_BINARY=1
+export FOX_USE_UNZIP_BINARY=1
+export FOX_USE_XZ_UTILS=1
 
 # Target Device
 export FOX_TARGET_DEVICES="a12s"
