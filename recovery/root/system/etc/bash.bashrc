@@ -18,6 +18,7 @@ lz4() {
 alias lz4_alias='lz4'
 
 # other aliases
+export TERM=xterm
 alias cls="clear"
 alias seek='find . -name "$@"'
 alias dir="ls -all --color=auto"
