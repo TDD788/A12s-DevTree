@@ -9,14 +9,14 @@ export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
 export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
 export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
 
+RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-RED='\033[0;31m'
-NC='\033[0m'
+NC='\033[0m' # No color
 
-DEVICE_NAME=$(getprop ro.product.vendor.device)
-DEVICE_MODEL=$(getprop ro.product.vendor.model)
-SOC=$(getprop ro.soc.model)
+DEVICE_NAME=$(getprop ro.product.system.device)
+DEVICE_MODEL=$(getprop ro.product.system.model)
+SOC=$(getprop ro.product.board)
 
 perform_resize_and_unshare_blocks() {
     resize2fs "$image_path/system.img" 6G
@@ -116,12 +116,10 @@ set_partition_names() {
 load_saved_configurations() {
     local config_file="/cache/recovery.conf"
     if [ -f "$config_file" ]; then
-        echo "Loading saved configurations from $config_file..."
         source "$config_file"
     else
         config_file="$HOME/recovery.conf"
         if [ -f "$config_file" ]; then
-            echo "Loading saved configurations from $config_file..."
             source "$config_file"
         else
             echo "No saved configurations found."
@@ -135,6 +133,10 @@ save_configurations() {
         echo "Saving configurations to $config_file..."
         {
             echo "# Recovery configurations"
+            echo "export CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
+            echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
+            echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
+            echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
             echo "export A_B=\"$A_B\""
             echo "export A_O=\"$A_O\""
             echo "export DYNAMIC=\"$DYNAMIC\""
@@ -143,10 +145,14 @@ save_configurations() {
             echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
         } >"$config_file"
     else
-        config_file="~/recovery.conf"
+        config_file="$HOME/recovery.conf"
         echo "Saving configurations to $config_file..."
         {
             echo "# Recovery configurations"
+            echo "export CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
+            echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
+            echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
+            echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
             echo "export A_B=\"$A_B\""
             echo "export A_O=\"$A_O\""
             echo "export DYNAMIC=\"$DYNAMIC\""
@@ -167,7 +173,7 @@ configure_manually() {
         echo "4. Done"
         echo "5. Enable super secret settings in $SOC"
         echo ""
-        echo -n "Enter your choice (1-4): "
+        echo -n "Enter your choice (1-5): "
         read -rsn1 choice
         echo ""
 
@@ -187,11 +193,11 @@ configure_manually() {
                     case $flag_choice in
                         a)
                             export A_B="true"
-                            export A_O=""
+                            export A_O="false"
                             break
                             ;;
                         b)
-                            export A_B=""
+                            export A_B="false"
                             export A_O="true"
                             break
                             ;;
@@ -222,12 +228,12 @@ configure_manually() {
                     case $param_choice in
                         a)
                             export DYNAMIC="true"
-                            export GENERIC=""
+                            export GENERIC="false"
                             export DEVICE_MAPPER="/dev/block/mapper"
                             break
                             ;;
-                        d)
-                            export DYNAMIC=""
+                        b)
+                            export DYNAMIC="false"
                             export GENERIC="true"
                             export DEVICE_MAPPER="/dev/block/by-name"
                             break
@@ -289,15 +295,6 @@ configure_manually() {
     done
 }
 
-set_default_configurations() {
-    : ${A_B:="true"}
-    : ${A_O:=""}
-    : ${DYNAMIC:="true"}
-    : ${GENERIC:=""}
-    : ${DEVICE_MAPPER:="/dev/block/mapper"}
-    : ${CUSTOM_MOUNT_POINT:=""}
-}
-
 perform_resize_and_unshare_blocks_v2() {
     resize2fs "$found_dir/system.img" 6G
     e2fsck -E unshare_blocks "$found_dir/system.img"
@@ -317,26 +314,28 @@ ask() {
 }
 
 identify_device() {
-    if ls /dev/block/mapper >/dev/null 2>&1; then
-        export DYNAMIC="true"
-        export GENERIC=""
-        export DEVICE_MAPPER="/dev/block/mapper"
-    elif ls /dev/block/by-name >/dev/null 2>&1; then
-        export DYNAMIC=""
-        export GENERIC="true"
-        export DEVICE_MAPPER="/dev/block/by-name"
-    else
-        exit 1
-    fi
-    
-    if ls $DEVICE_MAPPER | grep -q "system_a"; then
-        export A_B="true"
-        export A_O=""
-    elif ls $DEVICE_MAPPER | grep -q "system"; then
-        export A_B=""
-        export A_O="true"
-    else
-        exit 1
+    if [ -z "$DYNAMIC" ] || [ -z "$GENERIC" ] || [ -z "$DEVICE_MAPPER" ] || [ -z "$A_B" ] || [ -z "$A_O" ]; then
+        if ls /dev/block/mapper >/dev/null 2>&1; then
+            export DYNAMIC="true"
+            export GENERIC="false"
+            export DEVICE_MAPPER="/dev/block/mapper"
+        elif ls /dev/block/by-name >/dev/null 2>&1; then
+            export DYNAMIC="false"
+            export GENERIC="true"
+            export DEVICE_MAPPER="/dev/block/by-name"
+        else
+            exit 1
+        fi
+
+        if ls "$DEVICE_MAPPER" | grep -q "system_a"; then
+            export A_B="true"
+            export A_O=""
+        elif ls "$DEVICE_MAPPER" | grep -q "system"; then
+            export A_B=""
+            export A_O="true"
+        else
+            exit 1
+        fi
     fi
 }
 
@@ -379,21 +378,21 @@ process_image() {
       confirm_flash_v2
     elif [ "$type" = "4" ]; then
       $ask
-      if [ ! -d "/cache/system" ]; then
-          mkdir -p "/cache/system"
+      if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
+          mkdir -p "$CUSTOM_MOUNT_POINT"
       fi
       original_file="$found_dir/$found_file" 
       new_name="$found_dir/system.img"
       rename_image "$image_path/$select_file" "$new_name"
       perform_resize_and_unshare_blocks_v2 || echo "Failed to resize and unshare blocks."
       resize2fs "$new_name" 6G
-      mount -o loop,rw "$new_name" /cache/system/
-      echo "Mounted Image On /cache/system to modify"
+      mount -o loop,rw "$new_name" $CUSTOM_MOUNT_POINT
+      echo "Mounted Image On $CUSTOM_MOUNT_POINT to modify"
       echo "Press any key to indicate that you have finished the process... "
       read -rsn4 finish
       e2fsck -f "$new_name"
       resize2fs -M "$new_name"
-      umount /cache/system/
+      umount $CUSTOM_MOUNT_POINT/
       echo "Compressed Image and Removed Montage"
       rename_image "$new_name" "$original_file"
     else
@@ -425,12 +424,12 @@ confirm_flash() {
         if [ "$A_B" = "true" ]; then
             if [ "$GENERIC" = "true" ]; then
                 echo "Selected partition type: system (using by-name)"
-                dd if="$original_file" of="/dev/block/by-name/system_a"
-                dd if="$original_file" of="/dev/block/by-name/system_b"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
             elif [ "$DYNAMIC" = "true" ]; then
                 echo "Selected partition type: system (using device mapper)"
-                dd if="$original_file" of="/dev/block/mapper/system_a"
-                dd if="$original_file" of="/dev/block/mapper/system_b"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
             else
                 echo "Invalid device type specified."
                 exit 1
@@ -438,10 +437,10 @@ confirm_flash() {
         elif [ "$A_O" = "true" ]; then
             if [ "$GENERIC" = "true" ]; then
                 echo "Selected partition type: system (using by-name)"
-                dd if="$original_file" of="/dev/block/by-name/system"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
             elif [ "$DYNAMIC" = "true" ]; then
                 echo "Selected partition type: system (using device mapper)"
-                dd if="$original_file" of="/dev/block/mapper/system"
+                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
             else
                 echo "Invalid device type specified."
                 exit 1
@@ -462,12 +461,12 @@ confirm_flash_v2() {
         if [ "$A_B" = "true" ]; then
             if [ "$GENERIC" = "true" ]; then
                 echo "Selected partition type: system (using by-name)"
-                dd if="$original" of="/dev/block/by-name/system_a"
-                dd if="$original" of="/dev/block/by-name/system_b"
+                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
             elif [ "$DYNAMIC" = "true" ]; then
                 echo "Selected partition type: system (using device mapper)"
-                dd if="$original" of="/dev/block/mapper/system_a"
-                dd if="$original" of="/dev/block/mapper/system_b"
+                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
             else
                 echo "Invalid device type specified."
                 exit 1
@@ -475,10 +474,10 @@ confirm_flash_v2() {
         elif [ "$A_O" = "true" ]; then
             if [ "$GENERIC" = "true" ]; then
                 echo "Selected partition type: system (using by-name)"
-                dd if="$original" of="/dev/block/by-name/system"
+                dd if="$original" of="/dev/block/by-name/$CUSTOM_SYSTEM_NAME"
             elif [ "$DYNAMIC" = "true" ]; then
                 echo "Selected partition type: system (using device mapper)"
-                dd if="$original" of="/dev/block/mapper/system"
+                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
             else
                 echo "Invalid device type specified."
                 exit 1
@@ -593,21 +592,21 @@ user_modification() {
                     compressed_file="$select_file"
                     if [ "${select_file##*.}" = "img" ]; then
                     	$ask
-                        if [ ! -d "/cache/system" ]; then
-   						 mkdir -p "/cache/system"
+                        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
+   						 mkdir -p "$CUSTOM_MOUNT_POINT"
 						fi
                         original_file="$image_path/$select_file" 
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
                         resize2fs "$new_name" 6G
-   					 mount -o loop,rw "$new_name" /cache/system/
-    					echo "Mounted Image On /cache/system to modify"
+   					 mount -o loop,rw "$new_name" $CUSTOM_MOUNT_POINT
+    					echo "Mounted Image On $CUSTOM_MOUNT_POINT to modify"
                         echo "Price to any key to indicate that you have finished the process... "
                         read -rsn4 finish
                         e2fsck -f "$new_name"
                         resize2fs -M "$new_name"
-                        umount /cache/system/
+                        umount $CUSTOM_MOUNT_POINT/
                         echo "Compressed Image and Removed Montage"
                         rename_image "$new_name" "$original_file"
                         break
@@ -757,30 +756,30 @@ ota_rw() {
 	$ask
     if [ "$A_B" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
-            cp "/dev/block/by-name/system_a" "/sdcard/system.img"
-            cp "/dev/block/by-name/vendor_a" "/sdcard/vendor.img"
-            cp "/dev/block/by-name/product_a" "/sdcard/product.img"
-            cp "/dev/block/by-name/odm_a" "/sdcard/odm.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a" "/sdcard/vendor_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a" "/sdcard/product_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a" "/sdcard/odm_a.img"
         elif [ "$DYNAMIC" = "true" ]; then
-            cp "/dev/block/mapper/system_a" "/sdcard/system.img"
-            cp "/dev/block/mapper/vendor_a" "/sdcard/vendor.img"
-            cp "/dev/block/mapper/product_a" "/sdcard/product.img"
-            cp "/dev/block/mapper/odm_a" "/sdcard/odm.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a" "/sdcard/vendor_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a" "/sdcard/product_a.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a" "/sdcard/odm_a.img"
         else
             echo "Invalid device type specified."
             exit 1
         fi
     elif [ "$A_O" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
-            cp "/dev/block/by-name/system" "/sdcard/system.img"
-            cp "/dev/block/by-name/vendor" "/sdcard/vendor.img"
-            cp "/dev/block/by-name/product" "/sdcard/product.img"
-            cp "/dev/block/by-name/odm" "/sdcard/odm.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME" "/sdcard/vendor.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME" "/sdcard/product.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME" "/sdcard/odm.img"
         elif [ "$DYNAMIC" = "true" ]; then
-            cp "/dev/block/mapper/system" "/sdcard/system.img"
-            cp "/dev/block/mapper/vendor" "/sdcard/vendor.img"
-            cp "/dev/block/mapper/product" "/sdcard/product.img"
-            cp "/dev/block/mapper/odm" "/sdcard/odm.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME" "/sdcard/vendor.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME" "/sdcard/product.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME" "/sdcard/odm.img"
         else
             echo "Invalid device type specified."
             exit 1
@@ -790,45 +789,45 @@ ota_rw() {
         exit 1
     fi
     
-    perform_ota "/sdcard/system.img"
-    perform_ota "/sdcard/vendor.img"
-    perform_ota "/sdcard/product.img"
-    perform_ota "/sdcard/odm.img"
+    perform_ota "/sdcard/system_a.img"
+    perform_ota "/sdcard/vendor_a.img"
+    perform_ota "/sdcard/product_a.img"
+    perform_ota "/sdcard/odm_a.img"
     
     if [ "$A_B" = "true" ]; then
         if [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system_a"
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system_b"
-            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor_a"
-            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor_b"
-            dd if="/sdcard/product.img" of="/dev/block/mapper/product_a"
-            dd if="/sdcard/product.img" of="/dev/block/mapper/product_b"
-            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm_a"
-            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm_b"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
+            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a"
+            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_b"
+            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a"
+            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_b"
+            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a"
+            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_b"
         elif [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system_a"
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system_b"
-            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor_a"
-            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor_b"
-            dd if="/sdcard/product.img" of="/dev/block/by-name/product_a"
-            dd if="/sdcard/product.img" of="/dev/block/by-name/product_b"
-            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm_a"
-            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm_b"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
+            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a"
+            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_b"
+            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a"
+            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_b"
+            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a"
+            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_b"
         else
             echo "Invalid device type specified."
             exit 1
         fi
     elif [ "$A_O" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system"
-            dd if="/sdcard/vendor.img" of="/dev/block/by-name/vendor"
-            dd if="/sdcard/product.img" of="/dev/block/by-name/product"
-            dd if="/sdcard/odm.img" of="/dev/block/by-name/odm"
+            dd if="/sdcard/system.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
+            dd if="/sdcard/vendor.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME"
+            dd if="/sdcard/product.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME"
+            dd if="/sdcard/odm.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME"
         elif [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system"
-            dd if="/sdcard/vendor.img" of="/dev/block/mapper/vendor"
-            dd if="/sdcard/product.img" of="/dev/block/mapper/product"
-            dd if="/sdcard/odm.img" of="/dev/block/mapper/odm"
+            dd if="/sdcard/system.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
+            dd if="/sdcard/vendor.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME"
+            dd if="/sdcard/product.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME"
+            dd if="/sdcard/odm.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME"
         else
             echo "Invalid device type specified."
             exit 1
@@ -842,18 +841,18 @@ ota_rw() {
 perform_copied_system_image() {
     if [ "$A_B" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
-            cp "/dev/block/by-name/system_a" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
         elif [ "$DYNAMIC" = "true" ]; then
-            cp "/dev/block/mapper/system_a" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
         else
             echo "Invalid device type specified."
             exit 1
         fi
     elif [ "$A_O" = "true" ]; then
         if [ "$GENERIC" = "true" ]; then
-            cp "/dev/block/by-name/system" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
         elif [ "$DYNAMIC" = "true" ]; then
-            cp "/dev/block/mapper/system" "/sdcard/system.img"
+            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
         else
             echo "Invalid device type specified."
             exit 1
@@ -863,33 +862,33 @@ perform_copied_system_image() {
         exit 1
     fi
     
-    perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
+perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
     
     if [ "$A_B" = "true" ]; then
         if [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system_a"
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system_b"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
         elif [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system_a"
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system_b"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
+            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
         else
             echo "Invalid device type specified."
             exit 1
         fi
-    elif [ "$A_O" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/by-name/system"
-        elif [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="/dev/block/mapper/system"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
-    else
-        echo "Partition type could not be determined."
-        exit 1
-    fi
+    fi    
 }
+
+if [ -f "/cache/recovery.conf" ] && grep -q "CUSTOM_MOUNT_POINT=" /cache/recovery.conf; then
+    echo ""
+fi
+
+if [ -f "$HOME/recovery.conf" ] && grep -q "CUSTOM_MOUNT_POINT=" "$HOME/recovery.conf"; then
+    echo ""
+fi
+
+if [ -z "$CUSTOM_MOUNT_POINT" ]; then
+    export CUSTOM_MOUNT_POINT="/cache/system"
+fi
 
 identify_device
 load_saved_configurations
@@ -932,7 +931,6 @@ case $option in
         user_modification
         ;;
     5)
-        set_default_configurations
         configure_manually
         ;;
     *)

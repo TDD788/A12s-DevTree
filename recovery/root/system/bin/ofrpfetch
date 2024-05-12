@@ -1,5 +1,7 @@
 #!/system/bin/sh
 
+DEVICE=$(getprop ro.product.system.device)
+
 msg() {
     echo "$1"
 }
@@ -23,7 +25,7 @@ printinfo() {
     msg " "
     printico_with_info
     msg " "
-    msg "OFRP FOR GALAXY A12s - $(cat /system/etc/fox.version)"
+    msg "OFRP FOR GALAXY $DEVICE - $(cat /system/etc/fox.version)"
     barrier_2
     msg "Bootloader: $(getprop ro.boot.bootloader)"
     msg "Brand: $(getprop ro.product.manufacturer)"

@@ -34,11 +34,12 @@ $(call inherit-product, device/samsung/a12s/device.mk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, cgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, fixparts)
++ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, lz4)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
 PRODUCT_NAME := twrp_a12s
-PRODUCT_MODEL := a12s
+PRODUCT_MODEL := SM-A127x
 PRODUCT_BRAND := samsung
 PRODUCT_MANUFACTURER := samsung
 PRODUCT_GMS_CLIENTID_BASE := android-samsung-ss
