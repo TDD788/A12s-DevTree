@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/system/bin/sh
 
 function show_function_guide {
     case $1 in

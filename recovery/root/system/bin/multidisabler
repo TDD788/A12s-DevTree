@@ -171,7 +171,7 @@ disable_recovery_restoration() {
   for i in "$ANDROID_ROOT" "$ANDROID_ROOT"/system /vendor; do
     if [ -f "$(find "$i" -maxdepth 1 -type f -name "*recovery*")" ]; then
       echo " -   Found recovery file in $i. Disabling..."
-      rm -f "$(find "$i" -maxdepth 1 -type f -name "*recovery*")"
+      rm -rf "$(find "$i" -maxdepth 1 -type f -name "*recovery*")"
       echo " -     ...succeeded."
       echo '#!/vendor/bin/sh' > /vendor/bin/install-recovery.sh
       echo 'echo "No more messing with Samsung"' >> /vendor/bin/install-recovery.sh
@@ -257,6 +257,11 @@ echo " - Detected a $device device with a $fw bootloader."
 echo " - The environment appears to be Android $major."
 echo " "
 
+e2fsck -fp /dev/block/mapper/system
+e2fsck -fp /dev/block/mapper/vendor
+e2fsck -fp /dev/block/mapper/product
+e2fsck -fp /dev/block/mapper/odm
+
 echo " - Mounting $ANDROID_ROOT..."
 mount "$ANDROID_ROOT" 2>/dev/null
 mount -o remount,rw "$ANDROID_ROOT" 2>/dev/null
@@ -272,7 +277,6 @@ if ! mount | grep "$ANDROID_ROOT" >/dev/null; then
 fi
 
 echo " - Mounting /vendor..."
-e2fsck -fp /dev/block/mapper/vendor
 mount /vendor
 mount -o remount,rw /vendor
 

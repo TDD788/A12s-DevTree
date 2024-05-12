@@ -6,14 +6,9 @@ msg() {
     echo "$1"
 }
 
-barrier_1() {
+barrier() {
     msg " "
     msg "================================"
-}
-
-barrier_2() {
-    msg "================================"
-    msg " "
 }
 
 printico_with_info () {
@@ -21,12 +16,12 @@ printico_with_info () {
 }
 
 printinfo() {
-    barrier_1
+    barrier
     msg " "
     printico_with_info
     msg " "
     msg "OFRP FOR GALAXY $DEVICE - $(cat /system/etc/fox.version)"
-    barrier_2
+    barrier
     msg "Bootloader: $(getprop ro.boot.bootloader)"
     msg "Brand: $(getprop ro.product.manufacturer)"
     msg "Device: $(getprop ro.product.name)"
@@ -41,7 +36,7 @@ printinfo() {
 	msg "Kernel: $(uname -r)"
     msg""
     msg "END OF ORANGEFETCH"
-    barrier_2
+    barrier
 }
 
 printinfo

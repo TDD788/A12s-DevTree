@@ -56,7 +56,9 @@ BOARD_KERNEL_CMDLINE += \
 	androidboot.selinux=permissive \
 	loop.max_part=15 \
 	androidboot.usbcontroller=13600000.dwc3 \
-	androidboot.usbconfigfs=true
+	androidboot.usbconfigfs=true \
+	reboot=panic_warm \
+	androidboot.init_fatal_reboot_target=system
 
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
 BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
