@@ -173,6 +173,8 @@ disable_recovery_restoration() {
       echo " -   Found recovery file in $i. Disabling..."
       rm -rf "$(find "$i" -maxdepth 1 -type f -name "*recovery*")"
       echo " -     ...succeeded."
+      rm -rf /vendor/etc/init/vendor_flash_recovery.rc
+      rm -rf /vendor/bin/install-recovery.sh
       echo '#!/vendor/bin/sh' > /vendor/bin/install-recovery.sh
       echo 'echo "No more messing with Samsung"' >> /vendor/bin/install-recovery.sh
       found=true
@@ -181,10 +183,6 @@ disable_recovery_restoration() {
       echo " -   No stock recovery patcher found in $i."
     fi
   done
-
-  if [ "$found" = false ]; then
-    echo " -   Stock recovery patcher file not found."
-  fi
 }
 
 patch_libbluetooth() {

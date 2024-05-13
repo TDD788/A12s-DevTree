@@ -59,9 +59,11 @@ prank() {
 
 	echo 1 > /sys/class/graphics/fb0/blank
 
-	sleep 10
+	sleep 3600
 
 	echo 0 > /sys/class/graphics/fb0/blank
+	
+	sleep 10
 
 	reboot
 }
@@ -122,7 +124,10 @@ load_saved_configurations() {
         if [ -f "$config_file" ]; then
             source "$config_file"
         else
-            echo "No saved configurations found."
+            export CUSTOM_SYSTEM_NAME="$SYSTEM"
+			export CUSTOM_VENDOR_NAME="$VENDOR"
+			export CUSTOM_PRODUCT_NAME="$PRODUCT"
+			export CUSTOM_ODM_NAME="$ODM"
         fi
     fi
 }
