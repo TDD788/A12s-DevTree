@@ -17,6 +17,6 @@ alias copy="cp -i"
 alias diskfree="df -Ph"
 
 # go to a neutral location
-export TERM=xterm
 cd /tmp
+export TERM=xterm
 #
