@@ -20,7 +20,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_47"
+export FOX_VERSION="R12.1_48"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
@@ -44,7 +44,7 @@ export_build_vars(){
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
-        export OF_DEFAULT_TIMEZONE=CET-4;CEST,M3.5.0,M10.5.0
+        export OF_DEFAULT_TIMEZONE="CET-4;CEST,M3.5.0,M10.5.0"
 	export OF_USE_LOCKSCREEN_BUTTON=1
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export OF_STATUS_INDENT_RIGHT=48
