@@ -44,6 +44,8 @@ export_build_vars(){
 	export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
 	export FOX_DELETE_AROMAFM=0
 	export OF_CLOCK_POS=1
+        export OF_DEFAULT_TIMEZONE=CET-4;CEST,M3.5.0,M10.5.0
+	export OF_USE_LOCKSCREEN_BUTTON=1
 	export OF_CHECK_OVERWRITE_ATTEMPTS=1
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
@@ -70,7 +72,7 @@ export_build_vars(){
 	
 	# maximum permissible splash image size
 	# (in kilobytes); do *NOT* increase!
-	export OF_SPLASH_MAX_SIZE=128
+	export OF_SPLASH_MAX_SIZE=512
 	
 	# Specific Features Configurations
 	export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
