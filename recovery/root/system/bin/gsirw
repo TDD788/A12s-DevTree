@@ -1156,7 +1156,6 @@ GSIRW() {
 " 0.01
     progresive_print "
          AIO (ALL IN ONE) GSI / OTA  -RW" 0.2
-    stty echo
     sleep 1
     echo ""
     echo "                Select an option:"
@@ -1174,6 +1173,7 @@ GSIRW() {
     echo "6.                 Exit GSI-rw."
     sleep 1
     echo ""
+    stty echo
     echo -n ">         Choose one of the 5 options:"
     read -rsn5 option
     echo ""
