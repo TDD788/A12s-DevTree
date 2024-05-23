@@ -1,18 +1,18 @@
 #!/system/bin/sh
 case $1 in
-    --recovery)
+    --recovery | -r)
         pkill recovery && recovery
         ;;
-    --download)
+    --download | -d)
         reboot download
         ;;
-    --fastbootd)
+    --fastbootd | -f)
         reboot fastboot
         ;;
-    --bootloader)
+    --bootloader | -b)
         reboot bootloader
         ;;
-    --system)
+    --system | -s)
         reboot system
         ;;
     *)
@@ -23,20 +23,15 @@ case $1 in
         echo "=============================================="
         echo " "
         echo "Usage: "
-        echo "# samboot [--recovery|--download|--system|--fastbootd|--bootloader] "
+        echo "# samboot [--recovery / -r|--download / -d|--system / -s|--fastbootd / -f|--bootloader / -b] "
         echo " "
-        echo "--recovery             Boot again to recovery"
-        echo "--download             Boot to Download Mode"
-        echo "--system               Boot to System"
-        echo "--fastbootd			Boot to Fastbootd"
-        echo "--bootloader    	   Boot to Bootloader/Stock Fastboot"
+        echo "--recovery    /  -r      Boot again to recovery"
+        echo "--download    /  -d      Boot to Download Mode"
+        echo "--system      /  -s      Boot to System"
+        echo "--fastbootd   /  -f      Boot to Fastbootd"
+        echo "--bootloader  /  -b      Boot to Bootloader/Stock Fastboot"
         echo ""
         echo "Made By TheDarkDeath788 with Like and Appreciation for You"
         echo ""
         ;;
 esac
-
-
-    
-    
-

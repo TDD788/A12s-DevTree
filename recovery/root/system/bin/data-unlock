@@ -49,15 +49,13 @@ sys_ulock() {
 data_ulock() {
     echo "Calling Process Multidisabler"
     multidisabler
-    multidisabler
-    multidisabler
     echo "DONE"
 }
 
 prompt_answer() {
     echo "Are you sure you want to disable encryption measures on your /data?"
-    echo "Respond: [Y|y|N|n]:  "
-    read option
+    echo "Respond: (y/n):  "
+    read -rsn1 option
     case "$option" in
         [Yy])
             clear 
@@ -68,7 +66,8 @@ prompt_answer() {
             ;;
         *)
             echo "$option is invalid"
-            exit 1
+            prompt_answer
+            break
             ;;
     esac
 }

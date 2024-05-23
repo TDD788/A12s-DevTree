@@ -12,20 +12,52 @@ export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No color
+NC='\033[0m'
 
 DEVICE_NAME=$(getprop ro.product.system.device)
 DEVICE_MODEL=$(getprop ro.product.system.model)
 SOC=$(getprop ro.product.board)
 
 perform_resize_and_unshare_blocks() {
-    resize2fs "$image_path/system.img" 6G
-    e2fsck -E unshare_blocks "$image_path/system.img"
-    resize2fs -M "$image_path/system.img"
+    resize2fs "$new_name" 6G
+    echo "Try to fix any Error"
+    e2fsck -fp "$new_name"
+    echo "Unsharing block to get RW Image"
+    e2fsck -E unshare_blocks "$new_name" 2>/dev/null
+    resize2fs -M "$new_name"
 }
 
 generate_random_message() {
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
+}
+
+prompt_for_confirmation() {
+    local input
+    info="$@"
+
+    while true; do
+        echo "$info"
+        read -rsn1 input 
+
+        if [ -n "$input" ]; then
+            echo "Are you sure you want to continue? (y/n)"
+            read -rsn1 confirm
+
+            case "$confirm" in
+                [yY])
+                    echo "Continuing..."
+                    break
+                    ;;
+                [nN])
+                    echo "Operation cancelled."
+                    return 1
+                    ;;
+                *)
+                    echo "Please respond with 'y' to continue or 'n' to cancel."
+                    ;;
+            esac
+        fi
+    done
 }
 
 simulate_bootloader_patch() {
@@ -68,6 +100,26 @@ prank() {
 	reboot
 }
 
+look() {
+	echo ""
+    echo "GSI-rw configurations"
+    echo "SYSTEM Name=\"$CUSTOM_SYSTEM_NAME\""
+    echo "VENDOR Name=\"$CUSTOM_VENDOR_NAME\""
+    echo "PRODUCT Name=\"$CUSTOM_PRODUCT_NAME\""
+    echo "ODM Name=\"$CUSTOM_ODM_NAME\""
+    echo "A/B system: \"$A_B\""
+    echo "A only system: \"$A_O\""
+    echo "Dynamic partitions: \"$DYNAMIC\""
+    echo "Generic system image: \"$GENERIC\""
+    echo "Device Mapper: \"$DEVICE_MAPPER\""
+    echo "Custom mount point: \"$CUSTOM_MOUNT_POINT\""
+    echo "Default Start Point: \"$DEFAULT_START_POINT\""
+    echo "Current file extensions:"
+    echo "${FILE_EXTENSIONS:-None}"
+    echo ""
+    echo "Press any key to confirm that you have reviewed the settings."
+    read -rsn1
+}
 
 set_partition_names() {
     clear
@@ -115,25 +167,8 @@ set_partition_names() {
     esac
 }
 
-load_saved_configurations() {
-    local config_file="/cache/recovery.conf"
-    if [ -f "$config_file" ]; then
-        source "$config_file"
-    else
-        config_file="$HOME/recovery.conf"
-        if [ -f "$config_file" ]; then
-            source "$config_file"
-        else
-            export CUSTOM_SYSTEM_NAME="$SYSTEM"
-			export CUSTOM_VENDOR_NAME="$VENDOR"
-			export CUSTOM_PRODUCT_NAME="$PRODUCT"
-			export CUSTOM_ODM_NAME="$ODM"
-        fi
-    fi
-}
-
 save_configurations() {
-    local config_file="/cache/recovery.conf"
+    local config_file="/cache/gsirw.conf"
     if [ -w "/cache" ]; then
         echo "Saving configurations to $config_file..."
         {
@@ -148,9 +183,11 @@ save_configurations() {
             echo "export GENERIC=\"$GENERIC\""
             echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
             echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+            echo "export DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
+            echo "export FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
         } >"$config_file"
     else
-        config_file="$HOME/recovery.conf"
+        config_file="$HOME/gsirw.conf"
         echo "Saving configurations to $config_file..."
         {
             echo "# Recovery configurations"
@@ -164,7 +201,31 @@ save_configurations() {
             echo "export GENERIC=\"$GENERIC\""
             echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
             echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+            echo "export DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
+            echo "export FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
         } >"$config_file"
+    fi
+}
+
+load_saved_configurations() {
+    local config_file="/cache/gsirw.conf"
+    if [ -f "$config_file" ]; then
+        source "$config_file"
+    else
+        config_file="$HOME/gsirw.conf"
+        if [ -f "$config_file" ]; then
+            source "$config_file"
+        else
+            export CUSTOM_SYSTEM_NAME="system"
+            export CUSTOM_VENDOR_NAME="vendor"
+            export CUSTOM_PRODUCT_NAME="product"
+            export CUSTOM_ODM_NAME="odm"
+            export CUSTOM_MOUNT_POINT="/cache/system"
+            export DEFAULT_START_POINT="/sdcard"
+            identify_device
+            export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
+            export extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+        fi
     fi
 }
 
@@ -175,10 +236,13 @@ configure_manually() {
         echo "1. Set A/B or A Only flags"
         echo "2. Choose Device Mapper or other parameters"
         echo "3. Customize mount point"
-        echo "4. Done"
+        echo "4. Configure visibility in extensions"
         echo "5. Enable super secret settings in $SOC"
+        echo "6. Look at configured things"
+        echo "7. Done"
+        
         echo ""
-        echo -n "Enter your choice (1-5): "
+        echo -n "Enter your choice (1-7): "
         read -rsn1 choice
         echo ""
 
@@ -224,12 +288,13 @@ configure_manually() {
                     echo "a. Device Mapper"
                     echo "b. Generic By-Name"
                     echo "c. Other parameters"
-                    echo "d. Go back"
+                    echo "d. Define starting point"
+                    echo "e. Go back"
                     echo ""
-                    echo -n 'Enter your choice (a/b/c/d):'
+                    echo -n 'Enter your choice (a/b/c/d/e):'
                     read -rsn1 param_choice
                     echo ""
-                    
+                    clear
                     case $param_choice in
                         a)
                             export DYNAMIC="true"
@@ -251,6 +316,16 @@ configure_manually() {
                             break
                             ;;
                         d)
+                            echo "Here you can define the starting point of the GSI-rw (default: $DEFAULT_START_POINT)"
+                            echo -n "> "
+                            read -r DEFAULT_START_POINT
+                            if [ ! -d "$DEFAULT_START_POINT" ]; then
+                              echo "Invalid directory path. Falling back to default: $DEFAULT_START_POINT"
+                              export DEFAULT_START_POINT="/sdcard"
+                            fi  
+                            break
+                            ;;
+                        e)
                             break
                             ;;
                         *)
@@ -286,11 +361,17 @@ configure_manually() {
                 done
                 ;;
             4)
-                save_configurations
-                break
+                configure_file_extensions
                 ;;
             5)
                 prank
+                ;;
+            6)
+                look
+                ;;    
+            7)
+                save_configurations
+                break
                 ;;
             *)
                 echo "Invalid choice. Press any key to try again..."
@@ -300,20 +381,96 @@ configure_manually() {
     done
 }
 
-perform_resize_and_unshare_blocks_v2() {
-    resize2fs "$found_dir/system.img" 6G
-    e2fsck -E unshare_blocks "$found_dir/system.img"
-    resize2fs -M "$found_dir/system.img"
+configure_file_extensions() {
+    while true; do
+        clear
+        echo "Configure file extensions:"
+        echo "1. Add an extension"
+        echo "2. Remove an extension"
+        echo "3. List current extensions"
+        echo "4. Done"
+        echo ""
+        echo -n "Enter your choice (1-4): "
+        read -rsn1 choice
+        echo ""
+
+        case $choice in
+            1)
+                add_extension
+                ;;
+            2)
+                remove_extension
+                ;;
+            3)
+                list_extensions
+                ;;
+            4)
+                save_configurations
+                break
+                ;;
+            *)
+                echo "Invalid choice. Press any key to try again..."
+                read -rsn1
+                ;;
+        esac
+    done
+}
+
+add_extension() {
+    clear
+    echo "Add a new file extension:"
+    echo -n "Enter the extension (e.g., tar, lz4): "
+    read -r new_extension
+    if [[ -n "$new_extension" ]]; then
+        if [[ -z "$FILE_EXTENSIONS" ]]; then
+            FILE_EXTENSIONS="$new_extension"
+        else
+            FILE_EXTENSIONS="$FILE_EXTENSIONS|$new_extension"
+        fi
+        echo "Extension added: $new_extension"
+    else
+        echo "No extension entered. No changes made."
+    fi
+    echo "Press any key to continue..."
+    read -rsn1
+}
+
+remove_extension() {
+    clear
+    echo "Remove a file extension:"
+    echo "Current extensions: ${FILE_EXTENSIONS}"
+    echo -n "Enter the extension to remove: "
+    read -r remove_extension
+    if [[ -n "$remove_extension" ]]; then
+        FILE_EXTENSIONS=$(echo "$FILE_EXTENSIONS" | sed "s/\b$remove_extension\b//g" | sed 's/||/|/g' | sed 's/^|//;s/|$//')
+        echo "Extension removed: $remove_extension"
+    else
+        echo "No extension entered. No changes made."
+    fi
+    echo "Press any key to continue..."
+    read -rsn1
+}
+
+list_extensions() {
+    clear
+    echo "Current file extensions:"
+    echo "${FILE_EXTENSIONS:-None}"
+    echo "Press any key to continue..."
+    read -rsn1
 }
 
 perform_ota() {
 	local image="$1"
-    resize2fs "$image" 7G
-    e2fsck -E unshare_blocks "$image"
+    resize2fs "$image" 6G
+    echo "Try to fix any Error"
+    e2fsck -fp "$image"
+    echo "Unsharing block to get RW Image"
+    e2fsck -E unshare_blocks "$image" 2>/dev/null
     resize2fs -M "$image"
 }
 
 ask() {
+	clear
 	echo "Press any key to continue..."
 	read -rsn1
 }
@@ -334,9 +491,9 @@ identify_device() {
 
         if ls "$DEVICE_MAPPER" | grep -q "system_a"; then
             export A_B="true"
-            export A_O=""
+            export A_O="false"
         elif ls "$DEVICE_MAPPER" | grep -q "system"; then
-            export A_B=""
+            export A_B="false"
             export A_O="true"
         else
             exit 1
@@ -347,55 +504,88 @@ identify_device() {
 extract_image_from_archive() {
     local archive="$1"
     local extracted_dir="$(dirname "$archive")/extracted"
-    mkdir -p "$extracted_dir"
     
+    if [ ! -d "$extracted_dir" ]; then
+        mkdir -p "$extracted_dir"
+    fi
+    
+    echo ""
     echo "Extracting $archive..."
     case "$archive" in
         *.zip)
-            unzip "$archive" -d "$extracted_dir"
+            unzip -d "$extracted_dir" "$archive" 2>/dev/null
             ;;
         *.tar.gz | *.tgz)
-            gunzip -c "$archive" | tar -xf - -C "$extracted_dir"
+            tar -xzf "$archive" -C "$extracted_dir" 2>/dev/null
             ;;
-        *.tar.xz | *.xz)
-            xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)"
+        *.xz)
+            xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)" 2>/dev/null
+            ;;
+        *.tar.xz)
+            xz -d "$archive" -c | tar -xf - -C "$extracted_dir" 2>/dev/null
             ;;
         *.gz)
-            gunzip -k "$archive" -d "$extracted_dir"
+            gunzip -c "$archive" > "$extracted_dir/$(basename "$archive" .gz)" 2>/dev/null
+            ;;
+        *.tar.bz2 | *.tbz2)
+            tar -xjf "$archive" -C "$extracted_dir" 2>/dev/null
+            ;;
+        *.bz2)
+            bunzip2 -c "$archive" > "$extracted_dir/$(basename "$archive" .bz2)" 2>/dev/null
+            ;;
+        *.rar)
+            unrar x "$archive" "$extracted_dir" 2>/dev/null
+            ;;
+        *.7z)
+            7z x "$archive" -o"$extracted_dir" 2>/dev/null
+            ;;
+        *.lz4)
+            lz4 -d "$archive" "$extracted_dir/$(basename "$archive" .lz4)" 2>/dev/null
+            ;;
+        *.tar.lz4)
+            lz4 -d "$archive" | tar -xf - -C "$extracted_dir" 2>/dev/null
+            ;;
+        *.Z)
+            uncompress -c "$archive" > "$extracted_dir/$(basename "$archive" .Z)" 2>/dev/null
             ;;
         *)
-            echo "Unsupported archive format: $archive"
-            return 1
+            local extension="${archive##*.}"
+            if command -v "$extension" &> /dev/null; then
+                {
+                "$extension" -d "$archive" -c > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" -C > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -c "$archive" > "$extracted_dir/$(basename "$archive" ."$extension")"  
+                } 2>/dev/null
+            elif command -v "extract_$extension" &> /dev/null; then
+                "extract_$extension" -d "$archive" -C "$extracted_dir"
+            else
+                echo "Unsupported archive format: $archive"
+                sleep 5
+                return 1
+            fi
             ;;
     esac
 }
 
 process_image() {
     if [ "$type" = "1" ]; then
-      $ask
-      local found_dir=$found_dir
-      local found_file=$found_file
-      original="$found_dir/$found_file"
-      new="$found_dir/system.img"
-      rename_image "$original" "$new"
-      perform_resize_and_unshare_blocks_v2 || echo "Failed to resize and unshare blocks."
-      rename_image "$new" "$original"
-      confirm_flash_v2
+      ask
+      original_file="$found_dir/$found_file"
+      new_name="$found_dir/system.img"
+      rename_image "$original_file" "$new_name"
+      perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+      rename_image "$new_name" "$original_file"
+      confirm_flash
     elif [ "$type" = "4" ]; then
-      $ask
+      ask
       if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
           mkdir -p "$CUSTOM_MOUNT_POINT"
       fi
       original_file="$found_dir/$found_file" 
       new_name="$found_dir/system.img"
-      rename_image "$image_path/$select_file" "$new_name"
-      perform_resize_and_unshare_blocks_v2 || echo "Failed to resize and unshare blocks."
+      rename_image "$original_file" "$new_name"
+      perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       resize2fs "$new_name" 6G
-      mount -o loop,rw "$new_name" $CUSTOM_MOUNT_POINT
-      echo "Mounted Image On $CUSTOM_MOUNT_POINT to modify"
-      echo "Press any key to indicate that you have finished the process... "
-      read -rsn4 finish
-      e2fsck -f "$new_name"
+      mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
+      e2fsck -fp "$new_name"
       resize2fs -M "$new_name"
       umount $CUSTOM_MOUNT_POINT/
       echo "Compressed Image and Removed Montage"
@@ -406,94 +596,68 @@ process_image() {
 }
 
 find_image_in_directory() {
-    local recent_image_file=$(find "$image_path" -type f -name '*.img' -mmin -5)
+    local recent_image_file=$(find "$image_path/" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>/dev/null | sort -n | tail -n 1 | cut -d' ' -f2-)
     if [ -n "$recent_image_file" ]; then
-        export found_dir=$(dirname "$recent_image_file")
-        export found_file=$(basename "$recent_image_file")
-        echo "Found recent image: $found_file in $found_dir"
+        found_dir=$(dirname "$recent_image_file")
+        found_file=$(basename "$recent_image_file")
+        echo "Found recent system image: $found_file in $found_dir"
         process_image
     else
-        echo "No recent image found in $image_path"
+        echo "No recent system image found in $image_path"
     fi
 }
 
 list_directories_and_files() {
     directory="$1"
-    ls -1p "$directory" | grep -E '/$|.*\.(img|gzip|xz|tar|zip)$' | sed 's:/$::'
+    extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+    ls -1p "$directory" | grep -E "/$|.*\.(${extensions})$" | sed 's:/$::'
 }
+
+dd_image() {
+	dd if="$2" of="$DEVICE_MAPPER/$1"
+}
+
 
 confirm_flash() {
-    echo "Do you want to proceed with flashing the image $original_file? (y/n)"
-    read -rsn1 input
-    if [ "$input" = "y" ]; then
-        if [ "$A_B" = "true" ]; then
-            if [ "$GENERIC" = "true" ]; then
-                echo "Selected partition type: system (using by-name)"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-            elif [ "$DYNAMIC" = "true" ]; then
-                echo "Selected partition type: system (using device mapper)"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-            else
-                echo "Invalid device type specified."
-                exit 1
-            fi
-        elif [ "$A_O" = "true" ]; then
-            if [ "$GENERIC" = "true" ]; then
-                echo "Selected partition type: system (using by-name)"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
-            elif [ "$DYNAMIC" = "true" ]; then
-                echo "Selected partition type: system (using device mapper)"
-                dd if="$original_file" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
-            else
-                echo "Invalid device type specified."
-                exit 1
-            fi
-        else
-            echo "Partition type could not be determined."
-            exit 1
-        fi
-    else
-        exit 1
-    fi
-}
-
-confirm_flash_v2() {
+	stty echo
     echo "Do you want to proceed with flashing the image $original? (y/n)"
     read -rsn1 input
-    if [ "$input" = "y" ]; then
-        if [ "$A_B" = "true" ]; then
-            if [ "$GENERIC" = "true" ]; then
-                echo "Selected partition type: system (using by-name)"
-                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-            elif [ "$DYNAMIC" = "true" ]; then
-                echo "Selected partition type: system (using device mapper)"
-                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
+    stty -echo
+
+    case $input in
+        y|Y)
+            if [ "$A_B" = "true" ]; then
+                SYSTEM_SUFFIX="_a"
+                VENDOR_SUFFIX="_a"
+                PRODUCT_SUFFIX="_a"
+                ODM_SUFFIX="_a"
+        
+                if [ "A_O" = "true" ]; then
+                    SYSTEM_SUFFIX=""
+                    VENDOR_SUFFIX=""
+                    PRODUCT_SUFFIX=""
+                    ODM_SUFFIX=""
+                fi
+        
+                dd_image "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "$original_file"
+                dd_image "$CUSTOM_SYSTEM_NAME_b" "$original_file"
+            elif [ "$A_O" = "true" ]; then
+                dd_image "$CUSTOM_SYSTEM_NAME" "$original_file"
             else
-                echo "Invalid device type specified."
+                echo "Partition type could not be determined."
                 exit 1
             fi
-        elif [ "$A_O" = "true" ]; then
-            if [ "$GENERIC" = "true" ]; then
-                echo "Selected partition type: system (using by-name)"
-                dd if="$original" of="/dev/block/by-name/$CUSTOM_SYSTEM_NAME"
-            elif [ "$DYNAMIC" = "true" ]; then
-                echo "Selected partition type: system (using device mapper)"
-                dd if="$original" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
-            else
-                echo "Invalid device type specified."
-                exit 1
-            fi
-        else
-            echo "Partition type could not be determined."
-            exit 1
-        fi
-    else
-        exit 1
-    fi
+            break
+            ;;
+        n|N)
+            break
+            ;;
+        *)
+            echo "Invalid input. Please enter y or n."
+            read -rsn1
+            confirm_flash
+            ;;
+    esac
 }
 
 rename_image() {
@@ -502,18 +666,99 @@ rename_image() {
     mv "$original_file" "$new_name"
 }
 
+check_extension() {
+    local file="$1"
+    local extension="${file##*.}"
+    if [[ -n "$FILE_EXTENSIONS" ]]; then
+        local trimmed_extension=$(trim "$extension" | tolower)
+        for ext in "${FILE_EXTENSIONS[@]}"; do
+            local trimmed_ext=$(trim "$ext" | tolower)
+            if [[ "$trimmed_ext" = "$trimmed_extension" ]]; then
+                echo "Extensión encontrada: $extension"
+                COMPRESS=true
+                return
+            fi
+        done
+    else
+        echo "No se han definido extensiones permitidas."
+        COMPRESS=false
+        return
+    fi
+
+    echo "Extensión no encontrada: $extension"
+    COMPRESS=false
+}
+
+mount_device() {
+	{
+    if losetup -f "$1"; then 2>/dev/null
+        loop_device=$(losetup -f --show) 2>/dev/null
+
+        if [ -z "$loop_device" ]; then
+            echo "Error: Failed to set up loop device."
+            return 1
+        fi
+    fi
+
+    success=false
+    
+    mount -t ext4 -o rw,noatime $loop_device $2 2>/dev/null
+    if [ $? != 0 ]; then
+        minorx=1
+        [ -e /dev/block/$(ls -l /dev/block/loop1 | awk '{ print $6 }') ] && minorx=$(ls -l /dev/block/loop1 | awk '{ print $6 }') 2>/dev/null
+        i=0
+        while [ $i -lt 64 ]; do
+            loop=/dev/block/loop$i
+            mknod $loop b 7 $((i * minorx)) 2>/dev/null
+            losetup $loop $1 2>/dev/null
+            losetup $loop | grep -q $1 && break 2>/dev/null
+            i=$((i + 1))
+        done
+        mount -t ext4 -o loop,noatime $loop $2 2>/dev/null
+        success=true
+        if [ $? != 0 ]; then
+            losetup -d $loop 2>/dev/null
+            return 1
+        fi
+    else
+        success=true
+    fi
+    } 2>/dev/null
+    if $success; then
+        echo "Mounted Image on $2 to modify"
+        prompt_for_confirmation "Press any key to indicate that you have finished the process... "
+        umount "$2"
+        e2fsck -fp "$1"
+        resize2fs -M "$1"
+        rename_image "$new_name" "$original_file"
+        echo "Compressed Image and Removed Montage"
+    else
+        losetup -d "$loop_device"
+        echo "Error: No mount command was successful."
+        e2fsck -fp "$new_name"
+        resize2fs -M "$new_name"
+        echo "Compressed Image and Failed Mount"
+        rename_image "$new_name" "$original_file"
+        return 1
+    fi
+
+    return 0
+}
+
 user_modification() {
-    echo "Enter the full path of the image file or directory (default: /sdcard)"
+	clear
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
     echo "Enter '.' to use the default directory."
     echo -n "> "
     read -r image_path
+    stty -echo
 
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="/sdcard"
+        image_path="$DEFAULT_START_POINT"
     fi
 
     selected_index=1
-    selected_symbol=">"
+    selected_symbol="> "
     select_file=""
 
     while true; do
@@ -532,7 +777,7 @@ user_modification() {
         echo ""
         echo "Contents of $image_path:"
         list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
-
+        
         read -rsn1 input
 
         case "$input" in
@@ -595,8 +840,9 @@ user_modification() {
                 else
                     select_file="$selected_file"
                     compressed_file="$select_file"
+                    check_extension "$compressed_file"
                     if [ "${select_file##*.}" = "img" ]; then
-                    	$ask
+                    	ask
                         if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
    						 mkdir -p "$CUSTOM_MOUNT_POINT"
 						fi
@@ -605,25 +851,16 @@ user_modification() {
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
                         resize2fs "$new_name" 6G
-   					 mount -o loop,rw "$new_name" $CUSTOM_MOUNT_POINT
-    					echo "Mounted Image On $CUSTOM_MOUNT_POINT to modify"
-                        echo "Price to any key to indicate that you have finished the process... "
-                        read -rsn4 finish
-                        e2fsck -f "$new_name"
-                        resize2fs -M "$new_name"
-                        umount $CUSTOM_MOUNT_POINT/
-                        echo "Compressed Image and Removed Montage"
-                        rename_image "$new_name" "$original_file"
+                        mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
                         break
-                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.xz" ] && [ "${compressed_file##*.}" != "gz" ] && [ "${compressed_file##*.}" != "xz" ]; then
-						$ask
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    else
-                        $ask
+                    elif [ "$COMPRESS" = true ]; then
+                        ask
                         extract_image_from_archive "$image_path/$compressed_file"
                         find_image_in_directory
                         break
+                    else
+                        echo "Unsupported file format: $compressed_file"
+                        continue
                     fi
                 fi
                 ;;
@@ -636,13 +873,15 @@ user_modification() {
 }
 
 process_user_selected_image() {
-    echo "Enter the full path of the image file or directory (default: /sdcard):"
+	clear
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT):"
     echo "Enter '.' to use the default directory."
     echo -n "> "
     read -r image_path
+    stty -echo
 
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="/sdcard"
+        image_path="$DEFAULT_START_POINT"
     fi
 
     selected_index=1
@@ -665,7 +904,6 @@ process_user_selected_image() {
         echo ""
         echo "Contents of $image_path:"
         list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
-
         read -rsn1 input
 
         case "$input" in
@@ -728,8 +966,9 @@ process_user_selected_image() {
                 else
                     select_file="$selected_file"
                     compressed_file="$select_file"
+                    check_extension "$compressed_file"
                     if [ "${select_file##*.}" = "img" ]; then
-                        $ask
+                        ask
                         original_file="$image_path/$select_file" 
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
@@ -737,15 +976,14 @@ process_user_selected_image() {
                         rename_image "$new_name" "$original_file"
                         confirm_flash
                         break
-                    elif [ "${compressed_file##*.}" != "zip" ] && [ "${compressed_file##*.}" != "tar.xz" ] && [ "${compressed_file##*.}" != "gz" ] && [ "${compressed_file##*.}" != "xz" ]; then
-                        $ask
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    else
-                        $ask
+                    elif [ "$COMPRESS" = true ]; then
+                        ask
                         extract_image_from_archive "$image_path/$compressed_file"
                         find_image_in_directory
                         break
+                    else
+                        echo "Unsupported file format: $compressed_file"
+                        continue
                     fi
                 fi
                 ;;
@@ -757,86 +995,63 @@ process_user_selected_image() {
     done
 }
 
+copy_image() {
+	cp "$DEVICE_MAPPER/$1" "/sdcard/$2.img"
+}
+
+dd_images() {
+	dd if="/sdcard/$2.img" of="$DEVICE_MAPPER/$1"
+}
+
 ota_rw() {
-	$ask
+    ask
+
     if [ "$A_B" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a" "/sdcard/vendor_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a" "/sdcard/product_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a" "/sdcard/odm_a.img"
-        elif [ "$DYNAMIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a" "/sdcard/vendor_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a" "/sdcard/product_a.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a" "/sdcard/odm_a.img"
-        else
-            echo "Invalid device type specified."
-            exit 1
+        SYSTEM_SUFFIX="_a"
+        VENDOR_SUFFIX="_a"
+        PRODUCT_SUFFIX="_a"
+        ODM_SUFFIX="_a"
+        
+        if [ "A_O" = "true" ]; then
+            SYSTEM_SUFFIX=""
+            VENDOR_SUFFIX=""
+            PRODUCT_SUFFIX=""
+            ODM_SUFFIX=""
         fi
+
+        copy_image "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "system"
+        copy_image "$CUSTOM_VENDOR_NAME$VENDOR_SUFFIX" "vendor"
+        copy_image "$CUSTOM_PRODUCT_NAME$PRODUCT_SUFFIX" "product"
+        copy_image "$CUSTOM_ODM_NAME$ODM_SUFFIX" "odm"
+
+        perform_ota "/sdcard/system.img"
+        perform_ota "/sdcard/vendor.img"
+        perform_ota "/sdcard/product.img"
+        perform_ota "/sdcard/odm.img"
+
+        dd_images "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "system"
+        dd_images "$CUSTOM_SYSTEM_NAME_b" "system"
+        dd_images "$CUSTOM_VENDOR_NAME$VENDOR_SUFFIX" "vendor"
+        dd_images "$CUSTOM_VENDOR_NAME_b" "vendor"
+        dd_images "$CUSTOM_PRODUCT_NAME$PRODUCT_SUFFIX" "product"
+        dd_images "$CUSTOM_PRODUCT_NAME_b" "product"
+        dd_images "$CUSTOM_ODM_NAME$ODM_SUFFIX" "odm"
+        dd_images "$CUSTOM_ODM_NAME_b" "odm"
     elif [ "$A_O" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME" "/sdcard/vendor.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME" "/sdcard/product.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME" "/sdcard/odm.img"
-        elif [ "$DYNAMIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME" "/sdcard/vendor.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME" "/sdcard/product.img"
-            cp "$DEVICE_MAPPER/$CUSTOM_ODM_NAME" "/sdcard/odm.img"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
-    else
-        echo "Partition type could not be determined."
-        exit 1
-    fi
-    
-    perform_ota "/sdcard/system_a.img"
-    perform_ota "/sdcard/vendor_a.img"
-    perform_ota "/sdcard/product_a.img"
-    perform_ota "/sdcard/odm_a.img"
-    
-    if [ "$A_B" = "true" ]; then
-        if [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a"
-            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_b"
-            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a"
-            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_b"
-            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a"
-            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_b"
-        elif [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_a"
-            dd if="/sdcard/vendor_a.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME_b"
-            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_a"
-            dd if="/sdcard/product_a.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME_b"
-            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_a"
-            dd if="/sdcard/odm_a.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME_b"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
-    elif [ "$A_O" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
-            dd if="/sdcard/vendor.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME"
-            dd if="/sdcard/product.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME"
-            dd if="/sdcard/odm.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME"
-        elif [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME"
-            dd if="/sdcard/vendor.img" of="$DEVICE_MAPPER/$CUSTOM_VENDOR_NAME"
-            dd if="/sdcard/product.img" of="$DEVICE_MAPPER/$CUSTOM_PRODUCT_NAME"
-            dd if="/sdcard/odm.img" of="$DEVICE_MAPPER/$CUSTOM_ODM_NAME"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
+        copy_image "$CUSTOM_SYSTEM_NAME" "system"
+        copy_image "$CUSTOM_VENDOR_NAME" "vendor"
+        copy_image "$CUSTOM_PRODUCT_NAME" "product"
+        copy_image "$CUSTOM_ODM_NAME" "odm"
+
+        perform_ota "/sdcard/system.img"
+        perform_ota "/sdcard/vendor.img"
+        perform_ota "/sdcard/product.img"
+        perform_ota "/sdcard/odm.img"
+
+        dd_images "$CUSTOM_SYSTEM_NAME" "system"
+        dd_images "$CUSTOM_VENDOR_NAME" "vendor"
+        dd_images "$CUSTOM_PRODUCT_NAME" "product"
+        dd_images "$CUSTOM_ODM_NAME" "odm"
     else
         echo "Partition type could not be determined."
         exit 1
@@ -844,100 +1059,161 @@ ota_rw() {
 }
 
 perform_copied_system_image() {
+    ask
+
     if [ "$A_B" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
-        elif [ "$DYNAMIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a" "/sdcard/system_a.img"
-        else
-            echo "Invalid device type specified."
-            exit 1
+        SYSTEM_SUFFIX="_a"
+        VENDOR_SUFFIX="_a"
+        PRODUCT_SUFFIX="_a"
+        ODM_SUFFIX="_a"
+        
+        if [ "A_O" = "true" ]; then
+            SYSTEM_SUFFIX=""
+            VENDOR_SUFFIX=""
+            PRODUCT_SUFFIX=""
+            ODM_SUFFIX=""
         fi
+
+        copy_image "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "system"
+    
+        perform_ota "/sdcard/system.img" || echo "Failed to copy system image and resize/unshare blocks."
+        
+        dd_images "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "system"
+        dd_images "$CUSTOM_SYSTEM_NAME_b" "system"
     elif [ "$A_O" = "true" ]; then
-        if [ "$GENERIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
-        elif [ "$DYNAMIC" = "true" ]; then
-            cp "$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME" "/sdcard/system.img"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
+        copy_image "$CUSTOM_SYSTEM_NAME" "system"}
+        
+        perform_ota "/sdcard/system.img"
+        
+        dd_images "$CUSTOM_SYSTEM_NAME" "system"
     else
         echo "Partition type could not be determined."
         exit 1
     fi
-    
-perform_resize_and_unshare_blocks || echo "Failed to copy system image and resize/unshare blocks."
-    
-    if [ "$A_B" = "true" ]; then
-        if [ "$DYNAMIC" = "true" ]; then
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-        elif [ "$GENERIC" = "true" ]; then
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_a"
-            dd if="/sdcard/system_a.img" of="$DEVICE_MAPPER/$CUSTOM_SYSTEM_NAME_b"
-        else
-            echo "Invalid device type specified."
-            exit 1
-        fi
-    fi    
+}    
+
+progresive_print() {
+  local text="$1"
+  local delay="${2:-0.01}"
+  while [ -n "$text" ]; do
+    printf "%s" "${text:0:1}"
+    sleep "$delay"
+    text="${text:1}"
+  done
+  printf "\n"
 }
 
-if [ -f "/cache/recovery.conf" ] && grep -q "CUSTOM_MOUNT_POINT=" /cache/recovery.conf; then
-    echo ""
-fi
+clearly() {
+	clear "$@"
+}
 
-if [ -f "$HOME/recovery.conf" ] && grep -q "CUSTOM_MOUNT_POINT=" "$HOME/recovery.conf"; then
-    echo ""
-fi
+GSIRW() {
+	case "$1" in
+	    --fast | -f)
+		    sleep() {
+		    	export nothing=true
+            }
+            progresive_print() {
+            	local text="$1"
+                local delay="${2:-0.01}"
+                shift 2
+            	echo "$text"
+            }
+            clearly() {
+            	export nothing=true
+            }
+            ;;
+        *)
+            ;;
+    esac
+    
+	clear
+    stty -echo
+    progresive_print "Initialized the great wonder created by TheDarkDeath788" 0.05
 
-if [ -z "$CUSTOM_MOUNT_POINT" ]; then
-    export CUSTOM_MOUNT_POINT="/cache/system"
-fi
+    sleep 3
+    clearly
+    progresive_print "Identifying device parameters in case of emergency" 0.05
+    identify_device
 
-identify_device
-load_saved_configurations
-echo -e "
+    sleep 3
+    clearly
+    progresive_print "Loading secretly stored settings" 0.05
+    load_saved_configurations
+
+    sleep 2
+    clearly
+    progresive_print "
+                 _     ___    ___  
+                /_\   |_ _|  / _ \ 
+               / _ \   | |  | (_) |
+              /_/ \_\ |___|  \___/             
           ____ ____ ___
          / ___/ ___|_ _|     _ ____      __
         | |  _\___ \| |_____| '__\ \ /\ / /
         | |_| |___) | |_____| |   \ V  V /
-         \____|____/___|    |_|    \_/\_/  
-"
-echo ""
-echo "Select an option:"
-echo "1. Process the user-selected image."
-echo "2. Process a copy of the installed system image."
-echo "3. Process to return the ota in rw."
-echo "4. Modify images."
-echo "5. Manually configure options."
-echo " "
-echo -n "Choose one of the 5 options:"
-read -rsn5 option
-echo ""
+         \____|____/___|    |_|    \_/\_/ 
+" 0.01
+    progresive_print "
+         AIO (ALL IN ONE) GSI / OTA  -RW" 0.2
+    stty echo
+    sleep 1
+    echo ""
+    echo "                Select an option:"
+    sleep 1
+    echo "1.       Process the user-selected image."
+    sleep 1
+    echo "2.  Process a copy of the installed system image."
+    sleep 1
+    echo "3.       Process to return the ota in rw."
+    sleep 1
+    echo "4.                Modify images."
+    sleep 1
+    echo "5.          Manually configure options."
+    sleep 1
+    echo "6.                 Exit GSI-rw."
+    sleep 1
+    echo ""
+    echo -n ">         Choose one of the 5 options:"
+    read -rsn5 option
+    echo ""
 
-if [ -z "$option" ] || [ "$option" = "." ]; then
-   option="1"
-fi
+    if [ -z "$option" ] || [ "$option" = "." ]; then
+       option="1"
+    fi
 
-case $option in
-    1)
-        type=1
-        process_user_selected_image
-        ;;
-    2)
-        perform_copied_system_image
-        ;;
-    3)
-        ota_rw
-        ;;
-    4)
-        type=4
-        user_modification
-        ;;
-    5)
-        configure_manually
-        ;;
-    *)
-        echo "Invalid option."
-esac
+    case $option in
+        1)
+            type=1
+            process_user_selected_image
+            stty echo
+            ;;
+        2)
+            stty -echo
+            perform_copied_system_image
+            stty echo
+            ;;
+        3)
+            stty -echo
+            ota_rw
+            stty echo
+            ;;
+        4)
+            type=4
+            user_modification
+            stty echo
+            ;;
+        5)
+            stty echo
+            configure_manually
+            ;;
+        6)
+            echo "Why did you want to enter the GSIRW if you are ultimately going to leave?"
+            exit
+            ;;
+        *)
+            echo "                 Invalid option."
+    esac
+}
+
+GSIRW "$@"
