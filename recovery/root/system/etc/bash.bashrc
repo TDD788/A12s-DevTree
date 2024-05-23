@@ -15,7 +15,7 @@ alias del="rm -i"
 alias ren="mv -i"
 alias copy="cp -i"
 alias diskfree="df -Ph"
-alias nano='export TERM=xterm && nano "$@"'
+alias nano='nano --term pcansi "$@"'
 
 # go to a neutral location
 cd /tmp
