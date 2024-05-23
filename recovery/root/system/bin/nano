@@ -1,0 +1,3 @@
+#!/system/bin/sh
+export TERM=pcansi
+/FFiles/nano/bin/nano.bin "$@"
