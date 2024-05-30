@@ -116,7 +116,7 @@ jobs:
       contents: write
     steps: 
     - name: Print MANIFEST
-        run: echo ${{ needs.set-environment.outputs.MANIFEST }}
+      run: echo ${{ needs.set-environment.outputs.MANIFEST }}
         
     - name: Checkout
       uses: actions/checkout@v4
