@@ -64,6 +64,47 @@ on:
         type: boolean
 
 jobs:
+  set-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      MANIFEST: ${{ steps.set-manifest.outputs.MANIFEST }}
+    steps:
+      - name: Set MANIFEST based on input
+        id: set-manifest
+        run: |
+          if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+            if [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "OFRP" ]]; then
+              echo "MANIFEST=fox-12.1" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::fox-12.1"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "SHRP" ]]; then
+              echo "MANIFEST=shrp-12.1" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::shrp-12.1"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "PBRP" ]]; then
+              echo "MANIFEST=android-12.1" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::android-12.1"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "TWRP" ]]; then
+              echo "MANIFEST=android-12.1" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::android-12.1"
+            fi
+          elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+            if [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "OFRP" ]]; then
+              echo "MANIFEST=fox-11.0" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::fox-11.0"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "SHRP" ]]; then
+              echo "MANIFEST=v3_11.0" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::v3_11.0"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "PBRP" ]]; then
+              echo "MANIFEST=android-11.0" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::android-11.0"
+            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "TWRP" ]]; then
+              echo "MANIFEST=android-11.0" >> $GITHUB_ENV
+              echo "::set-output name=MANIFEST::android-11.0"
+            fi
+          else
+            echo "Invalid inputs"
+            exit 1
+          fi
+          
   Build-OrangeFox:
     name: Build OFRP by ${{ github.actor }}
     runs-on: ubuntu-latest
@@ -73,7 +114,10 @@ jobs:
       CCACHE_BASEDIR: "${{ github.workspace }}"
     permissions:
       contents: write
-    steps:
+    steps: 
+    - name: Print MANIFEST
+        run: echo ${{ needs.set-environment.outputs.MANIFEST }}
+        
     - name: Checkout
       uses: actions/checkout@v4
       with:
