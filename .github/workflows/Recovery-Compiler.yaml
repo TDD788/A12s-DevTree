@@ -62,7 +62,7 @@ on:
         required: true
         default: true
         type: boolean
-
+       
 jobs:
   Build-OrangeFox:
     name: Build OFRP by ${{ github.actor }}
@@ -74,7 +74,7 @@ jobs:
     permissions:
       contents: write
     steps: 
-    - name: Set MANIFEST based on input
+    - name: Set env based on input
       id: set-manifest
       run: |
         if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
