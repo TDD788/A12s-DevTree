@@ -544,8 +544,10 @@ jobs:
       id: set-manifest
       run: |
         if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+          echo "URL=https://github.com/SHRP-Reborn/manifest" >> $GITHUB_ENV
           echo "MANIFEST=shrp-12.1" >> $GITHUB_ENV
         elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+          echo "URL=https://github.com/SHRP/manifest" >> $GITHUB_ENV
           echo "MANIFEST=v3_11.0" >> $GITHUB_ENV
         fi
 
@@ -581,7 +583,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.email "thedarkdeath788@gmail.com"
         git config --global user.name "TDD788"
-        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ env.MANIFEST }}
+        repo init --depth=1 -u ${{ env.URL }} -b ${{ env.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
