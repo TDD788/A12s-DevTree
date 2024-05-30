@@ -20,11 +20,11 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_50"
+export FOX_VERSION="R12.1_51"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
-export FOX_CUSTOM_BINS_TO_SDCARD=3
+export FOX_CUSTOM_BINS_TO_SDCARD=1
 export FOX_USE_NANO_EDITOR=1
 export FOX_REPLACE_BUSYBOX_PS=1
 export FOX_USE_SED_BINARY=1
