@@ -4,6 +4,7 @@
 
 # shell
 export PS1='\s-\v \w > '
+export TERM='pcansi'
 
 # aliases
 alias cls="clear"
