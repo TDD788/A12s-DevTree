@@ -430,7 +430,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
   Build-PBRP:
-  name: Build PBRP by ${{ github.actor }}
+    name: Build PBRP by ${{ github.actor }}
     needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'PBRP' }}
     runs-on: ubuntu-latest
@@ -564,7 +564,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
 
   Build-SHRP:
-  name: Build SHRP by ${{ github.actor }}
+    name: Build SHRP by ${{ github.actor }}
     needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'SHRP' }}
     runs-on: ubuntu-latest
