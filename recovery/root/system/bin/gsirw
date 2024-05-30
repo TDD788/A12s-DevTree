@@ -1424,7 +1424,9 @@ esac
 
 if [ "$ROOT" = "false" ]; then
 	if command -v sudo >/dev/null 2>&1; then
- 	   EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
+ 	   if "sudo" = true >/dev/null 2>&1; then
+ 	       EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
+ 	   fi
     elif command -v su >/dev/null 2>&1; then
 		if "su -c "= true >/dev/null 2>&1; then
   		  EXEC_CMD="su -c sh $SCRIPT_DIR/gsirw "$1""
@@ -1432,6 +1434,8 @@ if [ "$ROOT" = "false" ]; then
 			true
  	 	  EXEC_CMD=""
 		fi
+	else
+	    EXEC_CMD=""
 	fi
 fi
 
