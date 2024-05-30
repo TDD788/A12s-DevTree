@@ -64,50 +64,8 @@ on:
         type: boolean
 
 jobs:
-  Set-ENV:
-    runs-on: ubuntu-latest
-    outputs:
-      MANIFEST: ${{ env.MANIFEST }}
-    steps:
-      - name: Set MANIFEST based on input
-        id: set-manifest
-        run: |
-          if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
-            if [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "OFRP" ]]; then
-              echo "MANIFEST=fox-12.1" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::fox-12.1"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "SHRP" ]]; then
-              echo "MANIFEST=shrp-12.1" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::shrp-12.1"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "PBRP" ]]; then
-              echo "MANIFEST=android-12.1" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::android-12.1"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "TWRP" ]]; then
-              echo "MANIFEST=android-12.1" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::android-12.1"
-            fi
-          elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
-            if [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "OFRP" ]]; then
-              echo "MANIFEST=fox-11.0" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::fox-11.0"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "SHRP" ]]; then
-              echo "MANIFEST=v3_11.0" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::v3_11.0"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "PBRP" ]]; then
-              echo "MANIFEST=android-11.0" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::android-11.0"
-            elif [[ "${{ github.event.inputs.BUILD_RECOVERY }}" == "TWRP" ]]; then
-              echo "MANIFEST=android-11.0" >> $GITHUB_ENV
-              echo "::set-output name=MANIFEST::android-11.0"
-            fi
-          else
-            echo "Invalid inputs"
-            exit 1
-          fi
-          
   Build-OrangeFox:
     name: Build OFRP by ${{ github.actor }}
-    needs: Set-ENV
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'OFRP' }}
     env:
@@ -116,8 +74,14 @@ jobs:
     permissions:
       contents: write
     steps: 
-    - name: Print MANIFEST
-      run: echo ${{ env.MANIFEST }}
+    - name: Set MANIFEST based on input
+      id: set-manifest
+      run: |
+        if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+          echo "MANIFEST=fox-12.1" >> $GITHUB_ENV
+        elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+          echo "MANIFEST=fox-11.0" >> $GITHUB_ENV
+        fi
         
     - name: Checkout
       uses: actions/checkout@v4
@@ -284,7 +248,6 @@ jobs:
 
   Build-TWRP:
     name: Build TWRP by ${{ github.actor }}
-    needs: Set-ENV
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'TWRP' }}
     env:
@@ -293,6 +256,15 @@ jobs:
     permissions:
       contents: write
     steps:
+    - name: Set MANIFEST based on input
+      id: set-manifest
+      run: |
+        if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+          echo "MANIFEST=twrp-12.1" >> $GITHUB_ENV
+        elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+          echo "MANIFEST=twrp-11.0" >> $GITHUB_ENV
+        fi
+        
     - name: Check Out
       uses: actions/checkout@v3
     
@@ -421,12 +393,20 @@ jobs:
         
   Build-PBRP:
     name: Build PBRP by ${{ github.actor }}
-    needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'PBRP' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+    - name: Set MANIFEST based on input
+      id: set-manifest
+      run: |
+        if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+          echo "MANIFEST=android-12.1" >> $GITHUB_ENV
+        elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+          echo "MANIFEST=android-11.0" >> $GITHUB_ENV
+        fi
+        
     - name: Check Out
       uses: actions/checkout@v3
     
@@ -512,7 +492,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
-        tag_name: twrp${{ github.run_id }}
+        tag_name: pbrp${{ github.run_id }}
         body: |
           ## PBRP Recovery Build - Unofficial
           Build: ${{ env.MANIFEST }}
@@ -549,18 +529,26 @@ jobs:
         <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
         <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
         <pre><b>${{ env.MD5_RRAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/twrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
+        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/pbrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
 
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
 
   Build-SHRP:
     name: Build SHRP by ${{ github.actor }}
-    needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'SHRP' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+    - name: Set MANIFEST based on input
+      id: set-manifest
+      run: |
+        if [[ "${{ github.event.inputs.MANIFEST }}" == "12.1" ]]; then
+          echo "MANIFEST=shrp-12.1" >> $GITHUB_ENV
+        elif [[ "${{ github.event.inputs.MANIFEST }}" == "11.0" ]]; then
+          echo "MANIFEST=v3_11.0" >> $GITHUB_ENV
+        fi
+
     - name: Check Out
       uses: actions/checkout@v3
    
@@ -593,7 +581,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.email "thedarkdeath788@gmail.com"
         git config --global user.name "TDD788"
-        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ github.env.MANIFEST }}
+        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ env.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
@@ -646,7 +634,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
-        tag_name: twrp${{ github.run_id }}
+        tag_name: shrp${{ github.run_id }}
         body: |
           ## SHRP Recovery Build - Unofficial
           Build: ${{ env.MANIFEST }}
@@ -683,7 +671,7 @@ jobs:
         <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
         <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
         <pre><b>${{ env.MD5_RRAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/twrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
+        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/shrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
 
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
