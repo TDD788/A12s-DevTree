@@ -202,7 +202,7 @@ jobs:
         tag_name: ofrp${{ github.run_id }}
         body: |
           ## OrangeFox Recovery Build - Unofficial
-          Build: fox_${{ github.event.inputs.MANIFEST }}
+          Build: ${{ env.MANIFEST }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
@@ -233,7 +233,7 @@ jobs:
         TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
         MESSAGE="
         <b>Orange Fox Recovery Build - Unofficial</b>
-        <b>Build:</b> fox_${{ env.FOX_MANIFEST }}
+        <b>Build:</b> ${{ env.MANIFEST }}
         <b>Device:</b> <a href=\"${{ env.DEVICE_TREE }}/tree/${{ env.DEVICE_TREE_BRANCH }}\">Device Tree/Branch</a>
         <b>Commit:</b> Most recent <a href=\"${{ env.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}\">commit</a> during building.
         <b><pre>MD5SUM:</pre></b>
@@ -353,7 +353,7 @@ jobs:
         tag_name: twrp${{ github.run_id }}
         body: |
           ## TWRP Recovery Build - Unofficial
-          Build: ${{ github.event.inputs.MANIFEST }}
+          Build: ${{ env.MANIFEST }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
@@ -380,7 +380,7 @@ jobs:
         TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
         MESSAGE="
         <b>TWRP Recovery Build - Unofficial</b>
-        <b>Build:</b> ${{ env.TW_MANIFEST }}
+        <b>Build:</b> ${{ env.MANIFEST }}
         <b>Device:</b> <a href=\"${{ env.DEVICE_TREE }}/tree/${{ env.DEVICE_TREE_BRANCH }}\">Device Tree/Branch</a>
         <b>Commit:</b> Most recent <a href=\"${{ env.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}\">commit</a> during building.
         <b><pre>MD5SUM:</pre></b>
