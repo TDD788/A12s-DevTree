@@ -170,7 +170,7 @@ jobs:
         git config --global user.email "thedarkdeath788@gmail.com"
         git clone https://gitlab.com/OrangeFox/sync.git -b master
         cd sync
-        ./orangefox_sync.sh --branch fox-${{ github.event.inputs.MANIFEST }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
+        ./orangefox_sync.sh --branch ${{ github.event.inputs.MANIFEST }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
       
     - name: Clone Device Tree
       run: |
