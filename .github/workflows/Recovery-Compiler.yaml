@@ -108,7 +108,7 @@ jobs:
   Build-OrangeFox:
     name: Build OFRP by ${{ github.actor }}
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.ORANGE_FOX == 'true' }}
+    if: ${{ github.event.inputs.BUILD_RECOVERY == 'OFRP' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CCACHE_BASEDIR: "${{ github.workspace }}"
@@ -284,7 +284,7 @@ jobs:
   Build-TWRP:
     name: Build TWRP by ${{ github.actor }}
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.TWRP == 'true' }}
+    if: ${{ github.event.inputs.BUILD_RECOVERY == 'TWRP' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       CCACHE_BASEDIR: "${{ github.workspace }}"
@@ -492,7 +492,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
   Build-PBRP:
-    if: github.event.repository.owner.id == github.event.sender.id
+    if: ${{ github.event.inputs.BUILD_RECOVERY == 'PBRP' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -651,7 +651,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
 
   Build-SHRP:
-    if: github.event.repository.owner.id == github.event.sender.id
+    if: ${{ github.event.inputs.BUILD_RECOVERY == 'SHRP' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
