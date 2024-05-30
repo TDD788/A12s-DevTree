@@ -19,5 +19,5 @@ alias nano='nano --term pcansi "$@"'
 
 # go to a neutral location
 cd /tmp
-
+echo "Welcome, Enjoy this Recovery. =D"
 #
