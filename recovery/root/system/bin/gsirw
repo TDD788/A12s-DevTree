@@ -1,22 +1,22 @@
 #!/system/bin/sh
 
-export DEFAULT_SYSTEM_NAME="system"
-export DEFAULT_VENDOR_NAME="vendor"
-export DEFAULT_PRODUCT_NAME="product"
-export DEFAULT_ODM_NAME="odm"
-export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
-export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
-export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
-export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
+check_root_permissions() {
+    if [ "$(id -u)" -eq 0 ]; then
+        ROOT=true
+    else
+        ROOT=false
+    fi
+}
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
-DEVICE_NAME=$(getprop ro.product.system.device)
-DEVICE_MODEL=$(getprop ro.product.system.model)
-SOC=$(getprop ro.product.board)
+root_msg() {
+	if [ "$ROOT" = "true" ]; then
+		echo "Congratulations you are running the script at root level"
+	else
+		if [ "$ROOT" = "false" ]; then
+			echo "Running a script that needs a root level, bruh"
+  	  fi
+	fi
+}
 
 perform_resize_and_unshare_blocks() {
     resize2fs "$new_name" 6G
@@ -101,6 +101,8 @@ prank() {
 }
 
 look() {
+	echo ""
+	root_msg
 	echo ""
     echo "GSI-rw configurations"
     echo "SYSTEM Name=\"$CUSTOM_SYSTEM_NAME\""
@@ -689,60 +691,109 @@ check_extension() {
     COMPRESS=false
 }
 
-mount_device() {
-	{
-    if losetup -f "$1"; then 2>/dev/null
-        loop_device=$(losetup -f --show) 2>/dev/null
-
-        if [ -z "$loop_device" ]; then
-            echo "Error: Failed to set up loop device."
+mount_dual() {
+    if [ -x "/system/bin/toybox" ]; then
+        TOYBOX_BIN="/system/bin/toybox"
+        echo "Attempting to mount using toybox..."
+        $TOYBOX_BIN mount --bind -t ext4 "$1" "$2"
+        if [ $? -eq 0 ]; then
+            echo "Mount successful using toybox"
+            success=true
+            return 0
+        else
+            echo "Mount failed using toybox, trying with mountutils..."
+        fi
+    fi
+    mount -t ext4 -o rw,noatime "$1" "$2"
+    if [ $? -eq 0 ]; then
+        echo "Mount successful using mountutils"
+        success=true
+        return 0
+    else
+        echo "Mount failed using mountutils as well, trying with losetup..."
+        loopy=$(losetup -f)
+        loop_locate=$(losetup -a | grep "$loopy")
+        umount $loop_locate
+        if losetup -j $loopy "$1"; then
+            if mount -t ext4 -o rw,noatime "$loopy" "$2"; then
+                echo "Mount successful using losetup"
+                return 0
+            else
+                echo "Mount failed using losetup"
+                return 1
+            fi
+        else
+            echo "Failed to assign partition to loop device"
             return 1
         fi
     fi
+}
 
-    success=false
+mount_device() {
+    local loopy=$(losetup -f)
+    local success=false
+    {
+    loop_device=$loopy
+    losetup $loopy "$1"
+    if [ -z "$(losetup -f "$1" )" ]; then
+        echo "Error: Failed to set up loop device."
+    fi
     
-    mount -t ext4 -o rw,noatime $loop_device $2 2>/dev/null
-    if [ $? != 0 ]; then
-        minorx=1
-        [ -e /dev/block/$(ls -l /dev/block/loop1 | awk '{ print $6 }') ] && minorx=$(ls -l /dev/block/loop1 | awk '{ print $6 }') 2>/dev/null
-        i=0
+    if mount -t ext4 -o rw,noatime "$loop_device" "$2" ; then
+        success=true
+    else
+        local minorx=1
+        [ -e "/dev/block/$(ls -l /dev/block/loop1 | awk '{ print $6 }' )" ] && minorx=$(ls -l /dev/block/loop1 | awk '{ print $6 }' )
+        local i=0
         while [ $i -lt 64 ]; do
-            loop=/dev/block/loop$i
-            mknod $loop b 7 $((i * minorx)) 2>/dev/null
-            losetup $loop $1 2>/dev/null
-            losetup $loop | grep -q $1 && break 2>/dev/null
+            local loop="/dev/block/loop$i"
+            mknod "$loop" b 7 $((i * minorx)) 
+            if losetup "$loop" "$1"  && losetup "$loop" | grep -q "$1"; then
+                if mount -t ext4 -o loop,noatime "$loop" "$2" ; then
+                    loop_device="$loop"
+                    return 0
+                else
+                    if mount -t ext4 -o loop,noatime "$1" "$2" ; then
+                        loop_device="$loop"
+                        return 0
+                    else
+                        loop=$(losetup -f)
+                        losetup $loop "$1"
+                        if losetup -f "$1" ; then
+                            mount -t ext4 -o loop,noatime "$loop" "$2"
+                            success=true
+                        fi    
+                    fi
+                fi
+            fi
             i=$((i + 1))
         done
-        mount -t ext4 -o loop,noatime $loop $2 2>/dev/null
-        success=true
-        if [ $? != 0 ]; then
-            losetup -d $loop 2>/dev/null
-            return 1
-        fi
-    else
-        success=true
     fi
     } 2>/dev/null
-    if $success; then
-        echo "Mounted Image on $2 to modify"
+    
+    if ! $success; then
+        echo "Trying an alternative method"
+        mount_dual "$1" "$2"
+    fi
+
+    if success=true ; then
+        echo "Mounted image on $2 to modify"
         prompt_for_confirmation "Press any key to indicate that you have finished the process... "
         umount "$2"
         e2fsck -fp "$1"
         resize2fs -M "$1"
         rename_image "$new_name" "$original_file"
-        echo "Compressed Image and Removed Montage"
-    else
-        losetup -d "$loop_device"
+        echo "Compressed image and removed mount"
+        return 0
+    elif success=false ; then
+        losetup -d "$loop_device" 
         echo "Error: No mount command was successful."
         e2fsck -fp "$new_name"
         resize2fs -M "$new_name"
-        echo "Compressed Image and Failed Mount"
+        echo "Compressed image and failed mount"
         rename_image "$new_name" "$original_file"
         return 1
     fi
-
-    return 0
 }
 
 user_modification() {
@@ -850,6 +901,132 @@ user_modification() {
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                        resize2fs "$new_name" 6G
+                        mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
+                        break
+                    elif [ "$COMPRESS" = true ]; then
+                        ask
+                        extract_image_from_archive "$image_path/$compressed_file"
+                        find_image_in_directory
+                        break
+                    else
+                        echo "Unsupported file format: $compressed_file"
+                        continue
+                    fi
+                fi
+                ;;
+        esac
+
+        if [ "$selected_index" -lt 1 ]; then
+            selected_index=1
+        fi
+    done
+}
+
+modification() {
+	clear
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
+    echo "Enter '.' to use the default directory."
+    echo -n "> "
+    read -r image_path
+    stty -echo
+
+    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
+        image_path="$DEFAULT_START_POINT"
+    fi
+
+    selected_index=1
+    selected_symbol="> "
+    select_file=""
+
+    while true; do
+        clear
+        echo "Guide to Move"
+        echo ""
+        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
+        echo "Also in the style of PC games you can use the WASD keys"
+        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
+        echo "                   Q=Exit GSIRW"
+        echo ""
+        echo "UP : You will go up in the list of Files or Folders" 
+        echo "LEFT : You will go to the previous or higher directory"
+        echo "RIGHT : Enter folder or select file"
+        echo "DOWN : Go down the list of Files or Folders"
+        echo ""
+        echo "Contents of $image_path:"
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+        
+        read -rsn1 input
+
+        case "$input" in
+            "q")
+                break
+                ;;
+            $'\x1b')
+                read -rsn2 input
+                case "$input" in
+                    '[A')
+                        flag="UP"
+                        ;;
+                    '[B')
+                        flag="DOWN"
+                        ;;
+                    '[C')
+                        flag="RIGHT"
+                        ;;
+                    '[D')
+                        flag="LEFT"
+                        ;;
+                esac
+                ;;
+            "W" | "w")
+                flag="UP"
+                ;;
+            "A" | "a")
+                flag="LEFT"
+                ;;
+            "S" | "s")
+                flag="DOWN"
+                ;;
+            "D" | "d")
+                flag="RIGHT"
+                ;;
+        esac
+
+        case "$flag" in
+            "UP")
+                ((selected_index--))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+                ;;
+            "LEFT")
+                image_path=$(dirname "$image_path")
+                ;;
+            "DOWN")
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                ((selected_index++))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+                ;;
+            "RIGHT")
+                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
+                if [ -d "$image_path/$selected_file" ]; then
+                    image_path="$image_path/$selected_file"
+                    selected_index=1
+                else
+                    select_file="$selected_file"
+                    compressed_file="$select_file"
+                    check_extension "$compressed_file"
+                    if [ "${select_file##*.}" = "img" ]; then
+                    	ask
+                        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
+   						 mkdir -p "$CUSTOM_MOUNT_POINT"
+						fi
+                        original_file="$image_path/$select_file" 
+                        new_name="$image_path/system.img"
+                        rename_image "$image_path/$select_file" "$new_name"
                         resize2fs "$new_name" 6G
                         mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
                         break
@@ -1108,25 +1285,6 @@ clearly() {
 }
 
 GSIRW() {
-	case "$1" in
-	    --fast | -f)
-		    sleep() {
-		    	export nothing=true
-            }
-            progresive_print() {
-            	local text="$1"
-                local delay="${2:-0.01}"
-                shift 2
-            	echo "$text"
-            }
-            clearly() {
-            	export nothing=true
-            }
-            ;;
-        *)
-            ;;
-    esac
-    
 	clear
     stty -echo
     progresive_print "Initialized the great wonder created by TheDarkDeath788" 0.05
@@ -1166,15 +1324,17 @@ GSIRW() {
     sleep 1
     echo "3.       Process to return the ota in rw."
     sleep 1
-    echo "4.                Modify images."
+    echo "4.           Process and modify image."
     sleep 1
-    echo "5.          Manually configure options."
+    echo "5.                  Modify image."
     sleep 1
-    echo "6.                 Exit GSI-rw."
+    echo "6.           Manually configure options."
+    sleep 1
+    echo "7.                 Exit GSI-rw."
     sleep 1
     echo ""
     stty echo
-    echo -n ">         Choose one of the 5 options:"
+    echo -n ">         Choose one of the 7 options:"
     read -rsn5 option
     echo ""
 
@@ -1204,10 +1364,15 @@ GSIRW() {
             stty echo
             ;;
         5)
+            type=4
+            modification
+            stty echo
+            ;;
+        6)
             stty echo
             configure_manually
             ;;
-        6)
+        7)
             echo "Why did you want to enter the GSIRW if you are ultimately going to leave?"
             exit
             ;;
@@ -1216,4 +1381,58 @@ GSIRW() {
     esac
 }
 
-GSIRW "$@"
+export DEFAULT_SYSTEM_NAME="system"
+export DEFAULT_VENDOR_NAME="vendor"
+export DEFAULT_PRODUCT_NAME="product"
+export DEFAULT_ODM_NAME="odm"
+export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
+export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
+export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
+export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m'
+
+DEVICE_NAME=$(getprop ro.product.system.device)
+DEVICE_MODEL=$(getprop ro.product.system.model)
+SOC=$(getprop ro.product.board)
+
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+
+check_root_permissions
+
+case "$1" in
+	    --fast | -f)
+		    sleep() {
+		    	export nothing=true
+            }
+            progresive_print() {
+            	local text="$1"
+                local delay="${2:-0.01}"
+                shift 2
+            	echo "$text"
+            }
+            clearly() {
+            	export nothing=true
+            }
+            ;;
+        *)
+            ;;
+esac
+
+if [ "$ROOT" = "false" ]; then
+	if command -v sudo >/dev/null 2>&1; then
+ 	   EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
+    elif command -v su >/dev/null 2>&1; then
+		if "su -c "= true >/dev/null 2>&1; then
+  		  EXEC_CMD="su -c sh $SCRIPT_DIR/gsirw "$1""
+		else
+			true
+ 	 	  EXEC_CMD=""
+		fi
+	fi
+fi
+
+$EXEC_CMD GSIRW "$1"
