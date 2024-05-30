@@ -43,7 +43,7 @@ on:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
-      WHAT_TO_BUILD:
+      BUILD_TARGET:
         description: "Set partition to build"
         required: true
         default: 'recovery'
@@ -67,7 +67,7 @@ jobs:
   Set-ENV:
     runs-on: ubuntu-latest
     outputs:
-      MANIFEST: ${{ steps.set-manifest.outputs.MANIFEST }}
+      MANIFEST: ${{ env.MANIFEST }}
     steps:
       - name: Set MANIFEST based on input
         id: set-manifest
@@ -117,7 +117,7 @@ jobs:
       contents: write
     steps: 
     - name: Print MANIFEST
-      run: echo ${{ needs.set-environment.outputs.MANIFEST }}
+      run: echo ${{ env.MANIFEST }}
         
     - name: Checkout
       uses: actions/checkout@v4
@@ -162,7 +162,7 @@ jobs:
        sudo bash setup/install_android_sdk.sh
       
     - name: Set-up Manifest
-      if: github.event.inputs.FOX_MANIFEST == '11.0' || github.event.inputs.FOX_MANIFEST == '12.1'
+      if: github.event.inputs.MANIFEST == '11.0' || github.event.inputs.MANIFEST == '12.1'
       run: |
         mkdir -p ${GITHUB_WORKSPACE}/OrangeFox
         cd ${GITHUB_WORKSPACE}/OrangeFox
@@ -170,24 +170,24 @@ jobs:
         git config --global user.email "thedarkdeath788@gmail.com"
         git clone https://gitlab.com/OrangeFox/sync.git -b master
         cd sync
-        ./orangefox_sync.sh --branch ${{ github.event.inputs.FOX_MANIFEST }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}
+        ./orangefox_sync.sh --branch fox-${{ github.event.inputs.MANIFEST }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
       
     - name: Clone Device Tree
       run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
         cd ${{ github.event.inputs.DEVICE_PATH }}
         echo "COMMIT_ID=$(git rev-parse HEAD)" >> $GITHUB_ENV
         
     - name: Building OrangeFox
       run: |
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
         set +e
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         export BOARD_RAMDISK_USE_LZMA=true
         set -e
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd recoveryimage -j$(nproc --all)
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
       continue-on-error: true
     
     - name: Upload files
@@ -196,7 +196,7 @@ jobs:
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
        path: |
-        OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+        OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
         
     - name: Upload files
       if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
@@ -204,7 +204,7 @@ jobs:
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Zip
        path: |
-        OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+        OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
         
     - name: Upload files
       if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
@@ -212,12 +212,12 @@ jobs:
       with:
        name: Orange Fox Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Tar
        path: |
-        OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
+        OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
         
     - name: Set Release Properties
       run: |
         echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
-        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}
+        cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
         echo "MD5_IMG=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_RAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
         echo "MD5_RRAMDISK=$(md5sum out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
@@ -229,16 +229,16 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
-          OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
-          OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-          OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
-          OrangeFox/fox_${{ github.event.inputs.FOX_MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.tar
+          OrangeFox/fox_${{ github.event.inputs.MANIFEST }}/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/OrangeFox*.zip
         name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: ofrp${{ github.run_id }}
         body: |
           ## OrangeFox Recovery Build - Unofficial
-          Build: fox_${{ github.event.inputs.FOX_MANIFEST }}
+          Build: fox_${{ github.event.inputs.MANIFEST }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
@@ -253,7 +253,7 @@ jobs:
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        FOX_MANIFEST: ${{ github.event.inputs.FOX_MANIFEST }}
+        FOX_MANIFEST: ${{ github.event.inputs.MANIFEST }}
         DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
         DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
         COMMIT_ID: ${{ env.COMMIT_ID }}
@@ -296,7 +296,7 @@ jobs:
     - name: Display Run Parameters
       run: |
         echo "::group::User Environment Variables"
-        echo "Manifest Branch: ${{ github.event.inputs.TW_MANIFEST }}"
+        echo "Manifest Branch: ${{ github.event.inputs.MANIFEST }}"
         echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE }}"
         echo "Device Tree Branch: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}"
         echo "Device Path: ${{ github.event.inputs.DEVICE_PATH }}"
@@ -335,7 +335,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.event.inputs.TW_MANIFEST }}
+        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b android-${{ github.event.inputs.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
@@ -348,72 +348,6 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Check Build Tree
-      uses: haya14busa/action-cond@v1
-      id: buildtree
-      with:
-        cond: ${{ github.event.inputs.TW_MANIFEST == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
-        if_true: twrp
-        if_false: omni
-
-    - name: Sync Device Dependencies
-      run: |
-        echo '#!/bin/bash
-
-        if [ -n "$1" ] && [ -e "$1" ]; then
-            file="$1"
-        else
-            exit 1
-        fi
-
-        if [ -n "$2" ]; then
-            manifest_path="$2"
-        elif [ -e .repo ]; then
-            mkdir -p .repo/local_manifests
-            manifest_path=".repo/local_manifests/roomservice.xml"
-        else
-            exit 1
-        fi
-
-
-        if [ -e "$manifest_path" ]; then
-            sed -i 's@</manifest>@@g' "$manifest_path"
-        else
-            echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > "$manifest_path"
-            echo "<manifest>" >> "$manifest_path"
-        fi
-
-        vars=( "remote" "repository" "target_path" "branch" "revision")
-
-        for i in "${!vars[@]}" ; do
-            value=$(grep "${vars[$i]}" "$file" | cut -d '"' -f4)
-            if [ "$value" != "" ]; then
-                declare -a ${vars[$i]}_val=( $value )
-            fi
-        done
-
-        for i in {0..5}; do
-            if [ "${repository_val[$i]}" != "" ] && [ "${target_path_val[$i]}" != "" ]; then
-                target_path="path=\"${target_path_val[$i]}\""
-                repository=" name=\"${repository_val[$i]}\""
-                if [ "${remote_val[$i]}" != "" ]; then
-                    remote_for_repo=" remote=\"${remote_val[$i]}\""
-                fi
-                if [ "${branch_val[$i]}" != "" ]; then
-                    revision=" revision=\"${branch_val[$i]}\""
-                elif [ "${revision_val[$i]}" != "" ]; then
-                    revision=" revision=\"${revision_val[$i]}\""
-                fi
-                echo "  <project $target_path$repository$remote_for_repo$revision />" >> "$manifest_path"
-            fi
-        done
-
-        echo "</manifest>" >> "$manifest_path"' > ${GITHUB_WORKSPACE}/convert.sh
-        bash ${GITHUB_WORKSPACE}/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
-        repo sync -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      continue-on-error: true
-
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
@@ -421,10 +355,12 @@ jobs:
 
     - name: Building recovery
       run: |
+        set +e
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         export BOARD_RAMDISK_USE_LZMA=true
-        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && make recoveryimage -j$(nproc --all)
+        set -e
+        lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload files
@@ -455,7 +391,7 @@ jobs:
         tag_name: twrp${{ github.run_id }}
         body: |
           ## TWRP Recovery Build - Unofficial
-          Build: ${{ github.event.inputs.TW_MANIFEST }}
+          Build: ${{ github.event.inputs.MANIFEST }}
           Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
           Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
           ## MD5SUM
@@ -468,7 +404,7 @@ jobs:
       env:
         TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
         TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        TW_MANIFEST: ${{ github.event.inputs.TW_MANIFEST }}
+        TW_MANIFEST: ${{ github.event.inputs.MANIFEST }}
         DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
         DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
         COMMIT_ID: ${{ env.COMMIT_ID }}
@@ -494,6 +430,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
   Build-PBRP:
+  name: Build PBRP by ${{ github.actor }}
     needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'PBRP' }}
     runs-on: ubuntu-latest
@@ -504,312 +441,4 @@ jobs:
       uses: actions/checkout@v3
     
     - name: Cleanup
-      uses: rokibhasansagar/slimhub_actions@main
-
-    - name: Prepare the environment
-      run: |
-        sudo apt update
-        sudo apt -y upgrade
-        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3
-
-    - name: Install OpenJDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '8'
-
-    - name: Setup SSH Keys
-      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') }}
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-          ssh-private-key: |
-              ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Install repo
-      run: |
-        mkdir ~/bin
-        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-        chmod a+x ~/bin/repo
-        sudo ln -sf ~/bin/repo /usr/bin/repo
-      
-    - name: Initialize repo
-      run: |
-        mkdir workspace
-        cd workspace
-        echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
-        git config --global user.name "TDD788"
-        git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/PitchBlackRecoveryProject/manifest_pb -b ${{ env.MANIFEST }}
-      id: pwd
-          
-    - name: Repo Sync
-      run: |
-        repo sync -j$(nproc --all) --force-sync
-      working-directory: workspace
-      
-    - name: Clone device tree
-      run: |
-        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
-    - name: Clone common tree
-      if: |
-        github.event.inputs.COMMON_TREE_URL != null
-        && github.event.inputs.COMMON_PATH != null
-      run: |
-        git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
-    - name: Check Build Tree
-      uses: haya14busa/action-cond@v1
-      id: buildtree
-      with:
-        cond: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
-        if_true: twrp
-        if_false: omni
-
-    - name: Sync Device Dependencies
-      run: |
-        bash ${GITHUB_WORKSPACE}/scripts/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
-        repo sync -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      continue-on-error: true
-
-    - name: Set Swap Space
-      uses: pierotofy/set-swap-space@master
-      with:
-        swap-size-gb: 50
-
-    - name: Building recovery
-      run: |
-        source build/envsetup.sh
-        export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
-    - name: Upload files
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
-      uses: actions/upload-artifact@v2
-      with:
-       name: PBRP Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
-       path: |
-        workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-
-    - name: Set Release Properties
-      run: |
-        echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
-        cd ${GITHUB_WORKSPACE}
-        echo "MD5_IMG=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_RAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_RRAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        
-    - name: Upload to Release
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' }}
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
-        tag_name: twrp${{ github.run_id }}
-        body: |
-          ## PBRP Recovery Build - Unofficial
-          Build: ${{ env.MANIFEST }}
-          Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-          Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-          ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMAGE file.
-          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
-          * ${{ env.MD5_RRAMDISK }} for RECOVERY RAMDISK file.
-
-    - name: Upload to Telegram
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' && github.event.inputs.POST_TO_TELEGRAM == 'true' }}
-      env:
-        TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        TW_MANIFEST: ${{ github.event.inputs.TW_MANIFEST }}
-        DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
-        DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
-        COMMIT_ID: ${{ env.COMMIT_ID }}
-        MD5_IMG: ${{ env.MD5_IMG }}
-        MD5_RAMDISK: ${{ env.MD5_RAMDISK }}
-        MD5_RRAMDISK: ${{ env.MD5_RRAMDISK }}
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_RUN_ID: ${{ github.run_id }}
-      run: |
-        TELEGRAM_CHAT_ID="$TELEGRAM_TO"
-        TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
-        MESSAGE="
-        <b>PBRP Recovery Build - Unofficial</b>
-        <b>Build:</b> ${{ env.MANIFEST }}
-        <b>Device:</b> <a href=\"${{ env.DEVICE_TREE }}/tree/${{ env.DEVICE_TREE_BRANCH }}\">Device Tree/Branch</a>
-        <b>Commit:</b> Most recent <a href=\"${{ env.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}\">commit</a> during building.
-        <b><pre>MD5SUM:</pre></b>
-        <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
-        <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
-        <pre><b>${{ env.MD5_RRAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/twrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
-
-        curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
-
-  Build-SHRP:
-    needs: Set-ENV
-    if: ${{ github.event.inputs.BUILD_RECOVERY == 'SHRP' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-    - name: Check Out
-      uses: actions/checkout@v3
-   
-    - name: Cleanup
-      uses: rokibhasansagar/slimhub_actions@main
-
-    - name: Prepare the environment
-      run: |
-        sudo apt update
-        sudo apt -y upgrade
-        sudo apt -y install gperf gcc-multilib gcc-10-multilib g++-multilib g++-10-multilib libc6-dev lib32ncurses5-dev x11proto-core-dev libx11-dev tree lib32z-dev libgl1-mesa-dev libxml2-utils xsltproc bc ccache lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libwxgtk3.0-gtk3-dev libxml2 lzop pngcrush schedtool squashfs-tools imagemagick libbz2-dev lzma ncftp qemu-user-static libstdc++-10-dev libncurses5 python3
-
-    - name: Install OpenJDK
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '8'
-
-    - name: Setup SSH Keys
-      if: ${{ startsWith(github.event.inputs.MANIFEST_URL, 'git@github.com') }}
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-          ssh-private-key: |
-              ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Install repo
-      run: |
-        mkdir ~/bin
-        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-        chmod a+x ~/bin/repo
-        sudo ln -sf ~/bin/repo /usr/bin/repo
-      
-    - name: Initialize repo
-      run: |
-        mkdir workspace
-        cd workspace
-        echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
-        git config --global user.email "thedarkdeath788@gmail.com"
-        git config --global user.name "TDD788"
-        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ env.MANIFEST }}
-      id: pwd
-          
-    - name: Repo Sync
-      run: |
-        repo sync -j$(nproc --all) --force-sync
-      working-directory: workspace
-      
-    - name: Clone device tree
-      run: |
-        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
-    - name: Clone common tree
-      if: |
-        github.event.inputs.COMMON_TREE_URL != null
-        && github.event.inputs.COMMON_PATH != null
-      run: |
-        git clone ${{ github.event.inputs.COMMON_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.COMMON_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-
-    - name: Check Build Tree
-      uses: haya14busa/action-cond@v1
-      id: buildtree
-      with:
-        cond: ${{ github.event.inputs.MANIFEST_BRANCH == 'twrp-11' || github.event.inputs.MANIFEST_BRANCH == 'twrp-12.1' }}
-        if_true: twrp
-        if_false: omni
-
-    - name: Sync Device Dependencies
-      run: |
-        bash ${GITHUB_WORKSPACE}/scripts/convert.sh ${{ github.event.inputs.DEVICE_PATH }}/${{ steps.buildtree.outputs.value }}.dependencies
-        repo sync -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
-      continue-on-error: true
-
-    - name: Set Swap Space
-      uses: pierotofy/set-swap-space@master
-      with:
-        swap-size-gb: 12
-
-    - name: Building recovery
-      run: |
-        source build/envsetup.sh
-        export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng  && mka ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}        
-      
-    - name: Upload files
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
-      uses: actions/upload-artifact@v2
-      with:
-       name: SHRP Recovery for ${{ github.event.inputs.DEVICE_NAME }} ${{ env.BUILD_DATE }} Image
-       path: |
-        workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-
-    - name: Set Release Properties
-      run: |
-        echo "BUILD_DATE=$(TZ=Asia/Manila date +%Y%m%d)" >> $GITHUB_ENV
-        cd ${GITHUB_WORKSPACE}
-        echo "MD5_IMG=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_RAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        echo "MD5_RRAMDISK=$(md5sum workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img | cut -d ' ' -f 1)" >> $GITHUB_ENV
-        
-    - name: Upload to Release
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' }}
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
-        tag_name: twrp${{ github.run_id }}
-        body: |
-          ## SHRP Recovery Build - Unofficial
-          Build: ${{ env.MANIFEST }}
-          Device: [Device Tree/Branch](${{ github.event.inputs.DEVICE_TREE }}/tree/${{ github.event.inputs.DEVICE_TREE_BRANCH }})
-          Commit: Most recent [commit](${{ github.event.inputs.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}) during building.
-          ## MD5SUM
-          * ${{ env.MD5_IMG }} for IMAGE file.
-          * ${{ env.MD5_RAMDISK }} for RAMDISK file.
-          * ${{ env.MD5_RRAMDISK }} for RECOVERY RAMDISK file.
-
-    - name: Upload to Telegram
-      if: ${{ github.event.inputs.RELEASE_TYPE == 'true' && github.event.inputs.POST_TO_TELEGRAM == 'true' }}
-      env:
-        TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
-        TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-        TW_MANIFEST: ${{ github.event.inputs.TW_MANIFEST }}
-        DEVICE_TREE: ${{ github.event.inputs.DEVICE_TREE }}
-        DEVICE_TREE_BRANCH: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}
-        COMMIT_ID: ${{ env.COMMIT_ID }}
-        MD5_IMG: ${{ env.MD5_IMG }}
-        MD5_RAMDISK: ${{ env.MD5_RAMDISK }}
-        MD5_RRAMDISK: ${{ env.MD5_RRAMDISK }}
-        GITHUB_ACTOR: ${{ github.actor }}
-        GITHUB_RUN_ID: ${{ github.run_id }}
-      run: |
-        TELEGRAM_CHAT_ID="$TELEGRAM_TO"
-        TELEGRAM_TOKEN="$TELEGRAM_TOKEN"
-        MESSAGE="
-        <b>SHRP Recovery Build - Unofficial</b>
-        <b>Build:</b> ${{ env.MANIFEST }}
-        <b>Device:</b> <a href=\"${{ env.DEVICE_TREE }}/tree/${{ env.DEVICE_TREE_BRANCH }}\">Device Tree/Branch</a>
-        <b>Commit:</b> Most recent <a href=\"${{ env.DEVICE_TREE }}/commit/${{ env.COMMIT_ID }}\">commit</a> during building.
-        <b><pre>MD5SUM:</pre></b>
-        <pre><b>${{ env.MD5_IMG }}</b> for IMAGE file.</pre>
-        <pre><b>${{ env.MD5_RAMDISK }}</b> for RAMDISK file.</pre>
-        <pre><b>${{ env.MD5_RRAMDISK }}</b> for RECOVERY RAMDISK file.</pre>
-        <b>Download:</b> <a href=\"https://github.com/${{ github.repository }}/releases/tag/twrp${{ env.GITHUB_RUN_ID }}\">Download Here</a>"
-
-        curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
-        
+      uses: rokibhasansagar/slimhub_actions@mai
