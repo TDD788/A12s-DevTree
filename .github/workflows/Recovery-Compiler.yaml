@@ -7,7 +7,7 @@ name: Recovery - Build
 on:
   workflow_dispatch:
     inputs:
-      RECOVERY:
+      BUILD_RECOVERY:
         description: 'Recovery Type'
         required: true
         default: true
