@@ -3,6 +3,8 @@ name: Recovery - Build
 # Credits to:
 # https://github.com/TeamWin
 # https://gitlab.com/OrangeFox
+# https://github.com/SHRP
+# https://github.com/PitchBlackRecoveryProject
 
 on:
   workflow_dispatch:
@@ -10,20 +12,21 @@ on:
       BUILD_RECOVERY:
         description: 'Recovery Type'
         required: true
-        default: OFRP
+        default: 'OFRP'
         type: choice
-        - OFRP
-        - SHRP
-        - TWRP
-        - PBRP
+        options:
+          - 'OFRP'
+          - 'SHRP'
+          - 'TWRP'
+          - 'PBRP'
       MANIFEST:
         description: 'Manifest Branch'
         required: true
         default: '12.1'
         type: choice
         options:
-        - 12.1
-        - 11.0
+          - '12.1'
+          - '11.0'
       DEVICE_TREE:
         description: 'Device Tree'
         required: true
@@ -46,9 +49,9 @@ on:
         default: 'recovery'
         type: choice
         options:
-        - vendorboot
-        - boot
-        - recovery
+          - 'vendorboot'
+          - 'boot'
+          - 'recovery'
       RELEASE_TYPE:
         description: 'Official Build'
         required: true
