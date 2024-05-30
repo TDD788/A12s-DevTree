@@ -293,16 +293,6 @@ jobs:
     permissions:
       contents: write
     steps:
-    - name: Display Run Parameters
-      run: |
-        echo "::group::User Environment Variables"
-        echo "Manifest Branch: ${{ github.event.inputs.MANIFEST }}"
-        echo "Device Tree URL: ${{ github.event.inputs.DEVICE_TREE }}"
-        echo "Device Tree Branch: ${{ github.event.inputs.DEVICE_TREE_BRANCH }}"
-        echo "Device Path: ${{ github.event.inputs.DEVICE_PATH }}"
-        echo "Device Name: ${{ github.event.inputs.DEVICE_NAME }}"
-        echo "::endgroup::"
-
     - name: Check Out
       uses: actions/checkout@v3
     
@@ -335,7 +325,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b android-${{ github.event.inputs.MANIFEST }}
+        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.env.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
@@ -603,7 +593,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.email "thedarkdeath788@gmail.com"
         git config --global user.name "TDD788"
-        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ env.MANIFEST }}
+        repo init --depth=1 -u https://github.com/SHRP/manifest -b ${{ github.env.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
