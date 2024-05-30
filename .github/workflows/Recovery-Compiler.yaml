@@ -64,7 +64,7 @@ on:
         type: boolean
 
 jobs:
-  set-environment:
+  Set-ENV:
     runs-on: ubuntu-latest
     outputs:
       MANIFEST: ${{ steps.set-manifest.outputs.MANIFEST }}
@@ -107,6 +107,7 @@ jobs:
           
   Build-OrangeFox:
     name: Build OFRP by ${{ github.actor }}
+    needs: Set-ENV
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'OFRP' }}
     env:
@@ -283,6 +284,7 @@ jobs:
 
   Build-TWRP:
     name: Build TWRP by ${{ github.actor }}
+    needs: Set-ENV
     runs-on: ubuntu-latest
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'TWRP' }}
     env:
@@ -492,6 +494,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
         
   Build-PBRP:
+    needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'PBRP' }}
     runs-on: ubuntu-latest
     permissions:
@@ -651,6 +654,7 @@ jobs:
         curl -s -X POST https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage -d chat_id=${TELEGRAM_CHAT_ID} -d parse_mode=HTML -d text="${MESSAGE}"
 
   Build-SHRP:
+    needs: Set-ENV
     if: ${{ github.event.inputs.BUILD_RECOVERY == 'SHRP' }}
     runs-on: ubuntu-latest
     permissions:
