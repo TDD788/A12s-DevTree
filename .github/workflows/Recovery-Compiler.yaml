@@ -325,7 +325,7 @@ jobs:
         echo "workspace-folder=$(pwd)" >> $GITHUB_OUTPUT
         git config --global user.name "TheDarkDeath788"
         git config --global user.email "thedarkdeath788@gmail.com"
-        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b ${{ github.env.MANIFEST }}
+        repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp -b twrp-${{ github.event.inputs.MANIFEST }}
       id: pwd
           
     - name: Repo Sync
