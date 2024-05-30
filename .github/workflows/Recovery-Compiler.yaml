@@ -10,7 +10,7 @@ on:
       BUILD_RECOVERY:
         description: 'Recovery Type'
         required: true
-        default: true
+        default: OFRP
         type: choice
         - OFRP
         - SHRP
