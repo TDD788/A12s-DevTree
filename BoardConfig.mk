@@ -197,7 +197,7 @@ TW_SCREEN_BLANK_ON_BOOT := true
 TW_FORCE_CPUINFO_FOR_DEVICE_ID := true
 
 # Exclude from backup
-TW_BACKUP_EXCLUSIONS \
+TW_BACKUP_EXCLUSIONS += \
 	/data/fonts \
 	/data/system/package_cache \
 	/data/dalvik-cache \
