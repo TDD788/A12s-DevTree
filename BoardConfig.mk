@@ -155,7 +155,7 @@ TW_Y_OFFSET := 80
 TW_H_OFFSET := -80
 
 # TWRP Settings
-TW_DEVICE_VERSION := "The-Latest-In-The-Resources"
+TW_DEVICE_VERSION := The-Latest-In-The-Resources
 TW_USE_TOOLBOX := false
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER := false
