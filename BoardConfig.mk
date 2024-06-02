@@ -78,7 +78,7 @@ TARGET_KERNEL_ADDITIONAL_FLAGS := \
 endif
 	
 # Kernel - prebuilt
-ifeq ($(COMPILE_KERNEL),true)
+ifeq ($(COMPILE_KERNEL),false)
 TARGET_FORCE_PREBUILT_KERNEL := true
 BOARD_KERNEL_SEPARATED_DTBO := true
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
@@ -86,7 +86,7 @@ BOARD_INCLUDE_RECOVERY_DTBO := true
 endif
 
 # Image Paths
-ifeq ($(COMPILE_KERNEL),true)
+ifeq ($(COMPILE_KERNEL),false)
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/twrp-kernel
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/stock-dtb
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/stock-dtbo
