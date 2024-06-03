@@ -66,6 +66,11 @@ BOARD_KERNEL_CMDLINE += \
 	reboot=panic_warm \
 	androidboot.init_fatal_reboot_target=system
 	
+# MKBOOTIMG Args
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION) --pagesize $(BOARD_KERNEL_PAGESIZE) --board "SRPVJ19A001"
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+
 # Kernel Compiler
 COMPILE_KERNEL := false
 ifeq ($(COMPILE_KERNEL),true)
@@ -83,18 +88,21 @@ BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_INCLUDE_RECOVERY_DTBO := true
 endif
 
-# Image Paths
+# Image Paths / Bootimg Args
 ifeq ($(COMPILE_KERNEL),false)
+
+# Kernel
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/twrp-kernel
+BOARD_MKBOOTIMG_ARGS := --kernel_offset $(BOARD_KERNEL_OFFSET)
+
+#DTB
 TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/stock-dtb
+BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+
 BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/stock-dtbo
 endif
 
-# MKBOOTIMG Args
-BOARD_MKBOOTIMG_ARGS := --kernel_offset $(BOARD_KERNEL_OFFSET) --ramdisk_offset $(BOARD_RAMDISK_OFFSET) 
-BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION) --pagesize $(BOARD_KERNEL_PAGESIZE) --board "SRPVJ19A001"
-BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+# MKBOOT
 BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 
 # Partitions
