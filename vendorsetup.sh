@@ -20,7 +20,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_51"
+export FOX_VERSION="R12.1_52"
 export FOX_VARIANT="AOSP"
 
 # Binaries & Tools
