@@ -1,6 +1,18 @@
 #!/system/bin/sh
 
-check_root_permissions() {
+function default() {
+	export CUSTOM_SYSTEM_NAME="system"
+	export CUSTOM_VENDOR_NAME="vendor"
+	export CUSTOM_PRODUCT_NAME="product"
+	export CUSTOM_ODM_NAME="odm"
+	export CUSTOM_MOUNT_POINT="/cache/system"
+	export DEFAULT_START_POINT="/sdcard"
+	export MOUSE=">"
+	identify_device
+	export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
+}
+
+function check_root_permissions() {
     if [ "$(id -u)" -eq 0 ]; then
         ROOT=true
     else
@@ -8,7 +20,7 @@ check_root_permissions() {
     fi
 }
 
-root_msg() {
+function root_msg() {
 	if [ "$ROOT" = "true" ]; then
 		echo "Congratulations you are running the script at root level"
 	else
@@ -18,7 +30,7 @@ root_msg() {
 	fi
 }
 
-perform_resize_and_unshare_blocks() {
+function perform_resize_and_unshare_blocks() {
     resize2fs "$new_name" 6G
     echo "Try to fix any Error"
     e2fsck -fp "$new_name"
@@ -27,11 +39,11 @@ perform_resize_and_unshare_blocks() {
     resize2fs -M "$new_name"
 }
 
-generate_random_message() {
+function generate_random_message() {
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
 }
 
-prompt_for_confirmation() {
+function prompt_for_confirmation() {
     local input
     info="$@"
 
@@ -60,7 +72,7 @@ prompt_for_confirmation() {
     done
 }
 
-simulate_bootloader_patch() {
+function simulate_bootloader_patch() {
     echo -e "${NC}Generating specialized patch keys for $DEVICE_MODEL${NC}"
     echo -e "${NC}Modifying kernel for library adjustment${NC}"
     echo -e "${NC}Proceeding with the process for user adaptation${NC}"
@@ -70,7 +82,7 @@ simulate_bootloader_patch() {
     sleep 3
 }
 
-prank() {
+function prank() {
 	clear
 	echo -e "${GREEN}Initializing attempt to remove Bootloader security patches on ${DEVICE_NAME}...${NC}"
 	simulate_bootloader_patch
@@ -100,7 +112,7 @@ prank() {
 	reboot
 }
 
-look() {
+function look() {
 	echo ""
 	root_msg
 	echo ""
@@ -116,6 +128,7 @@ look() {
     echo "Device Mapper: \"$DEVICE_MAPPER\""
     echo "Custom mount point: \"$CUSTOM_MOUNT_POINT\""
     echo "Default Start Point: \"$DEFAULT_START_POINT\""
+    echo "Current mouse: \"$MOUSE\""
     echo "Current file extensions:"
     echo "${FILE_EXTENSIONS:-None}"
     echo ""
@@ -123,7 +136,7 @@ look() {
     read -rsn1
 }
 
-set_partition_names() {
+function set_partition_names() {
     clear
     echo "Partition Names Configuration:"
     echo "1. System partition name: $CUSTOM_SYSTEM_NAME"
@@ -169,7 +182,7 @@ set_partition_names() {
     esac
 }
 
-save_configurations() {
+function save_configurations() {
     local config_file="/cache/gsirw.conf"
     if [ -w "/cache" ]; then
         echo "Saving configurations to $config_file..."
@@ -179,6 +192,7 @@ save_configurations() {
             echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
             echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
             echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
+            echo "export MOUSE=\"$MOUSE\""
             echo "export A_B=\"$A_B\""
             echo "export A_O=\"$A_O\""
             echo "export DYNAMIC=\"$DYNAMIC\""
@@ -197,6 +211,7 @@ save_configurations() {
             echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
             echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
             echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
+            echo "export MOUSE=\"$MOUSE\""
             echo "export A_B=\"$A_B\""
             echo "export A_O=\"$A_O\""
             echo "export DYNAMIC=\"$DYNAMIC\""
@@ -209,29 +224,23 @@ save_configurations() {
     fi
 }
 
-load_saved_configurations() {
+function load_saved_configurations() {
     local config_file="/cache/gsirw.conf"
     if [ -f "$config_file" ]; then
+    	default
         source "$config_file"
     else
         config_file="$HOME/gsirw.conf"
         if [ -f "$config_file" ]; then
+            default
             source "$config_file"
         else
-            export CUSTOM_SYSTEM_NAME="system"
-            export CUSTOM_VENDOR_NAME="vendor"
-            export CUSTOM_PRODUCT_NAME="product"
-            export CUSTOM_ODM_NAME="odm"
-            export CUSTOM_MOUNT_POINT="/cache/system"
-            export DEFAULT_START_POINT="/sdcard"
-            identify_device
-            export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
-            export extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+            default
         fi
     fi
 }
 
-configure_manually() {
+function configure_manually() {
     while true; do
         clear
         echo "Manual Configuration:"
@@ -240,11 +249,12 @@ configure_manually() {
         echo "3. Customize mount point"
         echo "4. Configure visibility in extensions"
         echo "5. Enable super secret settings in $SOC"
-        echo "6. Look at configured things"
-        echo "7. Done"
+        echo "6. GSI-rw interface"
+        echo "7. Look at configured things"
+        echo "8. Done"
         
         echo ""
-        echo -n "Enter your choice (1-7): "
+        echo -n "Enter your choice (1-8): "
         read -rsn1 choice
         echo ""
 
@@ -369,9 +379,12 @@ configure_manually() {
                 prank
                 ;;
             6)
+                gsirw_interface
+                ;;
+            7)
                 look
                 ;;    
-            7)
+            8)
                 save_configurations
                 break
                 ;;
@@ -383,7 +396,7 @@ configure_manually() {
     done
 }
 
-configure_file_extensions() {
+function configure_file_extensions() {
     while true; do
         clear
         echo "Configure file extensions:"
@@ -418,7 +431,7 @@ configure_file_extensions() {
     done
 }
 
-add_extension() {
+function add_extension() {
     clear
     echo "Add a new file extension:"
     echo -n "Enter the extension (e.g., tar, lz4): "
@@ -437,7 +450,7 @@ add_extension() {
     read -rsn1
 }
 
-remove_extension() {
+function remove_extension() {
     clear
     echo "Remove a file extension:"
     echo "Current extensions: ${FILE_EXTENSIONS}"
@@ -453,7 +466,7 @@ remove_extension() {
     read -rsn1
 }
 
-list_extensions() {
+function list_extensions() {
     clear
     echo "Current file extensions:"
     echo "${FILE_EXTENSIONS:-None}"
@@ -461,7 +474,32 @@ list_extensions() {
     read -rsn1
 }
 
-perform_ota() {
+function gsirw_interface() {
+	clear
+	echo "a. Mouse style (default: \">\""
+	echo ""
+	echo "Coming soon"
+	echo -n "Imput: "
+	read -rsn1 inter
+	echo ""
+	case $inter in
+	    a)
+	        echo "Please specify the symbol that indicates the mouse you want to use."
+	        echo "Default symbol is \">\""
+	        read -rsn1 chmouse
+	        if [ -z "$chmouse" ] || [ "$chmouse" = "." ]; then
+                MOUSE=">"
+            else
+                MOUSE=$chmouse
+            fi
+            ;;
+	    *)
+	        echo "Wrong option"
+	        ;;
+	esac
+}
+
+function perform_ota() {
 	local image="$1"
     resize2fs "$image" 6G
     echo "Try to fix any Error"
@@ -471,13 +509,13 @@ perform_ota() {
     resize2fs -M "$image"
 }
 
-ask() {
+function ask() {
 	clear
 	echo "Press any key to continue..."
 	read -rsn1
 }
 
-identify_device() {
+function identify_device() {
     if [ -z "$DYNAMIC" ] || [ -z "$GENERIC" ] || [ -z "$DEVICE_MAPPER" ] || [ -z "$A_B" ] || [ -z "$A_O" ]; then
         if ls /dev/block/mapper >/dev/null 2>&1; then
             export DYNAMIC="true"
@@ -503,7 +541,7 @@ identify_device() {
     fi
 }
 
-extract_image_from_archive() {
+function extract_image_from_archive() {
     local archive="$1"
     local extracted_dir="$(dirname "$archive")/extracted"
     
@@ -567,7 +605,7 @@ extract_image_from_archive() {
     esac
 }
 
-process_image() {
+function process_image() {
     if [ "$type" = "1" ]; then
       ask
       original_file="$found_dir/$found_file"
@@ -597,7 +635,7 @@ process_image() {
     fi
 }
 
-find_image_in_directory() {
+function find_image_in_directory() {
     local recent_image_file=$(find "$image_path/" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>/dev/null | sort -n | tail -n 1 | cut -d' ' -f2-)
     if [ -n "$recent_image_file" ]; then
         found_dir=$(dirname "$recent_image_file")
@@ -609,18 +647,12 @@ find_image_in_directory() {
     fi
 }
 
-list_directories_and_files() {
-    directory="$1"
-    extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
-    ls -1p "$directory" | grep -E "/$|.*\.(${extensions})$" | sed 's:/$::'
-}
-
-dd_image() {
+function dd_image() {
 	dd if="$2" of="$DEVICE_MAPPER/$1"
 }
 
 
-confirm_flash() {
+function confirm_flash() {
 	stty echo
     echo "Do you want to proceed with flashing the image $original? (y/n)"
     read -rsn1 input
@@ -649,10 +681,10 @@ confirm_flash() {
                 echo "Partition type could not be determined."
                 exit 1
             fi
-            break
+            exit 1
             ;;
         n|N)
-            break
+            exit 1
             ;;
         *)
             echo "Invalid input. Please enter y or n."
@@ -662,13 +694,13 @@ confirm_flash() {
     esac
 }
 
-rename_image() {
+function rename_image() {
     local original_file="$1"
     local new_name="$2"
     mv "$original_file" "$new_name"
 }
 
-check_extension() {
+function check_extension() {
     local file="$1"
     local extension="${file##*.}"
     if [[ -n "$FILE_EXTENSIONS" ]]; then
@@ -691,7 +723,7 @@ check_extension() {
     COMPRESS=false
 }
 
-mount_dual() {
+function mount_dual() {
     if [ -x "/system/bin/toybox" ]; then
         TOYBOX_BIN="/system/bin/toybox"
         echo "Attempting to mount using toybox..."
@@ -729,7 +761,7 @@ mount_dual() {
     fi
 }
 
-mount_device() {
+function mount_device() {
     local loopy=$(losetup -f)
     local success=false
     {
@@ -771,12 +803,12 @@ mount_device() {
     fi
     } 2>/dev/null
     
-    if ! $success; then
+    if [ $success=false ]; then
         echo "Trying an alternative method"
         mount_dual "$1" "$2"
     fi
 
-    if success=true ; then
+    if [ $success=true ]; then
         echo "Mounted image on $2 to modify"
         prompt_for_confirmation "Press any key to indicate that you have finished the process... "
         umount "$2"
@@ -785,7 +817,7 @@ mount_device() {
         rename_image "$new_name" "$original_file"
         echo "Compressed image and removed mount"
         return 0
-    elif success=false ; then
+    elif [ $success=false ]; then
         losetup -d "$loop_device" 
         echo "Error: No mount command was successful."
         e2fsck -fp "$new_name"
@@ -796,8 +828,14 @@ mount_device() {
     fi
 }
 
-user_modification() {
-	clear
+function list_directories_and_files() {
+    directory="$1"
+    extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+    ls -1p "$directory" | grep -E "/$|.*\.(${extensions})$" | sed 's:/$::'
+}
+
+function user_modification() {
+    clear
     echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
     echo "Enter '.' to use the default directory."
     echo -n "> "
@@ -809,10 +847,11 @@ user_modification() {
     fi
 
     selected_index=1
-    selected_symbol="> "
+    selected_symbol="$MOUSE "
     select_file=""
 
     while true; do
+        list_files=$(ls -1 "$image_path" | wc -l)
         clear
         echo "Guide to Move"
         echo ""
@@ -827,7 +866,7 @@ user_modification() {
         echo "DOWN : Go down the list of Files or Folders"
         echo ""
         echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=list_files) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
         
         read -rsn1 input
 
@@ -868,7 +907,7 @@ user_modification() {
 
         case "$flag" in
             "UP")
-                ((selected_index--))
+                selected_index=$((selected_index - 1))
                 if [ "$selected_index" -lt 1 ]; then
                     selected_index=1
                 fi
@@ -878,7 +917,7 @@ user_modification() {
                 ;;
             "DOWN")
                 total_items=$(list_directories_and_files "$image_path" | wc -l)
-                ((selected_index++))
+                selected_index=$((selected_index + 1))
                 if [ "$selected_index" -gt "$total_items" ]; then
                     selected_index="$total_items"
                 fi
@@ -893,17 +932,17 @@ user_modification() {
                     compressed_file="$select_file"
                     check_extension "$compressed_file"
                     if [ "${select_file##*.}" = "img" ]; then
-                    	ask
+                        ask
                         if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
-   						 mkdir -p "$CUSTOM_MOUNT_POINT"
-						fi
+                            mkdir -p "$CUSTOM_MOUNT_POINT"
+                        fi
                         original_file="$image_path/$select_file" 
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
                         resize2fs "$new_name" 6G
                         mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
-                        break
+                        break               
                     elif [ "$COMPRESS" = true ]; then
                         ask
                         extract_image_from_archive "$image_path/$compressed_file"
@@ -921,25 +960,28 @@ user_modification() {
             selected_index=1
         fi
     done
+
+    stty echo
 }
 
-modification() {
-	clear
+function modification() {
+    clear
     echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
     echo "Enter '.' to use the default directory."
     echo -n "> "
     read -r image_path
     stty -echo
-
+    
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
         image_path="$DEFAULT_START_POINT"
     fi
 
     selected_index=1
-    selected_symbol="> "
+    selected_symbol="$MOUSE "
     select_file=""
 
     while true; do
+        list_files=$(ls -1 "$image_path" | wc -l)
         clear
         echo "Guide to Move"
         echo ""
@@ -954,7 +996,7 @@ modification() {
         echo "DOWN : Go down the list of Files or Folders"
         echo ""
         echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR <= '$list_files') {if (NR == idx) print sym, $0; else print " ", $0} else {if (NR == idx - 25) print sym, $0; else print " ", $0}}'
         
         read -rsn1 input
 
@@ -995,17 +1037,18 @@ modification() {
 
         case "$flag" in
             "UP")
-                ((selected_index--))
+                selected_index=$((selected_index - 1))
                 if [ "$selected_index" -lt 1 ]; then
                     selected_index=1
                 fi
                 ;;
             "LEFT")
                 image_path=$(dirname "$image_path")
+                selected_index=1
                 ;;
             "DOWN")
                 total_items=$(list_directories_and_files "$image_path" | wc -l)
-                ((selected_index++))
+                selected_index=$((selected_index + 1))
                 if [ "$selected_index" -gt "$total_items" ]; then
                     selected_index="$total_items"
                 fi
@@ -1020,14 +1063,13 @@ modification() {
                     compressed_file="$select_file"
                     check_extension "$compressed_file"
                     if [ "${select_file##*.}" = "img" ]; then
-                    	ask
+                        ask
                         if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
-   						 mkdir -p "$CUSTOM_MOUNT_POINT"
-						fi
+                            mkdir -p "$CUSTOM_MOUNT_POINT"
+                        fi
                         original_file="$image_path/$select_file" 
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
-                        resize2fs "$new_name" 6G
                         mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
                         break
                     elif [ "$COMPRESS" = true ]; then
@@ -1047,25 +1089,28 @@ modification() {
             selected_index=1
         fi
     done
+
+    stty echo
 }
 
-process_user_selected_image() {
-	clear
+function process_user_selected_image() {
+    clear
     echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT):"
     echo "Enter '.' to use the default directory."
     echo -n "> "
     read -r image_path
     stty -echo
-
+    
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
         image_path="$DEFAULT_START_POINT"
     fi
 
     selected_index=1
-    selected_symbol=">"
+    selected_symbol="$MOUSE "
     select_file=""
 
     while true; do
+        list_files=$(ls -1 "$image_path" | wc -l)
         clear
         echo "Guide to Move"
         echo ""
@@ -1080,7 +1125,8 @@ process_user_selected_image() {
         echo "DOWN : Go down the list of Files or Folders"
         echo ""
         echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=999) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
+        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" -v lf="$list_files" '{if (NR<=lf) {if (NR==idx) print sym, $0; else print " ", $0}}'
+        
         read -rsn1 input
 
         case "$input" in
@@ -1120,17 +1166,18 @@ process_user_selected_image() {
 
         case "$flag" in
             "UP")
-                ((selected_index--))
+                selected_index=$((selected_index - 1))
                 if [ "$selected_index" -lt 1 ]; then
                     selected_index=1
                 fi
                 ;;
             "LEFT")
                 image_path=$(dirname "$image_path")
+                selected_index=1
                 ;;
             "DOWN")
                 total_items=$(list_directories_and_files "$image_path" | wc -l)
-                ((selected_index++))
+                selected_index=$((selected_index + 1))
                 if [ "$selected_index" -gt "$total_items" ]; then
                     selected_index="$total_items"
                 fi
@@ -1146,7 +1193,7 @@ process_user_selected_image() {
                     check_extension "$compressed_file"
                     if [ "${select_file##*.}" = "img" ]; then
                         ask
-                        original_file="$image_path/$select_file" 
+                        original_file="$image_path/$select_file"
                         new_name="$image_path/system.img"
                         rename_image "$image_path/$select_file" "$new_name"
                         perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
@@ -1170,17 +1217,19 @@ process_user_selected_image() {
             selected_index=1
         fi
     done
+
+    stty echo
 }
 
-copy_image() {
+function copy_image() {
 	cp "$DEVICE_MAPPER/$1" "/sdcard/$2.img"
 }
 
-dd_images() {
+function dd_images() {
 	dd if="/sdcard/$2.img" of="$DEVICE_MAPPER/$1"
 }
 
-ota_rw() {
+function ota_rw() {
     ask
 
     if [ "$A_B" = "true" ]; then
@@ -1235,7 +1284,7 @@ ota_rw() {
     fi
 }
 
-perform_copied_system_image() {
+function perform_copied_system_image() {
     ask
 
     if [ "$A_B" = "true" ]; then
@@ -1269,7 +1318,7 @@ perform_copied_system_image() {
     fi
 }    
 
-progresive_print() {
+function progresive_print() {
   local text="$1"
   local delay="${2:-0.01}"
   while [ -n "$text" ]; do
@@ -1280,11 +1329,11 @@ progresive_print() {
   printf "\n"
 }
 
-clearly() {
+function clearly() {
 	clear "$@"
 }
 
-GSIRW() {
+function GSIRW() {
 	clear
     stty -echo
     progresive_print "Initialized the great wonder created by TheDarkDeath788" 0.05
@@ -1305,7 +1354,7 @@ GSIRW() {
                  _     ___    ___  
                 /_\   |_ _|  / _ \ 
                / _ \   | |  | (_) |
-              /_/ \_\ |___|  \___/             
+              /_/ \_\ |___|  \___/
           ____ ____ ___
          / ___/ ___|_ _|     _ ____      __
         | |  _\___ \| |_____| '__\ \ /\ / /
