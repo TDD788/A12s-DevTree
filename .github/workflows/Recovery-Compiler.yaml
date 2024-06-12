@@ -53,7 +53,7 @@ on:
           - 'boot'
           - 'recovery'
       RELEASE_TYPE:
-        description: 'Official Build'
+        description: 'Normal Released Build'
         required: true
         default: true
         type: boolean
@@ -349,7 +349,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+        name: TeamWin Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: twrp${{ github.run_id }}
         body: |
           ## TWRP Recovery Build - Unofficial
@@ -491,7 +491,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+        name: Pitch Black for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: pbrp${{ github.run_id }}
         body: |
           ## PBRP Recovery Build - Unofficial
@@ -635,7 +635,7 @@ jobs:
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk.img
           workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/ramdisk-recovery.img
-        name: OrangeFox Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
+        name: Sky Hawk Recovery for ${{ github.event.inputs.DEVICE_NAME }} // ${{ env.BUILD_DATE }}
         tag_name: shrp${{ github.run_id }}
         body: |
           ## SHRP Recovery Build - Unofficial
