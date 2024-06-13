@@ -1453,10 +1453,10 @@ MAIN () {
 	export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
 	export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
 
-	RED='\033[0;31m'
-	GREEN='\033[0;32m'
-	BLUE='\033[0;34m'
-	NC='\033[0m'
+	export RED=$'\x1b[01;31m'
+    export GREEN=$'\x1b[01;32m'
+    export BLUE=$'\x1b[01;34m'
+    export NC=$'\x1b[0m'
 
 	DEVICE_NAME=$(getprop ro.product.system.device)
 	DEVICE_MODEL=$(getprop ro.product.system.model)
