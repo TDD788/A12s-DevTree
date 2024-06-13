@@ -50,7 +50,7 @@ export_build_vars(){
 	export OF_STATUS_INDENT_RIGHT=48
 	export OF_STATUS_INDENT_LEFT=48
 	export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
-	export OF_OPTIONS_LIST_NUM=8
+	export OF_OPTIONS_LIST_NUM=10
 	export FOX_DELETE_INITD_ADDON=1 # !- Causes bootloops sometimes -!
 	export FOX_ENABLE_APP_MANAGER=1
 	export OF_USE_SAMSUNG_HAPTICS=1
@@ -59,8 +59,6 @@ export_build_vars(){
 	
 	# Security Configurations
 	export OF_ADVANCED_SECURITY=1
-	export OF_FORCE_DISABLE_DM_VERITY=0
-	export OF_DISABLE_FORCED_ENCRYPTION=0
 	
 	# Tools and Utilities Configurations
 	export OF_USE_LZMA_COMPRESSION=1
