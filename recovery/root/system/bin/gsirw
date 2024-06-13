@@ -116,6 +116,8 @@ function look() {
 	echo ""
 	root_msg
 	echo ""
+	check_dd
+	echo ""
     echo "GSI-rw configurations"
     echo "SYSTEM Name=\"$CUSTOM_SYSTEM_NAME\""
     echo "VENDOR Name=\"$CUSTOM_VENDOR_NAME\""
@@ -134,6 +136,17 @@ function look() {
     echo ""
     echo "Press any key to confirm that you have reviewed the settings."
     read -rsn1
+}
+
+check_dd() {
+  if ! dd if=/dev/zero of=/dev/Nothing bs=1 count=1 &> /dev/null; then
+    echo "The 'dd' command is not available or failed to execute." >&2
+    exit 1
+  fi
+  
+  if dd if=/dev/zero of=/dev/Nothing bs=1 count=1 &> /dev/null; then
+    echo "Congratulations, the 'dd' command is present and can be executed."
+  fi
 }
 
 function set_partition_names() {
@@ -608,8 +621,8 @@ function extract_image_from_archive() {
 function process_image() {
     if [ "$type" = "1" ]; then
       ask
-      original_file="$found_dir/$found_file"
-      new_name="$found_dir/system.img"
+      export original_file="$found_dir/$found_file"
+      export new_name="$found_dir/system.img"
       rename_image "$original_file" "$new_name"
       perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       rename_image "$new_name" "$original_file"
@@ -619,8 +632,8 @@ function process_image() {
       if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
           mkdir -p "$CUSTOM_MOUNT_POINT"
       fi
-      original_file="$found_dir/$found_file" 
-      new_name="$found_dir/system.img"
+      export original_file="$found_dir/$found_file" 
+      export new_name="$found_dir/system.img"
       rename_image "$original_file" "$new_name"
       perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       resize2fs "$new_name" 6G
@@ -1430,62 +1443,66 @@ function GSIRW() {
     esac
 }
 
-export DEFAULT_SYSTEM_NAME="system"
-export DEFAULT_VENDOR_NAME="vendor"
-export DEFAULT_PRODUCT_NAME="product"
-export DEFAULT_ODM_NAME="odm"
-export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
-export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
-export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
-export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
+MAIN () {
+	export DEFAULT_SYSTEM_NAME="system"
+	export DEFAULT_VENDOR_NAME="vendor"
+	export DEFAULT_PRODUCT_NAME="product"
+	export DEFAULT_ODM_NAME="odm"
+	export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
+	export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
+	export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
+	export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-NC='\033[0m'
+	RED='\033[0;31m'
+	GREEN='\033[0;32m'
+	BLUE='\033[0;34m'
+	NC='\033[0m'
 
-DEVICE_NAME=$(getprop ro.product.system.device)
-DEVICE_MODEL=$(getprop ro.product.system.model)
-SOC=$(getprop ro.product.board)
+	DEVICE_NAME=$(getprop ro.product.system.device)
+	DEVICE_MODEL=$(getprop ro.product.system.model)
+	SOC=$(getprop ro.product.board)
 
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
-check_root_permissions
+	check_root_permissions
 
-case "$1" in
-	    --fast | -f)
-		    sleep() {
-		    	export nothing=true
-            }
-            progresive_print() {
-            	local text="$1"
-                local delay="${2:-0.01}"
-                shift 2
-            	echo "$text"
-            }
-            clearly() {
-            	export nothing=true
-            }
-            ;;
-        *)
-            ;;
-esac
+	case "$1" in
+		    --fast | -f)
+			    sleep() {
+			    	export null=true
+	            }
+	            progresive_print() {
+	            	local text="$1"
+	                local delay="${2:-0.01}"
+	                shift 2
+	            	echo "$text"
+	            }
+	            clearly() {
+	            	export null=true
+	            }
+	            ;;
+	        *)
+	            ;;
+	esac
 
-if [ "$ROOT" = "false" ]; then
-	if command -v sudo >/dev/null 2>&1; then
- 	   if "sudo" = true >/dev/null 2>&1; then
- 	       EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
- 	   fi
-    elif command -v su >/dev/null 2>&1; then
-		if "su -c "= true >/dev/null 2>&1; then
-  		  EXEC_CMD="su -c sh $SCRIPT_DIR/gsirw "$1""
+	if [ "$ROOT" = "false" ]; then
+		if command -v sudo >/dev/null 2>&1; then
+	 	   if "sudo" = true >/dev/null 2>&1; then
+	 	       EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
+	 	   fi
+	    elif command -v su >/dev/null 2>&1; then
+			if "su -c "= true >/dev/null 2>&1; then
+	  		  EXEC_CMD="su -c sh $SCRIPT_DIR/gsirw "$1""
+			else
+				true
+ 	 		  EXEC_CMD=""
+			fi
 		else
-			true
- 	 	  EXEC_CMD=""
+		    EXEC_CMD=""
 		fi
-	else
-	    EXEC_CMD=""
 	fi
-fi
 
-$EXEC_CMD GSIRW "$1"
+	$EXEC_CMD GSIRW "$1"
+}
+
+MAIN "$@"
