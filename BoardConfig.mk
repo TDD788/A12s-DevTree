@@ -70,7 +70,7 @@ TARGET_KERNEL_ARCH := arm64
 TARGET_KERNEL_ADDITIONAL_FLAGS := \
 	HOSTCFLAGS="-fuse-ld=lld -Wno-unused-command-line-argument"
 	
-BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
+#BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 	
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
@@ -131,7 +131,7 @@ TW_INCLUDE_FBE_METADATA_DECRYPT := false
 BOARD_USES_METADATA_PARTITION := true
 
 # TWRP
-TW_DEVICE_VERSION := Last-On-Resource
+TW_DEVICE_VERSION := "Last-On-Resource"
 TW_THEME := portrait_hdpi
 TW_FRAMERATE := 60
 TARGET_SCREEN_WIDTH := 720
@@ -151,11 +151,8 @@ TW_MTP_DEVICE := "Galaxy MTP"
 TW_USE_NEW_MINADBD := true
 TW_INPUT_BLACKLIST := hbtp_vm
 TARGET_USES_MKE2FS := true
-TWHAVE_SELINUX := true
 TW_USE_TOOLBOX := false
 TW_EXCLUDE_MTP := false
-TW_NO_EXFAT := false
-TW_ROUND_SCREEN := true
 BOARD_HAS_NO_REAL_SDCARD := false
 
 # Making the recovery.img smaller
