@@ -1,15 +1,53 @@
 #!/sbin/sh
 
+DEBUG=true
+
+ZIPFILE=$3
+ZIPNAME=${ZIPFILE##*/}
+OUTFD=$2
+
 scr_wdth=50
 
+# Detect real $OUTFD
+#
+if readlink /proc/$$/fd/$OUTFD 2>/dev/null | grep /tmp >/dev/null; then
+  OUTFD=0
+  for FD in $( ls /proc/$$/fd ); do
+    if readlink /proc/$$/fd/$FD 2>/dev/null | grep pipe >/dev/null; then
+      if ps | grep " 3 $FD " | grep -v grep >/dev/null; then
+	OUTFD=$FD
+	break
+      fi
+    fi
+  done
+fi
+
+progresive_print() {
+  local text="$1"
+  local delay="${2:-0.000001}"
+  while [ -n "$text" ]; do
+    printf "%s" "${text:0:1}"
+    sleep "$delay"
+    text="${text:1}"
+  done
+  printf "\n"
+}
+
+ui_print() {
+  local message="$1"
+  echo -ne "ui_print " >> /proc/self/fd/$OUTFD
+  progresive_print "$message" "$delay" >> /proc/self/fd/$OUTFD
+  echo -ne "\nui_print\n" >> /proc/self/fd/$OUTFD
+}
+
 debug_print() {
-  if [ "$DEBUG" = true ]; then
-    echo "$1"
-  fi
+  [ "$DEBUG" = true ] && progresive_print "$*" "$delay"
 }
 
 print_full_bar() {
-  echo "$(printf '%*s\n' "$scr_wdth" | tr ' ' '=')"
+  local bar_length="$scr_wdth"
+  local bar_content="$(printf '%*s' "$bar_length" | tr ' ' '=')"
+  progresive_print "$bar_content" "$delay"
 }
 
 print_justified() {
@@ -18,8 +56,9 @@ print_justified() {
   local padding_len=$(( ($scr_wdth - $str_len - 2) / 2))
   local ljust="$(printf '%*s' "$padding_len")"
   local rjust="$(printf '%*s' "$((padding_len + $str_len % 2))")"
-
-  echo "=$ljust$str$rjust="
+  local justified_str="=$ljust$str$rjust="
+  
+  progresive_print "$justified_str" "$delay"
 }
 
 md5() {
@@ -27,7 +66,16 @@ md5() {
 }
 
 file_changed() {
-  local file="$1"
+  local file="$1print_justified() {
+  local str="$1"
+  local str_len="${#str}"
+  local padding_len=$(( ($scr_wdth - $str_len - 2) / 2))
+  local ljust="$(printf '%*s' "$padding_len")"
+  local rjust="$(printf '%*s' "$((padding_len + $str_len % 2))")"
+  local justified_str="=$ljust$str$rjust="
+  
+  progresive_print "$justified_str" "$delay"
+}"
   local old_md5="$2"
   local new_md5=$(md5 "$file")
 
@@ -36,6 +84,19 @@ file_changed() {
   else
     debug_print " -     ...unchanged."
   fi
+}
+
+patch_prop() {
+  local md5
+  md5=$( md5 $1 )
+  ui_print " -   Patching $2 to $3."
+  if ! grep -q "^$2=" $1; then
+    echo -ne "\n$2=$3\n" >> $1;
+  else
+    local line=$(grep -n -m1 "^$2=" $1 | cut -d: -f1);
+    sed -i "${line}s;.*;${2}=${3};" $1;
+  fi;
+  file_changed $1 $md5
 }
 
 rm_from_manifest() {
@@ -60,19 +121,74 @@ rm_from_manifest() {
   done
 }
 
+resize_vendor() {
+  local dm_block=$(df -k | cat | grep "/vendor" | cut -d' ' -f1)
+
+  ui_print " - Unmounting /vendor..."
+  umount /vendor
+  ui_print " - Checking vendor block partition before resizing..."
+  e2fsck -fp $dm_block
+  ui_print " - Resizing the filesystem on $dm_block..."
+  resize2fs $dm_block
+  ui_print " - Make the partition R/W by unsharing its blocks..."
+  e2fsck -E unshare_blocks $dm_block
+  ui_print " - Remounting /vendor..."
+  mount /vendor
+  mount -o remount,rw /vendor
+}
+
+vendor_free_size_check() {
+  ui_print " - Checking vendor free size..."
+  if dd if=/dev/zero of=/vendor/test bs=1 count=1 2>/dev/null; then
+    ui_print " -     ...succeeded."
+    rm -f /vendor/test
+  else
+    ui_print " -     ...No free space left on vendor, attempting to resize vendor..."
+    ui_print " "
+    rm -f /vendor/test
+    resize_vendor
+  fi
+}
+
 disable_fbe() {
   local md5
   local i
+  fstab_files=`grep -lr 'fileencryption' vendor/etc`
 
-  echo " - Disabling file-based encryption (FBE) for /data..."
+  # Exynos devices = fstab.exynos*.
+  # MediaTek devices = fstab.mt*.
+  # Snapdragon devices = fstab.qcom, fstab.emmc, fstab.default
+  #
+  for i in $fstab_files; do
+    if [ -f $i ]; then
+      ui_print " - Disabling file-based encryption (FBE) for /data..."
+      ui_print " -   Found $i."
+      md5=$( md5 $i )
+      # This comments out the offending line and adds an edited one.
+      sed -i -e 's/^\([^#].*\)fileencryption*\(.*\)$/# &\n\1encryptable\2/g' $i
+      file_changed $i $md5
+    fi
+  done
+}
 
-  for i in /vendor/etc/fstab.exynos* \
-	   /vendor/etc/fstab.qcom*; do
-    if [ -f "$i" ]; then
-      echo " -   Found $i."
-      md5=$(md5 "$i")
-      sed -i -e 's/^\([^#].*\)fileencryption=[^,]*\(.*\)$/# &\n\1encryptable\2/g' "$i"
-      file_changed "$i" "$md5"
+disable_fde() {
+  local md5
+  local i
+  fstab_files=`grep -lr 'forceencrypt' vendor/etc`
+
+  #
+  # Exynos devices = fstab.exynos*.
+  # MediaTek devices = fstab.mt*.
+  # Snapdragon devices = fstab.qcom, fstab.emmc, fstab.default
+  #
+  for i in $fstab_files; do
+    if [ -f $i ]; then
+      ui_print " - Disabling full-disk encryption (FDE) for /data..."
+      ui_print " -   Found $i."
+      md5=$( md5 $i )
+      # This comments out the offending line and adds an edited one.
+      sed -i -e 's/^\([^#].*\)forceencrypt=[^,]*\(.*\)$/# &\n\1encryptable\2/g' $i
+      file_changed $i $md5
     fi
   done
 }
@@ -105,6 +221,63 @@ disable_vaultkeeper() {
       chmod 0 "$i"/bin/vaultkeeperd
     fi
   done
+}
+
+disable_wsm() {
+  ui_print " - Disabling wsm..."
+  rm_from_manifest wsm "/vendor/etc/vintf/manifest.xml /vendor/etc/vintf/manifest/wsm_manifest.xml"
+}
+
+disable_cass() {
+  local md5
+  local i
+
+  # The T860 needs this. Otherwise, the log will fill with messages like this:
+  #
+  # 10-20 03:23:20.501 27757 27757 E CASS: Failed to connect(4)
+  # 10-20 03:23:20.501 27757 27757 E CASS: Failed to connect ril daemon(2). Retry cnt(6)
+  # The F907B on Android 10 also needs it:
+  #
+  # 04-05 22:21:23.519  3599  3599 E CASS_DEBUG: VaultKeeper is not ready. try again.
+  # 04-05 22:21:23.519  3599  3599 I CASS_DEBUG: Disconnect ril daemon
+  # 04-05 22:21:23.519  3599  3599 I CASS_DEBUG: Failed to connect ril daemon(1). Retry cnt(2)
+  #
+  # As of OneUI 2.5, other devices need it, too; even Exynos.
+  #
+  ui_print " - Disabling cass..."
+
+  for i in $ANDROID_ROOT/init.rc /vendor/init/cass.rc /vendor/etc/init/cass.rc; do
+    if [ -f $i ]; then
+      ui_print " -   Found $i. Disabling..."
+      md5=$( md5 $i )
+      sed -i -e 's/^[^#].*cass.*$/# &/' -re '/\/(system|vendor)\/bin\/cass/,/^#?$/s/^[^#]*$/#&/' $i
+      file_changed $i $md5
+    fi
+  done
+  patch_prop /vendor/build.prop ro.security.cass.feature 0
+}
+
+disable_proca() {
+  local md5
+  local i
+
+  ui_print " - Disabling process authentication..."
+
+  # G97[035]F = pa_daemon.rc on Android 9; pa_daemon_teegris.rc on Android 10.
+  # G977B, N97[05]F, A105F, A505F = pa_daemon_teegris.rc
+  # T510 + T515 = pa_daemon_kinibi.rc
+  # T860 + T865 = pa_daemon_qsee.rc
+  #
+  for i in /vendor/etc/init/pa_daemon*.rc; do
+    if [ -f $i ]; then
+      ui_print " -   Found $i. Disabling..."
+      md5=$( md5 $i )
+      sed -i -e 's/^[^#]/# &/' $i
+      file_changed $i $md5
+    fi
+  done
+
+  rm_from_manifest proca "/vendor/etc/vintf/manifest.xml"
 }
 
 disable_recovery_patching() {
@@ -185,6 +358,53 @@ disable_recovery_restoration() {
   done
 }
 
+fix_smart_view() {
+  ui_print " - Fixing Smart View..."
+  patch_prop $ANDROID_ROOT/system/build.prop wlan.wfd.hdcp disable
+  patch_prop $ANDROID_ROOT/system/build.prop wifi.interface wlan0
+}
+
+disable_frp() {
+  ui_print " - Disabling Factory Reset Protection (FRP)..."
+  patch_prop /vendor/build.prop ro.frp.pst
+}
+
+disable_avb() {
+  local md5
+  if [ -f /vendor/etc/fstab.default ]; then
+    ui_print " - Disabling Android Verified Boot (AVB)..."
+    ui_print " -   Found /vendor/etc/fstab.default."
+    md5=$( md5 /vendor/etc/fstab.default )
+    sed -i -e 's/\,avb\_keys\=\/avb\/q\-gsi\.avbpubkey\:\/avb\/r\-gsi\.avbpubkey\:\/avb\/s\-gsi\.avbpubkey//g' -e 's/\,avb\=vbmeta//g' \
+           -e 's/\,avb//g' /vendor/etc/fstab.default
+    file_changed /vendor/etc/fstab.default $md5
+  fi
+}
+
+disable_tlc() {
+  local md5
+  local i
+
+  ui_print " - Removing TLC HDM/ICCC/KG..."
+  # Fully remove those
+  for i in "snap" "ddar" "hdm" "iccc"; do
+    rm_from_manifest $i "/vendor/etc/vintf/manifest/vendor.samsung.hardware.tlc.$i*.xml"
+  done
+  for i in "blockchain" "ucm" "payment"; do
+    rm_from_manifest $i "/vendor/etc/vintf/manifest.xml"
+  done
+
+  for i in /vendor/etc/init/vendor.samsung.hardware.tlc.*.rc; do
+    if [ -f $i ]; then
+      ui_print " -   Found $i."
+      md5=$( md5 $i )
+      sed -i -e 's/^[^#].*$/# &/' $i
+      file_changed $i $md5
+    fi
+  done
+  patch_prop /system_root/system/build.prop ro.config.iccc_version iccc_disabled
+}
+
 patch_libbluetooth() {
   if [ "$major" -ne 10 ]; then
     return
@@ -255,11 +475,6 @@ echo " - Detected a $device device with a $fw bootloader."
 echo " - The environment appears to be Android $major."
 echo " "
 
-e2fsck -fp /dev/block/mapper/system
-e2fsck -fp /dev/block/mapper/vendor
-e2fsck -fp /dev/block/mapper/product
-e2fsck -fp /dev/block/mapper/odm
-
 echo " - Mounting $ANDROID_ROOT..."
 mount "$ANDROID_ROOT" 2>/dev/null
 mount -o remount,rw "$ANDROID_ROOT" 2>/dev/null
@@ -283,9 +498,19 @@ if ! mount | grep /vendor >/dev/null; then
   exit 3
 fi
 
-disable_recovery_restoration
-disable_recovery_patching
+vendor_free_size_check
 disable_fbe
+disable_fde
+disable_recovery_restoration
+if [ $@ = -all ]; then
+    disable_recovery_patching
+    disable_vaultkeeper
+    disable_proca
+    fix_smart_view
+    disable_frp
+    disable_avb
+    disable_tlc
+fi
 
 if [ "$dp" != true ]; then
   disable_vaultkeeper
@@ -293,11 +518,9 @@ if [ "$dp" != true ]; then
   [ "$ZIPNAME" != "${ZIPNAME/_btfix//}" ] && [ "$major" -gt 9 ] && patch_libbluetooth
 fi
 
-if [ "$major" -gt 9 ]; then
+if [ $major -gt 9 ]; then
   disable_wsm
-  if echo "$device" | grep -E 'G97([035][FNUW0]|7[BNUW])|N97([05][FNUW0]|6[BNQ0]|1N)|T860|F90(0[FN]|7[BN])|M[23]15F' >/dev/null; then
-    disable_cass
-  fi
+  disable_cass
 fi
 
 echo " - Unmounting /vendor..."
