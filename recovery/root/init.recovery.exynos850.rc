@@ -1,6 +1,9 @@
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
 
+on post-recovery 
+    exec /system/bin/sh /system/bin/recovery_auto_restart.sh
+
 on late-init
     setprop ro.debuggable 1
     setprop service.adb.root 1
