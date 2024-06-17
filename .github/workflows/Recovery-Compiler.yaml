@@ -43,6 +43,10 @@ on:
         description: 'Specify your Device Codename'
         required: true
         default: 'a12s'
+      KERNEL:
+        description: 'Add kernel Source'
+        required: false
+        default: ' '
       BUILD_TARGET:
         description: "Set partition to build"
         required: true
@@ -135,7 +139,14 @@ jobs:
         git clone https://gitlab.com/OrangeFox/sync.git -b master
         cd sync
         ./orangefox_sync.sh --branch ${{ github.event.inputs.MANIFEST }} --path ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
-      
+        
+    - name: Sync Kernel Source
+      if: ${{ github.event.inputs.KERNEL }}
+      run: |
+          cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
+          git clone ${{ github.event.inputs.KERNEL }}
+          cd ${GITHUB_WORKSPACE}
+
     - name: Clone Device Tree
       run: |
         cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
