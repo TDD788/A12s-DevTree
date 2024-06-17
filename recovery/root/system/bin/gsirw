@@ -20,6 +20,29 @@ function check_root_permissions() {
     fi
 }
 
+exec_as_root() {
+	if [ "$ROOT" = "false" ]; then
+        if command -v sudo >/dev/null 2>&1; then
+            if "sudo" = true >/dev/null 2>&1; then
+                sudo $(readlink -f "$0") "$1"
+                exit 1
+            fi
+	    elif command -v su >/dev/null 2>&1; then
+			if "su -c" = true >/dev/null 2>&1; then
+	  		  su -c sh $(readlink -f "$0") "$1"
+	  		  exit 1
+			else
+				true
+ 	 		  /system/bin/sh $(readlink -f "$0") "$1"
+ 	 		  exit 1
+			fi
+		else
+		    /system/bin/sh $(readlink -f "$0") "$1"
+		    exit 1
+		fi
+	fi
+}
+
 function root_msg() {
 	if [ "$ROOT" = "true" ]; then
 		echo "Congratulations you are running the script at root level"
@@ -84,14 +107,16 @@ function simulate_bootloader_patch() {
 
 function prank() {
 	clear
+	bar_length=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
+	BAR=$(echo "$(printf '%*s' "$bar_length" | tr ' ' '-')")
 	echo -e "${GREEN}Initializing attempt to remove Bootloader security patches on ${DEVICE_NAME}...${NC}"
 	simulate_bootloader_patch
 
 	echo ""
-	echo -e "${RED}-----------------------------------------------------------"
+	echo -e "${RED}$(echo "$BAR")"
 	echo -e "${RED}ERROR: A critical problem has been detected in the system.${NC}"
 	echo -e "${RED}Please do not turn off the device and wait for instructions.${NC}"
-	echo -e "${RED}-----------------------------------------------------------"
+	echo -e "${RED}$BAR"
 	echo ""
 
 	echo -e "Bootloader SOC Log: ${RED}$(generate_random_message)${NC}"
@@ -1331,12 +1356,17 @@ function perform_copied_system_image() {
     fi
 }    
 
-function progresive_print() {
+progresive_print() {
   local text="$1"
-  local delay="${2:-0.01}"
+  local delay="0.00001"
   while [ -n "$text" ]; do
-    printf "%s" "${text:0:1}"
-    sleep "$delay"
+    local char="${text:0:1}"
+    if [ "$char" = " " ]; then
+      printf "%s" "$char"
+    else
+      printf "%s" "$char"
+      sleep "$delay"
+    fi
     text="${text:1}"
   done
   printf "\n"
@@ -1364,16 +1394,8 @@ function GSIRW() {
     sleep 2
     clearly
     progresive_print "
-                 _     ___    ___  
-                /_\   |_ _|  / _ \ 
-               / _ \   | |  | (_) |
-              /_/ \_\ |___|  \___/
-          ____ ____ ___
-         / ___/ ___|_ _|     _ ____      __
-        | |  _\___ \| |_____| '__\ \ /\ / /
-        | |_| |___) | |_____| |   \ V  V /
-         \____|____/___|    |_|    \_/\_/ 
-" 0.01
+    $LOGO
+" 0.00001
     progresive_print "
          AIO (ALL IN ONE) GSI / OTA  -RW" 0.2
     sleep 1
@@ -1453,11 +1475,17 @@ MAIN () {
 	export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
 	export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
 
-	export RED=$'\x1b[01;31m'
-    export GREEN=$'\x1b[01;32m'
-    export BLUE=$'\x1b[01;34m'
-    export NC=$'\x1b[0m'
-
+	RED='\033[0;31m'
+	GREEN='\033[0;32m'
+	BLUE='\033[0;34m'
+	NC='\033[0m'
+	
+	LOGO=$(base64 -d <<< "ICAgICAgICAgICAgIF8gICAgIF9fXyAgICBfX18gIAogICAgICAgICAgICAgICAgL19cICAgfF8g
+X3wgIC8gXyBcIAogICAgICAgICAgICAgICAvIF8gXCAgIHwgfCAgfCAoXykgfAogICAgICAgICAg
+ICAgIC9fLyBcX1wgfF9fX3wgIFxfX18vCiAgICAgICAgICBfX19fIF9fX18gX19fCiAgICAgICAg
+IC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KICAgICAgICB8IHwgIF9cX19fIFx8
+IHxfX19fX3wgJ19fXCBcIC9cIC8gLwogICAgICAgIHwgfF98IHxfX18pIHwgfF9fX19ffCB8ICAg
+XCBWICBWIC8KICAgICAgICAgXF9fX198X19fXy9fX198ICAgIHxffCAgICBcXy9cXy8gCg==")
 	DEVICE_NAME=$(getprop ro.product.system.device)
 	DEVICE_MODEL=$(getprop ro.product.system.model)
 	SOC=$(getprop ro.product.board)
@@ -1484,23 +1512,8 @@ MAIN () {
 	        *)
 	            ;;
 	esac
-
-	if [ "$ROOT" = "false" ]; then
-		if command -v sudo >/dev/null 2>&1; then
-	 	   if "sudo" = true >/dev/null 2>&1; then
-	 	       EXEC_CMD="sudo $SCRIPT_DIR/gsirw "$1""
-	 	   fi
-	    elif command -v su >/dev/null 2>&1; then
-			if "su -c "= true >/dev/null 2>&1; then
-	  		  EXEC_CMD="su -c sh $SCRIPT_DIR/gsirw "$1""
-			else
-				true
- 	 		  EXEC_CMD=""
-			fi
-		else
-		    EXEC_CMD=""
-		fi
-	fi
+	
+	exec_as_root "$1"
 
 	$EXEC_CMD GSIRW "$1"
 }
