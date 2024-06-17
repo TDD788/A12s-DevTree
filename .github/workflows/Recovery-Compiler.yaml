@@ -46,7 +46,7 @@ on:
       KERNEL:
         description: 'Add kernel Source'
         required: false
-        default: ' '
+        default: 'https://github.com/rsuntk/android_kernel_samsung_a12s_m12-unified.git'
       BUILD_TARGET:
         description: "Set partition to build"
         required: true
