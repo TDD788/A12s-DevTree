@@ -22,5 +22,4 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) $(recovery_ramdisk) $(recovery_k
 	$(hide) echo -n "SEANDROIDENFORCE" >> $@
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE),raw)
 	@echo "Made recovery image: $@"
-
-ls $(PRODUCT_OUT)
+	@echo "$(ls $(PRODUCT_OUT))"
