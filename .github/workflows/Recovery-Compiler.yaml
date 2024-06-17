@@ -144,7 +144,10 @@ jobs:
       if: ${{ github.event.inputs.KERNEL }}
       run: |
           cd ${GITHUB_WORKSPACE}/OrangeFox/fox_${{ github.event.inputs.MANIFEST }}
-          git clone ${{ github.event.inputs.KERNEL }}
+          DEVICE_DIRECTORY="${{ github.event.inputs.DEVICE_PATH }}"
+          MTF_DEVICE="${DEVICE_DIRECTORY#*/}"
+          KERNEL_PATH="kernel/$MTF_DEVICE"
+          git clone ${{ github.event.inputs.KERNEL }} $KERNEL_PATH
           cd ${GITHUB_WORKSPACE}
 
     - name: Clone Device Tree
