@@ -159,6 +159,9 @@ TW_INPUT_BLACKLIST := hbtp_vm
 TARGET_USES_MKE2FS := true
 TW_USE_TOOLBOX := false
 TW_EXCLUDE_MTP := false
+TWRP_EVENT_LOGGING := true
+TW_INCLUDE_LPDUMP := true
+TW_INCLUDE_LPTOOLS := true
 TW_CRYPTO_REAL_BLKDEV := /dev/block/by-name/userdata
 TW_CRYPTO_FS_OPTIONS := length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2;keydirectory=/metadata/vold/metadata_encryption
 BOARD_HAS_NO_REAL_SDCARD := false
