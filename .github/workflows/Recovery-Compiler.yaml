@@ -7,6 +7,7 @@ name: Recovery - Build
 # https://github.com/PitchBlackRecoveryProject
 
 on:
+  push:
   workflow_dispatch:
     inputs:
       BUILD_RECOVERY:
@@ -46,7 +47,7 @@ on:
       KERNEL:
         description: 'Add kernel Source'
         required: false
-        default: 'https://github.com/rsuntk/android_kernel_samsung_a12s_m12-unified.git'
+        default: ''
       BUILD_TARGET:
         description: "Set partition to build"
         required: true
