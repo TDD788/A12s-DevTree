@@ -1,6 +1,17 @@
 #!/system/bin/sh
 
+function generate_date_message() {
+  hour=$(echo "$(date +%Hhs:%Mmin)")
+  date=$(echo "$(date +%dday/%mmon/%Yyear)")
+  date=$(echo "$date" | sed 's/\//|/g')
+  echo "[$hour]($date)"
+}
+
 function default() {
+	export DEFAULT_SYSTEM_NAME="system"
+	export DEFAULT_VENDOR_NAME="vendor"
+	export DEFAULT_PRODUCT_NAME="product"
+	export DEFAULT_ODM_NAME="odm"
 	export CUSTOM_SYSTEM_NAME="system"
 	export CUSTOM_VENDOR_NAME="vendor"
 	export CUSTOM_PRODUCT_NAME="product"
@@ -8,8 +19,14 @@ function default() {
 	export CUSTOM_MOUNT_POINT="/cache/system"
 	export DEFAULT_START_POINT="/sdcard"
 	export MOUSE=">"
+	export UP_SHORTCUTS=true
+	export SORT_DIR_TYPE="name_asc"
+	export SORT_FILE_TYPE="name_asc"
 	identify_device
 	export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
+	export SHORTCUTS="DATA /data
+	SDCARD /sdcard
+	"
 }
 
 function check_root_permissions() {
@@ -20,7 +37,7 @@ function check_root_permissions() {
     fi
 }
 
-exec_as_root() {
+function exec_as_root() {
 	if [ "$ROOT" = "false" ]; then
         if command -v sudo >/dev/null 2>&1; then
             if "sudo" = true >/dev/null 2>&1; then
@@ -56,7 +73,7 @@ function root_msg() {
 function perform_resize_and_unshare_blocks() {
     resize2fs "$new_name" 6G
     echo "Try to fix any Error"
-    e2fsck -fp "$new_name"
+    e2fsck -f "$new_name"
     echo "Unsharing block to get RW Image"
     e2fsck -E unshare_blocks "$new_name" 2>/dev/null
     resize2fs -M "$new_name"
@@ -137,36 +154,9 @@ function prank() {
 	reboot
 }
 
-function look() {
-	echo ""
-	root_msg
-	echo ""
-	check_dd
-	echo ""
-    echo "GSI-rw configurations"
-    echo "SYSTEM Name=\"$CUSTOM_SYSTEM_NAME\""
-    echo "VENDOR Name=\"$CUSTOM_VENDOR_NAME\""
-    echo "PRODUCT Name=\"$CUSTOM_PRODUCT_NAME\""
-    echo "ODM Name=\"$CUSTOM_ODM_NAME\""
-    echo "A/B system: \"$A_B\""
-    echo "A only system: \"$A_O\""
-    echo "Dynamic partitions: \"$DYNAMIC\""
-    echo "Generic system image: \"$GENERIC\""
-    echo "Device Mapper: \"$DEVICE_MAPPER\""
-    echo "Custom mount point: \"$CUSTOM_MOUNT_POINT\""
-    echo "Default Start Point: \"$DEFAULT_START_POINT\""
-    echo "Current mouse: \"$MOUSE\""
-    echo "Current file extensions:"
-    echo "${FILE_EXTENSIONS:-None}"
-    echo ""
-    echo "Press any key to confirm that you have reviewed the settings."
-    read -rsn1
-}
-
-check_dd() {
+function check_dd() {
   if ! dd if=/dev/zero of=/dev/Nothing bs=1 count=1 &> /dev/null; then
-    echo "The 'dd' command is not available or failed to execute." >&2
-    exit 1
+    echo "The 'dd' command is not available or failed to execute."
   fi
   
   if dd if=/dev/zero of=/dev/Nothing bs=1 count=1 &> /dev/null; then
@@ -220,60 +210,18 @@ function set_partition_names() {
     esac
 }
 
-function save_configurations() {
-    local config_file="/cache/gsirw.conf"
-    if [ -w "/cache" ]; then
-        echo "Saving configurations to $config_file..."
-        {
-            echo "# Recovery configurations"
-            echo "export CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
-            echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
-            echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
-            echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
-            echo "export MOUSE=\"$MOUSE\""
-            echo "export A_B=\"$A_B\""
-            echo "export A_O=\"$A_O\""
-            echo "export DYNAMIC=\"$DYNAMIC\""
-            echo "export GENERIC=\"$GENERIC\""
-            echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
-            echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
-            echo "export DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
-            echo "export FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
-        } >"$config_file"
-    else
-        config_file="$HOME/gsirw.conf"
-        echo "Saving configurations to $config_file..."
-        {
-            echo "# Recovery configurations"
-            echo "export CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
-            echo "export CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
-            echo "export CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
-            echo "export CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
-            echo "export MOUSE=\"$MOUSE\""
-            echo "export A_B=\"$A_B\""
-            echo "export A_O=\"$A_O\""
-            echo "export DYNAMIC=\"$DYNAMIC\""
-            echo "export GENERIC=\"$GENERIC\""
-            echo "export DEVICE_MAPPER=\"$DEVICE_MAPPER\""
-            echo "export CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
-            echo "export DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
-            echo "export FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
-        } >"$config_file"
-    fi
-}
-
 function load_saved_configurations() {
     local config_file="/cache/gsirw.conf"
     if [ -f "$config_file" ]; then
-    	default
-        source "$config_file"
+        if source "$config_file"; then
+            echo "Configuration loaded from $config_file"
+        fi
     else
         config_file="$HOME/gsirw.conf"
         if [ -f "$config_file" ]; then
-            default
-            source "$config_file"
-        else
-            default
+            if source "$config_file"; then
+                echo "Configuration loaded from $config_file"
+            fi    
         fi
     fi
 }
@@ -301,26 +249,26 @@ function configure_manually() {
                 while true; do
                     clear
                     echo "Set A/B or A Only flags:"
-                    echo "a. A/B"
-                    echo "b. A Only"
-                    echo "c. Go back"
+                    echo "1. A/B"
+                    echo "2. A Only"
+                    echo "3. Go back"
                     echo ""
                     echo -n "Enter your choice (a/b/c): "
                     read -rsn1 flag_choice
                     echo ""
 
                     case $flag_choice in
-                        a)
+                        1)
                             export A_B="true"
                             export A_O="false"
                             break
                             ;;
-                        b)
+                        2)
                             export A_B="false"
                             export A_O="true"
                             break
                             ;;
-                        c)
+                        3)
                             break
                             ;;
                         *)
@@ -335,37 +283,37 @@ function configure_manually() {
                 while true; do
                     clear
                     echo "Choose Device Mapper or other parameters:"
-                    echo "a. Device Mapper"
-                    echo "b. Generic By-Name"
-                    echo "c. Other parameters"
-                    echo "d. Define starting point"
-                    echo "e. Go back"
+                    echo "1. Device Mapper"
+                    echo "2. Generic By-Name"
+                    echo "3. Other parameters"
+                    echo "4. Define starting point"
+                    echo "5. Go back"
                     echo ""
                     echo -n 'Enter your choice (a/b/c/d/e):'
                     read -rsn1 param_choice
                     echo ""
                     clear
                     case $param_choice in
-                        a)
+                        1)
                             export DYNAMIC="true"
                             export GENERIC="false"
                             export DEVICE_MAPPER="/dev/block/mapper"
                             break
                             ;;
-                        b)
+                        2)
                             export DYNAMIC="false"
                             export GENERIC="true"
                             export DEVICE_MAPPER="/dev/block/by-name"
                             break
                             ;;
-                        c)
+                        3)
                             echo "Custom parameters configuration."
                             echo "Press any key to continue..."
                             read -rsn1
                             set_partition_names
                             break
                             ;;
-                        d)
+                        4)
                             echo "Here you can define the starting point of the GSI-rw (default: $DEFAULT_START_POINT)"
                             echo -n "> "
                             read -r DEFAULT_START_POINT
@@ -375,7 +323,7 @@ function configure_manually() {
                             fi  
                             break
                             ;;
-                        e)
+                        5)
                             break
                             ;;
                         *)
@@ -512,29 +460,386 @@ function list_extensions() {
     read -rsn1
 }
 
+function list_directories_and_files() {
+    local directory="$1"
+    local extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+    local sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
+    local sort_file_type="${SORT_FILE_TYPE:-name_asc}"
+    local index=1
+    local IFS=$'\n'
+    local directories
+    local files
+
+    case "$sort_dir_type" in
+        name_asc)
+            directories=($(ls -d "$directory"/*/ | sort))
+            ;;
+        name_desc)
+            directories=($(ls -d "$directory"/*/ | sort -r))
+            ;;
+        date_asc)
+            directories=($(ls -dt "$directory"/*/))
+            ;;
+        date_desc)
+            directories=($(ls -dt "$directory"/*/ | tac))
+            ;;
+        size_asc)
+            directories=($(ls -ldS "$directory"/*/ | awk '{print $9}'))
+            ;;
+        size_desc)
+            directories=($(ls -ldSr "$directory"/*/ | awk '{print $9}'))
+            ;;
+        *)
+            echo "Invalid sort type for directories"
+            return
+            ;;
+    esac
+
+    case "$sort_file_type" in
+        name_asc)
+            files=($(ls -p "$directory"/* | grep -v / | sort))
+            ;;
+        name_desc)
+            files=($(ls -p "$directory"/* | grep -v / | sort -r))
+            ;;
+        date_asc)
+            files=($(ls -t "$directory"/* | grep -v /))
+            ;;
+        date_desc)
+            files=($(ls -tr "$directory"/* | grep -v /))
+            ;;
+        size_asc)
+            files=($(ls -lS "$directory"/* | grep -v / | awk '{print $9}'))
+            ;;
+        size_desc)
+            files=($(ls -lSr "$directory"/* | grep -v / | awk '{print $9}'))
+            ;;
+        type)
+            files=($(ls -p "$directory"/* | grep -v / | sort -t. -k2))
+            ;;
+        *)
+            echo "Invalid sort type for files"
+            return
+            ;;
+    esac
+
+    if [ "$UP_SHORTCUTS" = true ]; then
+        for line in $SHORTCUTS; do
+            # Process each shortcut line
+            line="${line#"${line%%[![:space:]]*}"}"
+            line="${line%"${line##*[![:space:]]}"}"
+            line="${line//  / }"
+            shortcut_name=${line%% *}
+            shortcut_dir=${line#* }
+            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
+                echo "$index.~[S]~$shortcut_name~$shortcut_dir"
+                ((index++))
+            else
+                echo "Invalid shortcut: $line"
+            fi
+        done
+    fi
+    for dir in "${directories[@]}"; do
+        dir=${dir%*/}
+        dir_name=${dir##*/}
+        echo "$index.~[D]~$dir_name"
+        ((index++))
+    done
+    for file in "${files[@]}"; do
+        file_extension="${file##*.}"
+        case "|$extensions|" in
+            *"|$file_extension|"*)
+                file_name=${file##*/}
+                echo "$index.~[F]~$file_name"
+                ((index++))
+                ;;
+        esac
+    done
+    if [ "$UP_SHORTCUTS" = false ]; then
+        for line in $SHORTCUTS; do
+            line="${line#"${line%%[![:space:]]*}"}"
+            line="${line%"${line##*[![:space:]]}"}"
+            line="${line//  / }"
+            shortcut_name=${line%% *}
+            shortcut_dir=${line#* }
+            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
+                echo "$index.~[S]~$shortcut_name~$shortcut_dir"
+                ((index++))
+            else
+                echo "Invalid shortcut: $line"
+            fi
+        done
+    fi
+}
+
 function gsirw_interface() {
-	clear
-	echo "a. Mouse style (default: \">\""
-	echo ""
-	echo "Coming soon"
-	echo -n "Imput: "
-	read -rsn1 inter
-	echo ""
-	case $inter in
-	    a)
-	        echo "Please specify the symbol that indicates the mouse you want to use."
-	        echo "Default symbol is \">\""
-	        read -rsn1 chmouse
-	        if [ -z "$chmouse" ] || [ "$chmouse" = "." ]; then
+    clear
+    echo "1. Mouse style (default: \">\")"
+    echo "2. Configure shortcuts"
+    echo "3. Set sort type for directories (default: name_asc)"
+    echo "4. Set sort type for files (default: name_asc)"
+    echo ""
+    echo "Input: "
+    read -rsn1 inter
+    echo ""
+    case $inter in
+        1)
+            echo "Please specify the symbol that indicates the mouse you want to use."
+            echo "Default symbol is \">\""
+            read chmouse
+            if [ -z "$chmouse" ]; then
                 MOUSE=">"
             else
-                MOUSE=$chmouse
+                MOUSE="$chmouse"
             fi
             ;;
-	    *)
-	        echo "Wrong option"
-	        ;;
-	esac
+        2)
+            manage_shortcuts
+            ;;
+        3)
+            echo "Choose sort type for directories:"
+            echo "1. Name Ascending"
+            echo "2. Name Descending"
+            echo "3. Date Ascending"
+            echo "4. Date Descending"
+            echo "5. Size Ascending"
+            echo "6. Size Descending"
+            read -rsn1 sort_choice_dir
+            case $sort_choice_dir in
+                1) SORT_DIR_TYPE="name_asc" ;;
+                2) SORT_DIR_TYPE="name_desc" ;;
+                3) SORT_DIR_TYPE="date_asc" ;;
+                4) SORT_DIR_TYPE="date_desc" ;;
+                5) SORT_DIR_TYPE="size_asc" ;;
+                6) SORT_DIR_TYPE="size_desc" ;;
+                *)
+                    echo "Invalid choice"
+                    ;;
+            esac
+            ;;
+        4)
+            echo "Choose sort type for files:"
+            echo "1. Name Ascending"
+            echo "2. Name Descending"
+            echo "3. Date Ascending"
+            echo "4. Date Descending"
+            echo "5. Size Ascending"
+            echo "6. Size Descending"
+            echo "7. File Type"
+            read -rsn1 sort_choice_file
+            case $sort_choice_file in
+                1) SORT_FILE_TYPE="name_asc" ;;
+                2) SORT_FILE_TYPE="name_desc" ;;
+                3) SORT_FILE_TYPE="date_asc" ;;
+                4) SORT_FILE_TYPE="date_desc" ;;
+                5) SORT_FILE_TYPE="size_asc" ;;
+                6) SORT_FILE_TYPE="size_desc" ;;
+                7) SORT_FILE_TYPE="type" ;;
+                *)
+                    echo "Invalid choice"
+                    ;;
+            esac
+            ;;
+        *)
+            echo "Wrong option"
+            ;;
+    esac
+}
+
+function save_configurations() {
+    config_file="$HOME/gsirw.conf"
+    echo "Saving configurations to $config_file..."
+    {
+        echo "# Recovery configurations"
+        echo "CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
+        echo "CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
+        echo "CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
+        echo "CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
+        echo "MOUSE=\"$MOUSE\""
+        echo "UP_SHORTCUTS=\"$UP_SHORTCUTS\""
+        echo "A_B=\"$A_B\""
+        echo "A_O=\"$A_O\""
+        echo "DYNAMIC=\"$DYNAMIC\""
+        echo "GENERIC=\"$GENERIC\""
+        echo "DEVICE_MAPPER=\"$DEVICE_MAPPER\""
+        echo "CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+        echo "DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
+        echo "FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
+        echo "SORT_DIR_TYPE=\"$SORT_DIR_TYPE\""
+        echo "SORT_FILE_TYPE=\"$SORT_FILE_TYPE\""
+        if [ -n "$SHORTCUTS" ]; then
+            echo "SHORTCUTS=\"$SHORTCUTS\""
+        fi
+    } >"$config_file"
+    
+    local config_file="/cache/gsirw.conf"
+    if [ -w "/cache" ]; then
+        echo "Saving configurations to $config_file..."
+        {
+            echo "# Recovery configurations"
+            echo "CUSTOM_SYSTEM_NAME=\"$CUSTOM_SYSTEM_NAME\""
+            echo "CUSTOM_VENDOR_NAME=\"$CUSTOM_VENDOR_NAME\""
+            echo "CUSTOM_PRODUCT_NAME=\"$CUSTOM_PRODUCT_NAME\""
+            echo "CUSTOM_ODM_NAME=\"$CUSTOM_ODM_NAME\""
+            echo "MOUSE=\"$MOUSE\""
+            echo "UP_SHORTCUTS=\"$UP_SHORTCUTS\""
+            echo "A_B=\"$A_B\""
+            echo "A_O=\"$A_O\""
+            echo "DYNAMIC=\"$DYNAMIC\""
+            echo "GENERIC=\"$GENERIC\""
+            echo "DEVICE_MAPPER=\"$DEVICE_MAPPER\""
+            echo "CUSTOM_MOUNT_POINT=\"$CUSTOM_MOUNT_POINT\""
+            echo "DEFAULT_START_POINT=\"$DEFAULT_START_POINT\""
+            echo "FILE_EXTENSIONS=\"$FILE_EXTENSIONS\""
+            echo "SORT_DIR_TYPE=\"$SORT_DIR_TYPE\""
+            echo "SORT_FILE_TYPE=\"$SORT_FILE_TYPE\""
+            if [ -n "$SHORTCUTS" ]; then
+                echo "SHORTCUTS=\"$SHORTCUTS\""
+            fi
+        } >"$config_file"
+    fi
+}
+
+function look() {
+    clear
+    echo ""
+    root_msg
+    echo ""
+    check_dd
+    echo ""
+    echo "GSI-rw configurations"
+    echo "SYSTEM Name=\"$CUSTOM_SYSTEM_NAME\""
+    echo "VENDOR Name=\"$CUSTOM_VENDOR_NAME\""
+    echo "PRODUCT Name=\"$CUSTOM_PRODUCT_NAME\""
+    echo "ODM Name=\"$CUSTOM_ODM_NAME\""
+    echo "A/B system: \"$A_B\""
+    echo "A only system: \"$A_O\""
+    echo "Dynamic partitions: \"$DYNAMIC\""
+    echo "Generic system image: \"$GENERIC\""
+    echo "Device Mapper: \"$DEVICE_MAPPER\""
+    echo "Custom mount point: \"$CUSTOM_MOUNT_POINT\""
+    echo "Default Start Point: \"$DEFAULT_START_POINT\""
+    echo "Current mouse: \"$MOUSE\""
+    echo "Current file extensions:"
+    echo "${FILE_EXTENSIONS:-None}"
+    echo "Sort type for directories: \"$SORT_DIR_TYPE\""
+    echo "Sort type for files: \"$SORT_FILE_TYPE\""
+    if [ -n "$SHORTCUTS" ]; then
+       echo "Shortcuts"
+       echo -e "$SHORTCUTS"
+    fi
+    echo ""
+    echo "Press any key to confirm that you have reviewed the settings."
+    read -rsn1
+}
+
+function manage_shortcuts() {
+    local shortcut_name
+    local shortcut_dir
+
+    while true; do
+        clear
+        echo "Manage Shortcuts"
+        echo "1. Create Shortcut"
+        echo "2. Delete Shortcut"
+        echo "3. Edit Shortcut"
+        echo "4. Display Shortcuts"
+        echo "5. Change Layout"
+        echo "6. Return"
+        echo -n "Choose an option: "
+        read -rsn1 option
+        echo ""
+
+        case $option in
+            1)
+                echo "Enter shortcut name:"
+                read shortcut_name
+                [ -z "$shortcut_name" ] && continue
+
+                echo "Enter directory path for $shortcut_name:"
+                read shortcut_dir
+
+                if [ -d "$shortcut_dir" ]; then
+                    SHORTCUTS+="$shortcut_name $shortcut_dir\n"
+                    echo "Shortcut created successfully."
+                else
+                    echo "Invalid directory. Please try again."
+                fi
+                ;;
+            2)
+                echo "Enter the name of the shortcut to delete:"
+                read shortcut_name
+                if [[ "$SHORTCUTS" == *"$shortcut_name "* ]]; then
+                    SHORTCUTS=$(echo -e "$SHORTCUTS" | grep -v "^$shortcut_name ")
+                    echo "Shortcut deleted successfully."
+                else
+                    echo "Shortcut not found."
+                fi
+                ;;
+            3)
+                echo "Enter the name of the shortcut to edit:"
+                read shortcut_name
+                if [[ "$SHORTCUTS" == *"$shortcut_name "* ]]; then
+                    echo "Enter new name for the shortcut (leave blank to keep current):"
+                    read new_name
+                    [ -z "$new_name" ] && new_name="$shortcut_name"
+
+                    echo "Enter new directory path for the shortcut (leave blank to keep current):"
+                    read new_dir
+                    if [ -z "$new_dir" ]; then
+                        new_dir=$(echo -e "$SHORTCUTS" | grep "^$shortcut_name " | cut -d ' ' -f 2-)
+                    fi
+
+                    if [ -d "$new_dir" ]; then
+                        SHORTCUTS=$(echo -e "$SHORTCUTS" | sed -e "s/^$shortcut_name .*$/$new_name $new_dir/")
+                        echo "Shortcut edited successfully."
+                    else
+                        echo "Invalid directory. Please try again."
+                    fi
+                else
+                    echo "Shortcut not found."
+                fi
+                ;;
+            4)
+                if [ -n "$SHORTCUTS" ]; then
+                    echo "Saved Shortcuts:"
+                    echo -e "$SHORTCUTS"
+                else
+                    echo "No shortcuts saved or created."
+                fi
+                ;;
+            5)
+                echo "You want to change the layout of the shortcuts"
+                echo "1. Shortcuts Up"
+                echo "2. Shortcuts Down"
+                echo -n "Choose an option: "
+                read -rsn1 short
+                echo ""
+                case $short in
+                	1)
+                	    echo "Selected Up Shortcuts"
+                	    UP_SHORTCUTS=true
+                	    ;;
+                	2)
+                	    echo "Selected Down Shortcuts"
+                	    UP_SHORTCUTS=false
+                	    ;;
+                	*)
+                	    echo "Invalid option. Please try again."
+                	    ;;
+                esac
+                ;;
+            6)
+                return 0
+                ;;
+            *)
+                echo "Invalid option. Please try again."
+                ;;
+        esac
+
+        echo "Press any key to continue..."
+        read -rsn1
+    done
 }
 
 function perform_ota() {
@@ -583,8 +888,8 @@ function extract_image_from_archive() {
     local archive="$1"
     local extracted_dir="$(dirname "$archive")/extracted"
     
-    if [ ! -d "$extracted_dir" ]; then
-        mkdir -p "$extracted_dir"
+    if [ ! -d "$extracted_dir" 2>/dev/null ]; then
+        mkdir -p "$extracted_dir" 2>/dev/null
     fi
     
     echo ""
@@ -691,30 +996,40 @@ function dd_image() {
 
 
 function confirm_flash() {
-	stty echo
+    stty echo
     echo "Do you want to proceed with flashing the image $original? (y/n)"
     read -rsn1 input
     stty -echo
 
     case $input in
         y|Y)
+            partition_name=""
+            while [ -z "$partition_name" ] || [ "$partition_name" = "." ] || [ "$partition_name" = " " ]; do
+                echo -n  "Enter the name of the partition to flash:"
+                read partition_name
+                echo
+                if [ "$partition_name" = "." ] || [ "$partition_name" = " " ]; then
+                    echo "Invalid partition name. Please enter a valid name."
+                fi
+            done
+
             if [ "$A_B" = "true" ]; then
                 SYSTEM_SUFFIX="_a"
                 VENDOR_SUFFIX="_a"
                 PRODUCT_SUFFIX="_a"
                 ODM_SUFFIX="_a"
         
-                if [ "A_O" = "true" ]; then
+                if [ "$A_O" = "true" ]; then
                     SYSTEM_SUFFIX=""
                     VENDOR_SUFFIX=""
                     PRODUCT_SUFFIX=""
                     ODM_SUFFIX=""
                 fi
         
-                dd_image "$CUSTOM_SYSTEM_NAME$SYSTEM_SUFFIX" "$original_file"
-                dd_image "$CUSTOM_SYSTEM_NAME_b" "$original_file"
+                dd_image "${partition_name}${SYSTEM_SUFFIX}" "$original_file"
+                dd_image "${partition_name}_b" "$original_file"
             elif [ "$A_O" = "true" ]; then
-                dd_image "$CUSTOM_SYSTEM_NAME" "$original_file"
+                dd_image "$partition_name" "$original_file"
             else
                 echo "Partition type could not be determined."
                 exit 1
@@ -866,397 +1181,258 @@ function mount_device() {
     fi
 }
 
-function list_directories_and_files() {
-    directory="$1"
-    extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
-    ls -1p "$directory" | grep -E "/$|.*\.(${extensions})$" | sed 's:/$::'
+function check_flag_restart() {
+    if [ "$new_image_path" = "$image_path" ]; then
+        echo ""
+        echo "If you've tried to go further behind root, I can't imagine what you're capable of."
+        exit 1
+    fi
+    image_path="$new_image_path"
+}
+
+function undo_resize_and_unshare_blocks() {
+    undo_file="$new_name"
+    if [ ! -f "$undo_file" ]; then
+        echo "Undo file not found: $undo_file"
+        return 1
+    fi
+    e2fsck -z "$undo_file"
+    e2fsck -f "$original_name"
+    e2fsck -z "$undo_file" "$original_name"
+    resize2fs -M "$original_name"
+    echo "Changes reverted successfully."
+}
+
+function interactive_core() {
+    local image_path="$1"
+    local mode="$2"
+    local selected_index=1
+    local selected_symbol="$MOUSE "
+    local select_file
+
+    while true; do
+        clear
+        echo "Guide to Move"
+        echo ""
+        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
+        echo "Also in the style of PC games you can use the WASD keys"
+        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
+        echo "                   Q=Exit GSIRW"
+        echo ""
+        echo "UP : You will go up in the list of Files or Folders"
+        echo "LEFT : You will go to the previous or higher directory"
+        echo "RIGHT : Enter folder or select file"
+        echo "DOWN : Go down the list of Files or Folders"
+        echo ""
+        echo "Contents of $image_path:"
+        
+        list_files=$(list_directories_and_files "$image_path" | wc -l)
+        list_directories_and_files "$image_path" | cut -d '~' -f 3 | awk -v idx="$selected_index" -v sym="$selected_symbol" -v list_files="$list_files" '
+            {
+                if (NR == idx) 
+                    print sym, $0
+                else 
+                    print " ", $0
+            }
+        '
+
+        read -rsn1 input
+
+        case "$input" in
+            "q")
+                break
+                ;;
+            $'\x1b')
+                read -rsn2 -t 0.5 input
+                case "$input" in
+                    '[A')
+                        flag="UP"
+                        ;;
+                    '[B')
+                        flag="DOWN"
+                        ;;
+                    '[C')
+                        flag="RIGHT"
+                        ;;
+                    '[D')
+                        flag="LEFT"
+                        ;;
+                esac
+                ;;
+            "W" | "w")
+                flag="UP"
+                ;;
+            "A" | "a")
+                flag="LEFT"
+                ;;
+            "S" | "s")
+                flag="DOWN"
+                ;;
+            "D" | "d")
+                flag="RIGHT"
+                ;;
+        esac
+
+        case "$flag" in
+            "UP")
+                selected_index=$((selected_index - 1))
+                if [ "$selected_index" -lt 1 ]; then
+                    selected_index=1
+                fi
+                ;;
+            "LEFT")
+                if [ "$mode" = "user_modification" ] || [ "$mode" = "process_user_selected_image" ]; then
+                    image_path=$(dirname "$image_path")
+                    selected_index=1
+                    check_flag_restart
+                fi
+                ;;
+            "DOWN")
+                total_items=$(list_directories_and_files "$image_path" | wc -l)
+                selected_index=$((selected_index + 1))
+                if [ "$selected_index" -gt "$total_items" ]; then
+                    selected_index="$total_items"
+                fi
+                ;;
+            "RIGHT")
+                selected_item=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
+                if echo "$selected_item" | grep -q "\[D\]"; then
+                    selected_directory=$(echo "$selected_item" | awk -F '~' '{print $3}')
+                    image_path="$image_path/$selected_directory"
+                    selected_index=1 
+                elif echo "$selected_item" | grep -q "\[S\]"; then
+                    selected_shortcut=$(echo "$selected_item" | awk -F '~' '{print $4}')
+                    image_path="$selected_shortcut"
+                    selected_index=1
+                elif echo "$selected_item" | grep -q "\[F\]"; then
+                    selected_file=$(echo "$selected_item" | awk -F '~' '{print $3}')
+                    select_file="$selected_file"
+                    compressed_file="$select_file"
+                    check_extension "$compressed_file"
+                    
+                    if [ "$mode" = "user_modification" ]; then
+                        if [ "${select_file##*.}" = "img" ]; then
+                            ask
+                            if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
+                                mkdir -p "$CUSTOM_MOUNT_POINT"
+                            fi
+                            original_file="$image_path/$select_file"
+                            new_name="$image_path/system.img"
+                            rename_image "$original_file" "$new_name"
+                            perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                            resize2fs "$new_name" 6G
+                            mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
+                            break
+                        elif [ "$COMPRESS" = true ]; then
+                            ask
+                            extract_image_from_archive "$image_path/$compressed_file"
+                            find_image_in_directory
+                            break
+                        else
+                            echo "Unsupported file format: $compressed_file"
+                            continue
+                        fi
+                    elif [ "$mode" = "process_user_selected_image" ]; then
+                        if [ "${select_file##*.}" = "img" ]; then
+                            ask
+                            original_file="$image_path/$select_file"
+                            new_name="$image_path/system.img"
+                            rename_image "$original_file" "$new_name"
+                            perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                            rename_image "$new_name" "$original_file"
+                            confirm_flash
+                            break
+                        elif [ "$COMPRESS" = true ]; then
+                            ask
+                            extract_image_from_archive "$image_path/$compressed_file"
+                            find_image_in_directory
+                            break
+                        else
+                            echo "Unsupported file format: $compressed_file"
+                            continue
+                        fi
+                    elif [ "$mode" = "undo" ]; then
+                        if [ "${select_file##*.}" = "img" ]; then
+                            ask
+                            original_file="$image_path/$select_file"
+                            new_name="$image_path/system.img"
+                            rename_image "$original_file" "$new_name"
+                            undo_resize_and_unshare_blocks || echo "Failed to undo resize and unshare blocks."
+                            rename_image "$new_name" "$original_file"
+                            confirm_flash
+                            break    
+                        elif [ "$COMPRESS" = true ]; then
+                            ask
+                            extract_image_from_archive "$image_path/$compressed_file"
+                            find_image_in_directory
+                            break
+                        else
+                            echo "Unsupported file format: $compressed_file"
+                            continue
+                        fi
+                    fi
+                fi
+                ;;
+        esac
+
+        if [ "$selected_index" -lt 1 ]; then
+            selected_index=1
+        fi
+    done
+
+    stty echo
+}
+
+function undo() {
+    clear 
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
+    echo "Enter '.' to use the default directory." 
+    echo -n "> " 
+    read -r image_path 
+    stty -echo
+    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
+        image_path="$DEFAULT_START_POINT"
+    fi
+    interactive_core "$image_path" "undo"
 }
 
 function user_modification() {
-    clear
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
-    echo "Enter '.' to use the default directory."
-    echo -n "> "
-    read -r image_path
+    clear 
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
+    echo "Enter '.' to use the default directory." 
+    echo -n "> " 
+    read -r image_path 
     stty -echo
-
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
         image_path="$DEFAULT_START_POINT"
     fi
-
-    selected_index=1
-    selected_symbol="$MOUSE "
-    select_file=""
-
-    while true; do
-        list_files=$(ls -1 "$image_path" | wc -l)
-        clear
-        echo "Guide to Move"
-        echo ""
-        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
-        echo "Also in the style of PC games you can use the WASD keys"
-        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
-        echo "                   Q=Exit GSIRW"
-        echo ""
-        echo "UP : You will go up in the list of Files or Folders" 
-        echo "LEFT : You will go to the previous or higher directory"
-        echo "RIGHT : Enter folder or select file"
-        echo "DOWN : Go down the list of Files or Folders"
-        echo ""
-        echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR<=list_files) {if (NR==idx) print sym, $0; else print " ", $0} else {if (NR==idx-25) print sym, $0; else print " ", $0}}'
-        
-        read -rsn1 input
-
-        case "$input" in
-            "q")
-                break
-                ;;
-            $'\x1b')
-                read -rsn2 input
-                case "$input" in
-                    '[A')
-                        flag="UP"
-                        ;;
-                    '[B')
-                        flag="DOWN"
-                        ;;
-                    '[C')
-                        flag="RIGHT"
-                        ;;
-                    '[D')
-                        flag="LEFT"
-                        ;;
-                esac
-                ;;
-            "W" | "w")
-                flag="UP"
-                ;;
-            "A" | "a")
-                flag="LEFT"
-                ;;
-            "S" | "s")
-                flag="DOWN"
-                ;;
-            "D" | "d")
-                flag="RIGHT"
-                ;;
-        esac
-
-        case "$flag" in
-            "UP")
-                selected_index=$((selected_index - 1))
-                if [ "$selected_index" -lt 1 ]; then
-                    selected_index=1
-                fi
-                ;;
-            "LEFT")
-                image_path=$(dirname "$image_path")
-                ;;
-            "DOWN")
-                total_items=$(list_directories_and_files "$image_path" | wc -l)
-                selected_index=$((selected_index + 1))
-                if [ "$selected_index" -gt "$total_items" ]; then
-                    selected_index="$total_items"
-                fi
-                ;;
-            "RIGHT")
-                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
-                if [ -d "$image_path/$selected_file" ]; then
-                    image_path="$image_path/$selected_file"
-                    selected_index=1
-                else
-                    select_file="$selected_file"
-                    compressed_file="$select_file"
-                    check_extension "$compressed_file"
-                    if [ "${select_file##*.}" = "img" ]; then
-                        ask
-                        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
-                            mkdir -p "$CUSTOM_MOUNT_POINT"
-                        fi
-                        original_file="$image_path/$select_file" 
-                        new_name="$image_path/system.img"
-                        rename_image "$image_path/$select_file" "$new_name"
-                        perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
-                        resize2fs "$new_name" 6G
-                        mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
-                        break               
-                    elif [ "$COMPRESS" = true ]; then
-                        ask
-                        extract_image_from_archive "$image_path/$compressed_file"
-                        find_image_in_directory
-                        break
-                    else
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    fi
-                fi
-                ;;
-        esac
-
-        if [ "$selected_index" -lt 1 ]; then
-            selected_index=1
-        fi
-    done
-
-    stty echo
+    interactive_core "$image_path" "user_modification"
 }
 
 function modification() {
-    clear
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
-    echo "Enter '.' to use the default directory."
-    echo -n "> "
-    read -r image_path
+    clear 
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
+    echo "Enter '.' to use the default directory." 
+    echo -n "> " 
+    read -r image_path 
     stty -echo
-    
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
         image_path="$DEFAULT_START_POINT"
     fi
-
-    selected_index=1
-    selected_symbol="$MOUSE "
-    select_file=""
-
-    while true; do
-        list_files=$(ls -1 "$image_path" | wc -l)
-        clear
-        echo "Guide to Move"
-        echo ""
-        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
-        echo "Also in the style of PC games you can use the WASD keys"
-        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
-        echo "                   Q=Exit GSIRW"
-        echo ""
-        echo "UP : You will go up in the list of Files or Folders" 
-        echo "LEFT : You will go to the previous or higher directory"
-        echo "RIGHT : Enter folder or select file"
-        echo "DOWN : Go down the list of Files or Folders"
-        echo ""
-        echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" '{if (NR <= '$list_files') {if (NR == idx) print sym, $0; else print " ", $0} else {if (NR == idx - 25) print sym, $0; else print " ", $0}}'
-        
-        read -rsn1 input
-
-        case "$input" in
-            "q")
-                break
-                ;;
-            $'\x1b')
-                read -rsn2 input
-                case "$input" in
-                    '[A')
-                        flag="UP"
-                        ;;
-                    '[B')
-                        flag="DOWN"
-                        ;;
-                    '[C')
-                        flag="RIGHT"
-                        ;;
-                    '[D')
-                        flag="LEFT"
-                        ;;
-                esac
-                ;;
-            "W" | "w")
-                flag="UP"
-                ;;
-            "A" | "a")
-                flag="LEFT"
-                ;;
-            "S" | "s")
-                flag="DOWN"
-                ;;
-            "D" | "d")
-                flag="RIGHT"
-                ;;
-        esac
-
-        case "$flag" in
-            "UP")
-                selected_index=$((selected_index - 1))
-                if [ "$selected_index" -lt 1 ]; then
-                    selected_index=1
-                fi
-                ;;
-            "LEFT")
-                image_path=$(dirname "$image_path")
-                selected_index=1
-                ;;
-            "DOWN")
-                total_items=$(list_directories_and_files "$image_path" | wc -l)
-                selected_index=$((selected_index + 1))
-                if [ "$selected_index" -gt "$total_items" ]; then
-                    selected_index="$total_items"
-                fi
-                ;;
-            "RIGHT")
-                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
-                if [ -d "$image_path/$selected_file" ]; then
-                    image_path="$image_path/$selected_file"
-                    selected_index=1
-                else
-                    select_file="$selected_file"
-                    compressed_file="$select_file"
-                    check_extension "$compressed_file"
-                    if [ "${select_file##*.}" = "img" ]; then
-                        ask
-                        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
-                            mkdir -p "$CUSTOM_MOUNT_POINT"
-                        fi
-                        original_file="$image_path/$select_file" 
-                        new_name="$image_path/system.img"
-                        rename_image "$image_path/$select_file" "$new_name"
-                        mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
-                        break
-                    elif [ "$COMPRESS" = true ]; then
-                        ask
-                        extract_image_from_archive "$image_path/$compressed_file"
-                        find_image_in_directory
-                        break
-                    else
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    fi
-                fi
-                ;;
-        esac
-
-        if [ "$selected_index" -lt 1 ]; then
-            selected_index=1
-        fi
-    done
-
-    stty echo
+    interactive_core "$image_path" "modification"
 }
 
 function process_user_selected_image() {
-    clear
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT):"
-    echo "Enter '.' to use the default directory."
-    echo -n "> "
-    read -r image_path
+    clear 
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
+    echo "Enter '.' to use the default directory." 
+    echo -n "> " 
+    read -r image_path 
     stty -echo
-    
     if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
         image_path="$DEFAULT_START_POINT"
     fi
-
-    selected_index=1
-    selected_symbol="$MOUSE "
-    select_file=""
-
-    while true; do
-        list_files=$(ls -1 "$image_path" | wc -l)
-        clear
-        echo "Guide to Move"
-        echo ""
-        echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
-        echo "Also in the style of PC games you can use the WASD keys"
-        echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
-        echo "                   Q=Exit GSIRW"
-        echo ""
-        echo "UP : You will go up in the list of Files or Folders" 
-        echo "LEFT : You will go to the previous or higher directory"
-        echo "RIGHT : Enter folder or select file"
-        echo "DOWN : Go down the list of Files or Folders"
-        echo ""
-        echo "Contents of $image_path:"
-        list_directories_and_files "$image_path" | awk -v idx="$selected_index" -v sym="$selected_symbol" -v lf="$list_files" '{if (NR<=lf) {if (NR==idx) print sym, $0; else print " ", $0}}'
-        
-        read -rsn1 input
-
-        case "$input" in
-            "q")
-                break
-                ;;
-            $'\x1b')
-                read -rsn2 input
-                case "$input" in
-                    '[A')
-                        flag="UP"
-                        ;;
-                    '[B')
-                        flag="DOWN"
-                        ;;
-                    '[C')
-                        flag="RIGHT"
-                        ;;
-                    '[D')
-                        flag="LEFT"
-                        ;;
-                esac
-                ;;
-            "W" | "w")
-                flag="UP"
-                ;;
-            "A" | "a")
-                flag="LEFT"
-                ;;
-            "S" | "s")
-                flag="DOWN"
-                ;;
-            "D" | "d")
-                flag="RIGHT"
-                ;;
-        esac
-
-        case "$flag" in
-            "UP")
-                selected_index=$((selected_index - 1))
-                if [ "$selected_index" -lt 1 ]; then
-                    selected_index=1
-                fi
-                ;;
-            "LEFT")
-                image_path=$(dirname "$image_path")
-                selected_index=1
-                ;;
-            "DOWN")
-                total_items=$(list_directories_and_files "$image_path" | wc -l)
-                selected_index=$((selected_index + 1))
-                if [ "$selected_index" -gt "$total_items" ]; then
-                    selected_index="$total_items"
-                fi
-                ;;
-            "RIGHT")
-                selected_file=$(list_directories_and_files "$image_path" | sed -n "${selected_index}p")
-                if [ -d "$image_path/$selected_file" ]; then
-                    image_path="$image_path/$selected_file"
-                    selected_index=1
-                else
-                    select_file="$selected_file"
-                    compressed_file="$select_file"
-                    check_extension "$compressed_file"
-                    if [ "${select_file##*.}" = "img" ]; then
-                        ask
-                        original_file="$image_path/$select_file"
-                        new_name="$image_path/system.img"
-                        rename_image "$image_path/$select_file" "$new_name"
-                        perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
-                        rename_image "$new_name" "$original_file"
-                        confirm_flash
-                        break
-                    elif [ "$COMPRESS" = true ]; then
-                        ask
-                        extract_image_from_archive "$image_path/$compressed_file"
-                        find_image_in_directory
-                        break
-                    else
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    fi
-                fi
-                ;;
-        esac
-
-        if [ "$selected_index" -lt 1 ]; then
-            selected_index=1
-        fi
-    done
-
-    stty echo
+    interactive_core "$image_path" "process_user_selected_image"
 }
 
 function copy_image() {
@@ -1356,9 +1532,61 @@ function perform_copied_system_image() {
     fi
 }    
 
-progresive_print() {
+function setup_logging() {
+    local log_dir="$HOME"
+    local cache_dir="/cache"
+    local old_set_x=$(set +o)
+    set -x
+    exec >> "$log_dir/gsirw-$(generate_date_message).log" 2>&1
+    if [ -w "$cache_dir" ]; then
+        exec >> "$cache_dir/gsirw-$(generate_date_message).log" 2>&1
+    fi
+    $old_set_x
+    MAIN "$@"
+}
+
+function center_ansi() {
+	ascii_art=$1
+	lenght=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
+	echo "$ascii_art" | awk -v term_lenght="$lenght" '{
+	    printf "%*s\n", (term_lenght + length($0)) / 2, $0
+	}'
+}
+
+function print_justified() {
+    text="$@"
+    terminal_width=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
+    text_length=$(echo -n "$text" | wc -c)
+
+    if [[ "${text:0:1}" = [0-9] && "${text:1:1}" = "." ]]; then
+        number_dot=$(echo "$text" | sed 's/\([0-9]\+\.\).*/\1/')
+        remaining_text=$(echo "$text" | sed 's/[0-9]\+\.\(.*\)/\1/')
+
+        number_dot_length=$(echo -n "$number_dot" | wc -c)
+        remaining_text_length=$(echo -n "$remaining_text" | wc -c)
+
+        left_spaces=$(( (terminal_width - number_dot_length - remaining_text_length) / 2 - 2 ))
+        right_spaces=$(( terminal_width - left_spaces - number_dot_length - remaining_text_length ))
+
+        printf "$number_dot%${left_spaces}s%s%${right_spaces}s\n" "" "$remaining_text"
+
+    elif [[ "${text:0:1}" = [a-zA-Z] ]]; then
+        left_spaces=$(( (terminal_width - text_length) / 2 ))
+        right_spaces=""
+
+        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text"
+
+    else
+        left_spaces=$(( (terminal_width - text_length) / 2 ))
+        right_spaces=$(( terminal_width - left_spaces - text_length ))
+
+        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text"
+    fi
+}
+
+function progresive_print() {
   local text="$1"
-  local delay="0.00001"
+  local delay="$2"
   while [ -n "$text" ]; do
     local char="${text:0:1}"
     if [ "$char" = " " ]; then
@@ -1379,46 +1607,47 @@ function clearly() {
 function GSIRW() {
 	clear
     stty -echo
-    progresive_print "Initialized the great wonder created by TheDarkDeath788" 0.05
+    progresive_print "$(print_justified "Initialized the great wonder created by TheDarkDeath788")" 0.05
 
     sleep 3
     clearly
-    progresive_print "Identifying device parameters in case of emergency" 0.05
+    progresive_print "$(print_justified "Identifying device parameters in case of emergency")" 0.05
     identify_device
 
     sleep 3
     clearly
-    progresive_print "Loading secretly stored settings" 0.05
-    load_saved_configurations
+    progresive_print "$(print_justified "Loading secretly stored settings")" 0.05
+    print_justified "$(load_saved_configurations)"
 
     sleep 2
     clearly
     progresive_print "
-    $LOGO
-" 0.00001
-    progresive_print "
-         AIO (ALL IN ONE) GSI / OTA  -RW" 0.2
+    $(center_ansi "$LOGO")
+    " 0.00001
+    progresive_print "$(print_justified "AIO (ALL IN ONE) GSI / OTA  -RW  ")" 0.2
     sleep 1
     echo ""
-    echo "                Select an option:"
+    print_justified "Select an option:"
     sleep 1
-    echo "1.       Process the user-selected image."
+    print_justified "1.Process the user-selected image."
     sleep 1
-    echo "2.  Process a copy of the installed system image."
+    print_justified "2.Process a copy of the installed system image."
     sleep 1
-    echo "3.       Process to return the ota in rw."
+    print_justified "3.Process to return the ota in rw."
     sleep 1
-    echo "4.           Process and modify image."
+    print_justified "4.Process and modify image."
     sleep 1
-    echo "5.                  Modify image."
+    print_justified "5.Modify image."
     sleep 1
-    echo "6.           Manually configure options."
+    print_justified "6.Undo Any Modification."
     sleep 1
-    echo "7.                 Exit GSI-rw."
+    print_justified "7.Manually configure options."
+    sleep 1
+    print_justified "8.Exit GSI-rw."
     sleep 1
     echo ""
+    echo -n "$(print_justified "Choose one of the 8 options: ")"
     stty echo
-    echo -n ">         Choose one of the 7 options:"
     read -rsn5 option
     echo ""
 
@@ -1453,44 +1682,48 @@ function GSIRW() {
             stty echo
             ;;
         6)
+        	undo
+        	;;
+        	
+        7)
             stty echo
             configure_manually
             ;;
-        7)
-            echo "Why did you want to enter the GSIRW if you are ultimately going to leave?"
+        8)
+            echo
+            progresive_print "$(print_justified "Why did you want to enter the GSIRW if you are ultimately going to leave?")" 1
             exit
             ;;
         *)
-            echo "                 Invalid option."
+            print_justified "Invalid option."
+            read -rsn1
+            GSIRW "$@"
     esac
 }
 
-MAIN () {
-	export DEFAULT_SYSTEM_NAME="system"
-	export DEFAULT_VENDOR_NAME="vendor"
-	export DEFAULT_PRODUCT_NAME="product"
-	export DEFAULT_ODM_NAME="odm"
-	export CUSTOM_SYSTEM_NAME="$DEFAULT_SYSTEM_NAME"
-	export CUSTOM_VENDOR_NAME="$DEFAULT_VENDOR_NAME"
-	export CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
-	export CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
-
-	RED='\033[0;31m'
-	GREEN='\033[0;32m'
-	BLUE='\033[0;34m'
+function MAIN () {
+	default
+    SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+    SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/[[:space:]]\+/ /g')"
+	
+	RED='\x1b[38;5;196m'
+	GREEN='\x1b[1;32m'
+	BLUE='\x1b[1;34m'
 	NC='\033[0m'
 	
-	LOGO=$(base64 -d <<< "ICAgICAgICAgICAgIF8gICAgIF9fXyAgICBfX18gIAogICAgICAgICAgICAgICAgL19cICAgfF8g
-X3wgIC8gXyBcIAogICAgICAgICAgICAgICAvIF8gXCAgIHwgfCAgfCAoXykgfAogICAgICAgICAg
-ICAgIC9fLyBcX1wgfF9fX3wgIFxfX18vCiAgICAgICAgICBfX19fIF9fX18gX19fCiAgICAgICAg
-IC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KICAgICAgICB8IHwgIF9cX19fIFx8
-IHxfX19fX3wgJ19fXCBcIC9cIC8gLwogICAgICAgIHwgfF98IHxfX18pIHwgfF9fX19ffCB8ICAg
-XCBWICBWIC8KICAgICAgICAgXF9fX198X19fXy9fX198ICAgIHxffCAgICBcXy9cXy8gCg==")
-	DEVICE_NAME=$(getprop ro.product.system.device)
-	DEVICE_MODEL=$(getprop ro.product.system.model)
-	SOC=$(getprop ro.product.board)
+	export LOGO="$(
+	echo -n "$(base64 -d <<< "CiBfICAgICBfX18gICAgX19fCiAgL19cICAgfF8gX3wgIC8gXyBcCiAgLyBfIFwgICB8IHwgIHwg==" 2>/dev/null)"
+    echo -n "$(base64 -d <<< "KF8pIHwKL18vIFxfXCB8X19ffCAgXF9fXy8KIF9fX18gX19fXyBfX18gICAgICAgICAgICAgICAg==" 2>/dev/null)"
+    echo -n "$(base64 -d <<< "ICAKIC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KfCB8ICBfXF9fXyBcfCB8X19f==" 2>/dev/null)"
+    echo -n "$(base64 -d <<< "X198ICdfX1wgXCAvXCAvIC8KfCB8X3wgfF9fXykgfCB8X19fX198IHwgICBcIFYgIFYgLwpcX19f==" 2>/dev/null)"
+    echo -n "$(base64 -d <<< "X3xfX19fL19fX3wgICAgfF98ICAgIFxfL1xfLwoK==" 2>/dev/null)"
+    )"
 
-	SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+	export DEVICE_NAME=$(getprop ro.product.system.device)
+	export DEVICE_MODEL=$(getprop ro.product.system.model)
+	export SOC=$(getprop ro.product.board)
+
+	export SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 
 	check_root_permissions
 
@@ -1515,7 +1748,7 @@ XCBWICBWIC8KICAgICAgICAgXF9fX198X19fXy9fX198ICAgIHxffCAgICBcXy9cXy8gCg==")
 	
 	exec_as_root "$1"
 
-	$EXEC_CMD GSIRW "$1"
+	GSIRW
 }
 
 MAIN "$@"

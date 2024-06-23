@@ -28,7 +28,7 @@ InitFox() {
     fi
     
     if [ -f /sdcard/Fox/bash.bashrc ]; then
-        source /system/etc/bash.bashrc;
+        source /sdcard/Fox/bash.bashrc;
     fi
 
     if [ -f $HOME/.mkshrc ]; then
