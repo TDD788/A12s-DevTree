@@ -79,11 +79,11 @@ BOARD_CUSTOM_BOOTIMG_MK := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/rsunk-kernel
-TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/darks-dtb
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/suf-kernel
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/stock-dtb
 BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/darks-dtbo.img
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/stock-dtbo.img
 BOARD_KERNEL_SEPARATED_DTBO := true
 endif
 
