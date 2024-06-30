@@ -156,6 +156,8 @@ resize_vendor() {
   e2fsck -E unshare_blocks $dm_block
   progresive_print " - Remounting /vendor..."
   search_and_mount_partition "vendor" "vendor_mount"
+  mount --bind -t ext4 "$partition" "/mnt/$mount_folder" 2>/dev/null
+  mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>/dev/null
 }
 
 vendor_free_size_check() {

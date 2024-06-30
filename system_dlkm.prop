@@ -1,0 +1,15 @@
+ro.product.system_dlkm.brand=samsung
+ro.product.system_dlkm.device=a12s
+ro.product.system_dlkm.manufacturer=samsung
+ro.product.system_dlkm.model=SM-A127F
+ro.product.system_dlkm.name=a12snsxx
+ro.system_dlkm.build.date=Wed May 24 08:54:39 +07 2023
+ro.system_dlkm.build.date.utc=1684893279
+ro.system_dlkm.build.fingerprint=samsung/a12snsxx/a12s:13/TP1A.220624.014/A127FXXU9DWE4:user/release-keys
+ro.system_dlkm.build.id=TP1A.220624.014
+ro.system_dlkm.build.tags=release-keys
+ro.system_dlkm.build.type=user
+ro.system_dlkm.build.version.incremental=A127FXXU9DWE4
+ro.system_dlkm.build.version.release=13
+ro.system_dlkm.build.version.release_or_codename=13
+ro.system_dlkm.build.version.sdk=33
