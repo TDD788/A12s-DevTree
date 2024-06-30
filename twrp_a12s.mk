@@ -38,7 +38,7 @@ $(call inherit-product, device/samsung/a12s/device.mk)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
-PRODUCT_NAME := fox_a12s
+PRODUCT_NAME := twrp_a12s
 PRODUCT_MODEL := SM-A127x
 PRODUCT_BRAND := samsung
 PRODUCT_MANUFACTURER := samsung
