@@ -45,6 +45,7 @@ TARGET_USES_UEFI             := true
 TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
+BOARD_NAME                   := exynos850
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE            := 0x10000000
 BOARD_KERNEL_IMAGE_NAME      := Image
@@ -62,11 +63,13 @@ BOARD_KERNEL_CMDLINE += \
 	androidboot.init_fatal_reboot_target=system
 
 # MKBOOTARGS
-BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
-BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
-BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
-BOARD_MKBOOTIMG_ARGS += --board $(BOARD_NAME)
+BOARD_MKBOOTIMG_ARGS += \
+	--ramdisk_offset $(BOARD_RAMDISK_OFFSET) \
+	--tags_offset $(BOARD_KERNEL_TAGS_OFFSET) \
+	--pagesize $(BOARD_KERNEL_PAGESIZE) \
+	--header_version $(BOARD_BOOTIMG_HEADER_VERSION) \
+	--board $(BOARD_NAME)
+	--os_version 13
 
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO  := true
