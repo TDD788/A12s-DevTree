@@ -1,5 +1,5 @@
 # MKBOOTIMG
-chmod a+x $(DEVICE_PATH)/prebuilt/mkboot/mkbootimg
+chmod a+x device/samsung/a12s/prebuilt/mkboot/mkbootimg
 add_lunch_combo twrp_a12s-eng
 
 # Device variables
