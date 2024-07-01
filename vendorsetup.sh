@@ -4,7 +4,7 @@
 sudo apt install nano
 git clone https://gitlab.com/EdwinT2/avb_tool -b main out/host/linux-x86/bin
 sudo chmod +rwx out/host/linux-x86/bin/avbtool
-chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
+#chmod a+x device/samsung/a12s/prebuilt/avb/mkbootimg
 add_lunch_combo twrp_a12s-eng
 
 # Device variables
@@ -31,27 +31,23 @@ export FOX_VARIANT="AOSP"
 # Binary and tool settings
 export FOX_CUSTOM_BINS_TO_SDCARD=2
 export FOX_USE_NANO_EDITOR=1
-export FOX_REPLACE_BUSYBOX_PS=1
 export FOX_USE_SED_BINARY=1
 export FOX_USE_TAR_BINARY=1
 export FOX_USE_UNZIP_BINARY=1
 export FOX_USE_XZ_UTILS=1
-export FOX_REPLACE_TOOLBOX_GETPROP=1
 
 # Target device configurations
-export FOX_TARGET_DEVICES="a12s"
+export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
 export TARGET_DEVICE_ALT="a12s, a12sub, SM-A127M, SM-A127F"
-export FOX_BUILD_DEVICE="a12s"
-export OF_DEVICE_WITHOUT_PERSIST=1
+export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 
 # Function to export build variables
 export_build_vars() {
     echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
     # Important build flags
-    export FOX_VANILLA_BUILD=0
+    export OF_FORCE_PREBUILT_KERNEL=1
     export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
     export FOX_DELETE_AROMAFM=0
-    export OF_DEFAULT_TIMEZONE="CET-4;CEST,M3.5.0,M10.5.0"
     export OF_CHECK_OVERWRITE_ATTEMPTS=1
     export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
     export FOX_DELETE_INITD_ADDON=1  # Note: This can cause bootloops
@@ -80,14 +76,12 @@ export_build_vars() {
     export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
     export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
     export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
-    export OF_HIDE_NOTCH=1
 
     # Maximum permissible splash image size (in KB); do not increase!
     export OF_SPLASH_MAX_SIZE=96
 
     # Specific features configurations
     export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-    export OF_DONT_KEEP_LOG_HISTORY=1
     export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
     export OF_USE_HEXDUMP=1
     export OF_ENABLE_LPTOOLS=1
