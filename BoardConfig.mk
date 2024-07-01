@@ -75,7 +75,7 @@ TARGET_KERNEL_CONFIG         := a12s_defconfig
 TARGET_KERNEL_SOURCE         := kernel/samsung/a12s
 TARGET_KERNEL_HEADER_ARCH    := arm64
 TARGET_KERNEL_ARCH           := arm64
-BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/avb/bootimg.mk
+BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
 	
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
@@ -161,7 +161,7 @@ TW_NO_LEGACY_PROPS          := true
 TW_USE_TOOLBOX              := true
 TW_NO_BIND_SYSTEM           := true
 TW_EXCLUDE_TWRPAPP          := true
-TW_INPUT_BLACKLIST          := "hbtp_vm"
+TW_INPUT_BLACKLIST          := hbtp_vm
 TW_HAS_DOWNLOAD_MODE        := true
 TW_MTP_DEVICE               := "Galaxy MTP"
 TW_USE_NEW_MINADBD          := true

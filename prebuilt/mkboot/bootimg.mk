@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-MKBOOTIMG := $(DEVICE_PATH)/mkboot/mkbootimg
+MKBOOTIMG := $(DEVICE_PATH)/prebuilt/mkboot/mkbootimg
 
 FLASH_IMAGE_TARGET ?= $(PRODUCT_OUT)/recovery.tar
 
