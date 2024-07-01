@@ -40,9 +40,6 @@ export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 export_build_vars() {
     echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
     # Important build flags
-    export OF_FORCE_PREBUILT_KERNEL=1
-    export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
-    export OF_TWRP_COMPATIBILITY_MODE=1
     export FOX_DELETE_AROMAFM=0
     export OF_CHECK_OVERWRITE_ATTEMPTS=1
     export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
@@ -64,7 +61,6 @@ export_build_vars() {
     export OF_SCREEN_H=2400
     export OF_OPTIONS_LIST_NUM=10
     export OF_CLOCK_POS=1
-    export OF_USE_LOCKSCREEN_BUTTON=1
     
     # Tools and utilities configurations
     export OF_USE_LZMA_COMPRESSION=1
@@ -74,14 +70,14 @@ export_build_vars() {
     export FOX_RECOVERY_SYSTEM_PARTITION="/dev/block/mapper/system"
 
     # Maximum permissible splash image size (in KB); do not increase!
-    export OF_SPLASH_MAX_SIZE=96
+    export OF_SPLASH_MAX_SIZE=128
 
     # Specific features configurations
     export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
     export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
     export OF_USE_HEXDUMP=1
     export OF_ENABLE_LPTOOLS=1
-    export FOX_NO_SAMSUNG_SPECIAL=1
+    export FOX_NO_SAMSUNG_SPECIAL=0
     export OF_PATCH_AVB20=1
     export OF_SUPPORT_VBMETA_AVB2_PATCHING=1
     export OF_NO_SPLASH_CHANGE=0
