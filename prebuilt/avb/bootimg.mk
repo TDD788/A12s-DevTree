@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-MKBOOTIMG := device/samsung/a20s/mkboot/mkbootimg
+MKBOOTIMG := $(DEVICE_PATH)/mkboot/mkbootimg
 
 FLASH_IMAGE_TARGET ?= $(PRODUCT_OUT)/recovery.tar
 
