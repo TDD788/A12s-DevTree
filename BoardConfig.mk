@@ -46,6 +46,7 @@ TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
 BOARD_NAME                   := exynos850
+TARGET_ANDROID               := 13
 BOARD_BOOTIMG_HEADER_VERSION := 2
 BOARD_KERNEL_BASE            := 0x10000000
 BOARD_KERNEL_IMAGE_NAME      := Image
@@ -55,30 +56,32 @@ BOARD_KERNEL_TAGS_OFFSET     := 0x00000100
 
 BOARD_KERNEL_CMDLINE += \
 	androidboot.hardware=exynos850 \
-	androidboot.selinux=permissive \
+	androidboot.selinux=enforcing \
 	loop.max_part=15 \
 	androidboot.usbcontroller=13600000.dwc3 \
 	androidboot.usbconfigfs=true
 	reboot=panic_warm \
 	androidboot.init_fatal_reboot_target=system
-
+	
 # MKBOOTARGS
-BOARD_MKBOOTIMG_ARGS += \
-	--ramdisk_offset $(BOARD_RAMDISK_OFFSET) \
-	--tags_offset $(BOARD_KERNEL_TAGS_OFFSET) \
-	--pagesize $(BOARD_KERNEL_PAGESIZE) \
-	--header_version $(BOARD_BOOTIMG_HEADER_VERSION) \
-	--board $(BOARD_NAME)
-	--os_version 13
+BOARD_MKBOOTIMG_ARGS =+ --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS =+ --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS =+ --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS =+ --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS =+ --board $(BOARD_NAME)
+BOARD_MKBOOTIMG_ARGS =+ --os_version $(TARGET_ANDROID)
 
+BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
+
+# DTBs
 BOARD_INCLUDE_DTB_IN_BOOTIMG := true
 BOARD_KERNEL_SEPARATED_DTBO  := true
 
+# Compile kernel and DTBs
 TARGET_KERNEL_CONFIG         := a12s_defconfig
 TARGET_KERNEL_SOURCE         := kernel/samsung/a12s
 TARGET_KERNEL_HEADER_ARCH    := arm64
 TARGET_KERNEL_ARCH           := arm64
-BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
 	
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
@@ -104,6 +107,7 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE     := ext4
 # Rsync error fix or Fixing trying to copy non-existance files
 TARGET_COPY_OUT_VENDOR := vendor
 
+# Dynamic partitions and SUPER
 BOARD_SUPER_PARTITION_SIZE              := 9126805504
 BOARD_GOOGLE_DYNAMIC_PARTITIONS_SIZE    := 9126805504
 BOARD_SUPER_PARTITION_GROUPS            := google_dynamic_partitions
@@ -203,7 +207,6 @@ TW_INCLUDE_RESETPROP     := true
 TW_SCREEN_BLANK_ON_BOOT  := true
 TWRP_INCLUDE_LOGCAT      := true
 TARGET_USES_LOGD         := true
-TW_FORCE_CPUINFO_FOR_DEVICE_ID := true
 
 # Exclude from backup
 TW_BACKUP_EXCLUSIONS += \
