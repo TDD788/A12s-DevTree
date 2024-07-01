@@ -123,17 +123,14 @@ BOARD_INCLUDE_RECOVERY_DTBO := true
 TARGET_USERIMAGES_USE_EXT4  := true
 TARGET_USERIMAGES_USE_F2FS  := true
 
-# Verified Boot
-#BOARD_AVB_ENABLE                 := true
-#BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
-#BOARD_AVB_RECOVERY_KEY_PATH      := external/avb/test/data/testkey_rsa4096.pem
-#BOARD_AVB_RECOVERY_ALGORITHM     := SHA256_RSA4096
-#BOARD_AVB_RECOVERY_ROLLBACK_INDEX          := 1
-#BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
-
-# Android Verified Boot
-BOARD_AVB_ENABLE                 := false
-BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+# Android Verified Boo
+BOARD_AVB_ENABLE                 := true
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
+BOARD_AVB_RECOVERY_KEY_PATH      := external/avb/test/data/testkey_rsa4096.pem
+BOARD_AVB_RECOVERY_ALGORITHM     := SHA256_RSA4096
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX          := 1
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+BOARD_BUILD_DISABLED_VBMETAIMAGE           := true
 
 # Crypto
 PLATFORM_SECURITY_PATCH   := 2023-08-01
@@ -180,7 +177,6 @@ TWHAVE_SELINUX              := true
 TW_INCLUDE_LPTOOLS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
-BOARD_VNDK_VERSION          := 33
 
 # Making the recovery.img smaller
 BOARD_HAS_NO_REAL_SDCARD := true
