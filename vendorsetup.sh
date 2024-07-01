@@ -29,6 +29,7 @@ export FOX_USE_SED_BINARY=1
 export FOX_USE_TAR_BINARY=1
 export FOX_USE_UNZIP_BINARY=1
 export FOX_USE_XZ_UTILS=1
+export FOX_USE_ZSTD_BINARY=1
 
 # Target device configurations
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"

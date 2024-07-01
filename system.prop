@@ -1,11 +1,26 @@
-dev.usbsetting.embedded=on
-ro.arch=exynos850
-ro.build.display_build_number=true
-ro.build.official.developer=true
-ro.build.official.release=true
-ro.build.product=a12s
-ro.oem_unlock_supported=1
-ro.product_ship=true
+# Platform information
+ro.arch=arm64
+ro.board.platform=exynos850
+ro.display.series=Samsung Galaxy A12 Nacho
+
+# Encryption settings
 ro.crypto.volume.filenames_mode=aes-256-cts
-persist.sys.isUsbOtgEnabled=false
 fbe.metadata.wrappedkey=true
+
+# Gatekeeper settings
+vendor.gatekeeper.disable_spu=true
+
+# USB OTG
+persist.sys.isUsbOtgEnabled=false
+
+# FUSE passthrough
+persist.sys.fuse.passthrough.enable=true
+
+# Dynamic Partitions
+ro.boot.dynamic_partitions=true
+
+# Charger suspend
+ro.charger.enable_suspend=1
+
+# ADB settings
+ro.adb.secure=0

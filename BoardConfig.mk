@@ -142,8 +142,12 @@ PLATFORM_VERSION          := 16.1.0
 TW_INCLUDE_CRYPTO         := false
 TW_INCLUDE_CRYPTO_FBE     := false
 TW_INCLUDE_FBE_METADATA_DECRYPT := false
-BOARD_USES_METADATA_PARTITION   := true
 TW_CRYPTO_FS_OPTIONS := length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2;keydirectory=/metadata/vold/metadata_encryption
+
+# Device Partitons
+BOARD_USES_METADATA_PARTITION   := true
+BOARD_USES_VENDOR_DLKMIMAGE     := true
+BOARD_USES_SYSTEM_DLKMIMAGE     := true
 
 # TWRP
 TW_DEVICE_VERSION    := Last-On-Resource
@@ -176,6 +180,7 @@ TWHAVE_SELINUX              := true
 TW_INCLUDE_LPTOOLS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
+BOARD_VNDK_VERSION          := 33
 
 # Making the recovery.img smaller
 BOARD_HAS_NO_REAL_SDCARD := true
