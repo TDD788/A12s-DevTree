@@ -47,6 +47,7 @@ export_build_vars() {
     # Important build flags
     export OF_FORCE_PREBUILT_KERNEL=1
     export FOX_USE_TWRP_RECOVERY_IMAGE_BUILDER=1
+    export OF_TWRP_COMPATIBILITY_MODE=1
     export FOX_DELETE_AROMAFM=0
     export OF_CHECK_OVERWRITE_ATTEMPTS=1
     export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
