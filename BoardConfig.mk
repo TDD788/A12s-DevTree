@@ -94,7 +94,6 @@ endif
 BOARD_FLASH_BLOCK_SIZE                 := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_BOOTIMAGE_PARTITION_SIZE         := 46137344
 BOARD_RECOVERYIMAGE_PARTITION_SIZE     := 55574528
-BOARD_RAMDISK_USE_LZMA                 := true
 BOARD_HAS_LARGE_FILESYSTEM             := true
 BOARD_SYSTEMIMAGE_PARTITION_TYPE       := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE   := f2fs
@@ -161,18 +160,12 @@ TW_DEFAULT_BRIGHTNESS         := 153
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER     := false
-TW_NO_LEGACY_PROPS          := true
 TW_USE_TOOLBOX              := true
-TW_NO_BIND_SYSTEM           := true
-TW_EXCLUDE_TWRPAPP          := true
 TW_INPUT_BLACKLIST          := hbtp_vm
 TW_HAS_DOWNLOAD_MODE        := true
 TW_MTP_DEVICE               := "Galaxy MTP"
 TW_USE_NEW_MINADBD          := true
 TARGET_USES_MKE2FS          := true
-TW_INCLUDE_LPDUMP           := true
-TWHAVE_SELINUX              := true
-TW_INCLUDE_LPTOOLS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
 
