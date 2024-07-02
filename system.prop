@@ -1,6 +1,4 @@
 # Platform information
-ro.arch=arm64
-ro.board.platform=exynos850
 ro.display.series=Samsung Galaxy A12 Nacho
 
 # Encryption settings
