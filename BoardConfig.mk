@@ -163,18 +163,12 @@ TW_DEFAULT_BRIGHTNESS         := 153
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER     := false
-TW_NO_LEGACY_PROPS          := true
 TW_USE_TOOLBOX              := true
-TW_NO_BIND_SYSTEM           := true
-TW_EXCLUDE_TWRPAPP          := true
 TW_INPUT_BLACKLIST          := hbtp_vm
 TW_HAS_DOWNLOAD_MODE        := true
 TW_MTP_DEVICE               := "Galaxy MTP"
 TW_USE_NEW_MINADBD          := true
 TARGET_USES_MKE2FS          := true
-TW_INCLUDE_LPDUMP           := true
-TWHAVE_SELINUX              := true
-TW_INCLUDE_LPTOOLS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
 
@@ -203,7 +197,7 @@ TW_INCLUDE_REPACKTOOLS   := true
 TW_EXTRA_LANGUAGES       := true
 TW_INCLUDE_FUSE_EXFAT    := true
 TW_INCLUDE_RESETPROP     := true
-TW_SCREEN_BLANK_ON_BOOT  := true
+#TW_SCREEN_BLANK_ON_BOOT := true
 TWRP_INCLUDE_LOGCAT      := true
 TARGET_USES_LOGD         := true
 
