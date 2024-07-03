@@ -136,7 +136,6 @@ PLATFORM_VERSION          := 16.1.0
 TW_INCLUDE_CRYPTO         := false
 TW_INCLUDE_CRYPTO_FBE     := false
 TW_INCLUDE_FBE_METADATA_DECRYPT := false
-TW_CRYPTO_FS_OPTIONS := length=-20480;fileencryption=aes-256-xts:aes-256-cts:v2;keydirectory=/metadata/vold/metadata_encryption
 
 # Device Partitons
 BOARD_USES_METADATA_PARTITION   := true
