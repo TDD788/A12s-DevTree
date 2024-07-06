@@ -30,11 +30,6 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 $(call inherit-product, device/samsung/a12s/device.mk)
 
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, cgdisk)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, fixparts)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, lz4)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s

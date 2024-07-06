@@ -49,7 +49,7 @@ export_build_vars() {
     export OF_USE_TWRP_SAR_DETECT=1
 	export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export OF_USE_SYSTEM_FINGERPRINT=0
-    export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/APatch.apk"
+    export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/Magisk.apk"
 
     # Security configurations
     export OF_ADVANCED_SECURITY=1
