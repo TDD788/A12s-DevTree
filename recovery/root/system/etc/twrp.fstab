@@ -1,16 +1,16 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
 /System               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System";logical
 /system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
-/system_image         emmc    /dev/block/mapper/system                 flags=flashimg;display="System Image"
+/system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg;display="System Image"
 /Vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor";logical
 /vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
-/vendor_image         emmc    /dev/block/mapper/vendor                 flags=flashimg;display="Vendor Image"
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=0;flashimg;display="Vendor Image"
 /Product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product";logical
 /product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
-/product_image        emmc    /dev/block/mapper/product                flags=flashimg;display="Product Image"
+/product_image        emmc    /dev/block/mapper/product                flags=backup=0;flashimg;display="Product Image"
 /Odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm";logical
 /odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
-/odm_image            emmc    /dev/block/mapper/odm                    flags=flashimg;display="Odm Image"
+/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg;display="Odm Image"
 
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
