@@ -814,6 +814,13 @@ function process_image() {
       perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       rename_image "$new_name" "$original_file"
       confirm_flash
+    elif [ "$type" = "6" ]; then
+      ask
+      export original_file="$found_dir/$found_file"
+      export new_name="$found_dir/system.img"
+      rename_image "$original_file" "$new_name"
+      undo_resize_and_unshare_blocks || echo "Failed to undo resize and unshare blocks."
+      rename_image "$new_name" "$original_file"  
     elif [ "$type" = "4" ]; then
       ask
       if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
@@ -922,7 +929,7 @@ function mount_dual() {
     if [ -x "/system/bin/toybox" ]; then
         TOYBOX_BIN="/system/bin/toybox"
         echo "Attempting to mount using toybox..."
-        $TOYBOX_BIN mount --bind -t ext4 "$1" "$2"
+        $TOYBOX_BIN mount --bind -t ext4 "$1" "$2" >/dev/null 2>&1
         if [ $? -eq 0 ]; then
             echo "Mount successful using toybox"
             success=true
@@ -931,18 +938,17 @@ function mount_dual() {
             echo "Mount failed using toybox, trying with mountutils..."
         fi
     fi
-    mount -t ext4 -o rw,noatime "$1" "$2"
+
+    mount -t ext4 -o rw,noatime "$1" "$2" >/dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo "Mount successful using mountutils"
         success=true
         return 0
     else
         echo "Mount failed using mountutils as well, trying with losetup..."
-        loopy=$(losetup -f)
-        loop_locate=$(losetup -a | grep "$loopy")
-        umount $loop_locate
-        if losetup -j $loopy "$1"; then
-            if mount -t ext4 -o rw,noatime "$loopy" "$2"; then
+        loop_device=$(losetup -f)
+        if losetup "$loop_device" "$1"; then
+            if mount -t ext4 -o rw,noatime "$loop_device" "$2" >/dev/null 2>&1; then
                 echo "Mount successful using losetup"
                 return 0
             else
@@ -954,80 +960,51 @@ function mount_dual() {
             return 1
         fi
     fi
-} >/dev/null 2>&1
+}
 
 function mount_device() {
-    export loopy=$(losetup -f)
-    export success=false
-    loop_device=$loopy
-    losetup $loopy "$1"
-    if [ -z "$(losetup -f "$1" )" ]; then
+    loop_device=$(losetup -f)
+    success=false
+
+    if losetup "$loop_device" "$1"; then
+        if mount -t ext4 -o rw,noatime "$loop_device" "$2" >/dev/null 2>&1; then
+            success=true
+        else
+            echo "Error: Mount failed on initial attempt"
+        fi
+    else
         echo "Error: Failed to set up loop device."
     fi
-    
-    if mount -t ext4 -o rw,noatime "$loop_device" "$2" ; then
-        success=true
-    else
-        export minorx=1
-        [ -e "/dev/block/$(ls -l /dev/block/loop1 | awk '{ print $6 }' )" ] && minorx=$(ls -l /dev/block/loop1 | awk '{ print $6 }' )
-        export i=0
-        while [ $i -lt 64 ]; do
-            export loop="/dev/block/loop$i"
-            mknod "$loop" b 7 $((i * minorx)) 
-            if losetup "$loop" "$1"  && losetup "$loop" | grep -q "$1"; then
-                if mount -t ext4 -o loop,noatime "$loop" "$2" ; then
-                    loop_device="$loop"
-                    return 0
-                else
-                    if mount -t ext4 -o loop,noatime "$1" "$2" ; then
-                        loop_device="$loop"
-                        return 0
-                    else
-                        loop=$(losetup -f)
-                        losetup $loop "$1"
-                        if losetup -f "$1" ; then
-                            mount -t ext4 -o loop,noatime "$loop" "$2"
-                            success=true
-                        fi    
-                    fi
-                fi
-            fi
-            i=$((i + 1))
-        done
-    fi
-    
-    if [ $success=false ]; then
+
+    if [ "$success" = false ]; then
         echo "Trying an alternative method"
         mount_dual "$1" "$2"
     fi
 
-    if [ $success=true ]; then
+    if [ "$success" = true ]; then
         echo "Mounted image on $2 to modify"
         prompt_for_confirmation "Press any key to indicate that you have finished the process... "
         umount "$2"
-        e2fsck -fp "$1"
+        if [ $? -ne 0 ]; then
+            echo "Error: Failed to unmount $2"
+            losetup -d "$loop_device"
+            return 1
+        fi
+
+        e2fsck -f "$1"
         resize2fs -M "$1"
         rename_image "$new_name" "$original_file"
         echo "Compressed image and removed mount"
         return 0
-    elif [ $success=false ]; then
-        losetup -d "$loop_device" 
+    else
+        losetup -d "$loop_device"
         echo "Error: No mount command was successful."
-        e2fsck -fp "$new_name"
+        e2fsck -f "$new_name"
         resize2fs -M "$new_name"
         echo "Compressed image and failed mount"
         rename_image "$new_name" "$original_file"
         return 1
     fi
-} >/dev/null 2>&1
-
-function check_flag_restart() {
-    if [ "$new_image_path" = "$image_path" ]; then
-        echo ""
-        echo "If you've tried to go further behind root, I can't imagine what you're capable of."
-        exit 1
-    fi
-    image_path="$new_image_path"
 }
 
 function undo_resize_and_unshare_blocks() {
@@ -1043,45 +1020,141 @@ function undo_resize_and_unshare_blocks() {
     echo "Changes reverted successfully."
 }
 
+function list_directories_and_files() {
+    local directory="$1"
+    local extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+    local sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
+    local sort_file_type="${SORT_FILE_TYPE:-name_asc}"
+    IFS=$'\n'
+    local directories
+    local files    
+    local index=1
+
+    case "$sort_dir_type" in
+        name_asc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort));;
+        name_desc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort -r));;
+        date_asc) directories=($(ls -dt "$directory"/*/ 2>/dev/null));;
+        date_desc) directories=($(ls -dt "$directory"/*/ 2>/dev/null | tac));;
+        size_asc) directories=($(ls -ldS "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
+        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
+        *) echo "Invalid sort type for directories"; return 1;;
+    esac
+
+    case "$sort_file_type" in
+        name_asc) files=($(ls -p "$directory" | grep -v / | sort));;
+        name_desc) files=($(ls -p "$directory" | grep -v / | sort -r));;
+        date_asc) files=($(ls -t "$directory" | grep -v /));;
+        date_desc) files=($(ls -tr "$directory" | grep -v /));;
+        size_asc) files=($(ls -lS "$directory" | grep -v / | awk '{print $9}'));;
+        size_desc) files=($(ls -lSr "$directory" | grep -v / | awk '{print $9}'));;
+        type) files=($(ls -p "$directory" | grep -v / | sort -t. -k2));;
+        *) echo "Invalid sort type for files"; return 1;;
+    esac
+
+    if [ "$UP_SHORTCUTS" = true ]; then
+        for line in $SHORTCUTS; do
+            line="${line#"${line%%[![:space:]]*}"}"
+            line="${line%"${line##*[![:space:]]}"}"
+            line="${line//  / }"
+            shortcut_name=${line%% *}
+            shortcut_dir=${line#* }
+            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
+                echo "$index~[S]~$shortcut_name~$shortcut_dir"
+                ((index++))
+            else
+                echo "Invalid shortcut: $line"
+            fi
+        done
+    fi
+
+    for dir in "${directories[@]}"; do
+        dir=${dir%*/}
+        dir_name=${dir##*/}
+        echo "$index~[D]~$dir_name"
+        ((index++))
+    done
+
+    for file in "${files[@]}"; do
+        file_extension="${file##*.}"
+        case "|$extensions|" in
+            *"|$file_extension|"*)
+                file_name=${file##*/}
+                echo "$index~[F]~$file_name"
+                ((index++))
+                ;;
+        esac
+    done
+
+    if [ "$DOWN_SHORTCUTS" = false ]; then
+        for line in $SHORTCUTS; do
+            line="${line#"${line%%[![:space:]]*}"}"
+            line="${line%"${line##*[![:space:]]}"}"
+            line="${line//  / }"
+            shortcut_name=${line%% *}
+            shortcut_dir=${line#* }
+            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
+                echo "$index~[S]~$shortcut_name~$shortcut_dir"
+                ((index++))
+            else
+                echo "Invalid shortcut: $line"
+            fi
+        done
+    fi
+    ((index--))
+}
+
 function interactive_core() {
-    export image_path="$1"
-    export mode="$2"
+    export mode="$1"
     export selected_index=1
     export selected_symbol="$MOUSE "
     export select_file
+    clear
+    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)"
+    echo "Enter '.' to use the default directory."
+    echo -n "> "
+    read -r image_path 
+    stty -echo
+    
+    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
+         image_path="$DEFAULT_START_POINT"
+    fi
+    
+    if [ -f "$image_path" ]; then
+        select_file="$(basename "$image_path")"
+        image_path="$(dirname "$image_path")"
+        right_logic
+        return
+    fi
 
     while true; do
         clear
         echo "Guide to Move"
-        echo ""
+        echo
         echo "The main operation is with the UP, DOWN, LEFT and RIGHT arrows."
         echo "Also in the style of PC games you can use the WASD keys"
         echo "ARROW-UP=W   ARROW-LEFT=A   ARROW-DOWN=S   ARROW-RIGHT=D"
-        echo "                 Q=Exit GSIRW"
-        echo ""
+        echo "                   Q=Exit GSIRW"
+        echo
         echo "UP : You will go up in the list of Files or Folders"
         echo "LEFT : You will go to the previous or higher directory"
         echo "RIGHT : Enter folder or select file"
         echo "DOWN : Go down the list of Files or Folders"
-        echo ""
+        echo
         echo "Contents of $image_path:"
         
         list_directories_and_files "$image_path" | cut -d '~' -f 3 | awk -v idx="$selected_index" -v sym="$selected_symbol" '
-            {
-                if (NR == idx) 
-                    print sym, $0
-                else 
-                    print " ", $0
-            }
-        '
-        
+    	{
+	        if (NR == idx) {
+	            print sym, $0
+	        } else {
+	            print " ", $0
+	        }
+	    }'
+	    
         read -rsn1 input
 
         case "$input" in
             "q")
-                break
-                ;;
-            $'\e')
                 break
                 ;;
             $'\x1b')
@@ -1125,7 +1198,12 @@ function interactive_core() {
             "LEFT")
                 new_image_path=$(dirname "$image_path")
                 selected_index=1
-                image_path=$new_image_path
+                if [ "$new_image_path" = "$image_path" ]; then
+                    echo
+                    echo "If you've tried to go further behind root, I can't imagine what you're capable of."
+                    exit 1
+                fi
+                image_path="$new_image_path"
                 ;;
             "DOWN")
                 selected_index=$((selected_index + 1))
@@ -1141,49 +1219,9 @@ function interactive_core() {
                     image_path="$selected_shortcut"
                     selected_index=1
                 elif echo "$selected_item" | grep -q "\[F\]"; then
-                    selected_file=$(echo "$selected_item" | awk -F '~' '{print $3}')
-                    select_file="$selected_file"
-                    compressed_file="$select_file"
-                    check_extension $compressed_file
-                    if [ "${select_file##*.}" = "img" ]; then
-                        ask
-                        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
-                            mkdir -p "$CUSTOM_MOUNT_POINT"
-                        fi
-                        original_file="$image_path/$select_file"
-                        new_name="$image_path/system.img"
-                        rename_image "$original_file" "$new_name"
-
-                        case "$mode" in
-                            "user_modification" | "process_user_selected_image")
-                                perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
-                                if [ "$mode" = "process_user_selected_image" ]; then
-                                    rename_image "$new_name" "$original_file"
-                                    confirm_flash
-                                else
-                                    resize2fs "$new_name" 6G
-                                    mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
-                                fi
-                                ;;
-                            "modification")
-                                resize2fs "$new_name" 6G
-                                mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
-                                ;;
-                            "undo")
-                                undo_resize_and_unshare_blocks || echo "Failed to undo resize and unshare blocks."
-                                confirm_flash
-                                ;;
-                        esac
-                        break
-                    elif [ "$COMPRESS" = true ]; then
-                        ask
-                        extract_image_from_archive "$image_path/$compressed_file"
-                        find_image_in_directory
-                        break
-                    else
-                        echo "Unsupported file format: $compressed_file"
-                        continue
-                    fi
+                    select_file=$(echo "$selected_item" | awk -F '~' '{print $3}')
+                    right_logic
+                    return
                 fi
                 ;;
         esac
@@ -1196,138 +1234,44 @@ function interactive_core() {
     stty echo
 }
 
+function right_logic() {
+    compressed_file="$select_file"
+    check_extension "$compressed_file"
+    if [ "${select_file##*.}" = "img" ]; then
+        ask
+        if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
+            mkdir -p "$CUSTOM_MOUNT_POINT"
+        fi
+        original_file="$image_path/$select_file"
+        new_name="$image_path/system.img"
+        rename_image "$original_file" "$new_name"
 
-function list_directories_and_files() {
-    export directory="$1"
-    export extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
-    export sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
-    export sort_file_type="${SORT_FILE_TYPE:-name_asc}"
-    export index=1
-    export IFS=$'\n'
-    export directories
-    export files
-    export total_index
-
-    case "$sort_dir_type" in
-        name_asc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort));;
-        name_desc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort -r));;
-        date_asc) directories=($(ls -dt "$directory"/*/ 2>/dev/null));;
-        date_desc) directories=($(ls -dt "$directory"/*/ 2>/dev/null | tac));;
-        size_asc) directories=($(ls -ldS "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
-        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
-        *) echo "Invalid sort type for directories"; return 1;;
-    esac
-
-    case "$sort_file_type" in
-        name_asc) files=($(ls -p "$directory" | grep -v / | sort));;
-        name_desc) files=($(ls -p "$directory" | grep -v / | sort -r));;
-        date_asc) files=($(ls -t "$directory" | grep -v /));;
-        date_desc) files=($(ls -tr "$directory" | grep -v /));;
-        size_asc) files=($(ls -lS "$directory" | grep -v / | awk '{print $9}'));;
-        size_desc) files=($(ls -lSr "$directory" | grep -v / | awk '{print $9}'));;
-        type) files=($(ls -p "$directory" | grep -v / | sort -t. -k2));;
-        *) echo "Invalid sort type for files"; return 1;;
-    esac
-
-    if [ "$UP_SHORTCUTS" = true ]; then
-        for line in $SHORTCUTS; do
-            line="${line#"${line%%[![:space:]]*}"}"
-            line="${line%"${line##*[![:space:]]}"}"
-            line="${line//  / }"
-            shortcut_name=${line%% *}
-            shortcut_dir=${line#* }
-            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
-                echo "$index.~[S]~$shortcut_name~$shortcut_dir"
-                ((index++))
-            else
-                echo "Invalid shortcut: $line"
-            fi
-        done
-    fi
-    for dir in "${directories[@]}"; do
-        dir=${dir%*/}
-        dir_name=${dir##*/}
-        echo "$index.~[D]~$dir_name"
-        ((index++))
-    done
-    for file in "${files[@]}"; do
-        file_extension="${file##*.}"
-        case "|$extensions|" in
-            *"|$file_extension|"*)
-                file_name=${file##*/}
-                echo "$index.~[F]~$file_name"
-                ((index++))
+        case "$mode" in
+            "user_modification" | "process_user_selected_image")
+                perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
+                if [ "$mode" = "process_user_selected_image" ]; then
+                    rename_image "$new_name" "$original_file"
+                    confirm_flash
+                else
+                    resize2fs "$new_name" 6G
+                    mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
+                fi
+                ;;
+            "modification")
+                resize2fs "$new_name" 6G
+                mount_device "$new_name" "$CUSTOM_MOUNT_POINT"
+                ;;
+            "undo")
+                undo_resize_and_unshare_blocks || echo "Failed to undo resize and unshare blocks."
                 ;;
         esac
-    done
-    if [ "$UP_SHORTCUTS" = false ]; then
-        for line in $SHORTCUTS; do
-            line="${line#"${line%%[![:space:]]*}"}"
-            line="${line%"${line##*[![:space:]]}"}"
-            line="${line//  / }"
-            shortcut_name=${line%% *}
-            shortcut_dir=${line#* }
-            if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
-                echo "$index.~[S]~$shortcut_name~$shortcut_dir"
-                ((index++))
-            else
-                echo "Invalid shortcut: $line"
-            fi
-        done
+    elif [ "$COMPRESS" = true ]; then
+        ask
+        extract_image_from_archive "$image_path/$compressed_file"
+        find_image_in_directory
+    else
+        echo "Unsupported file format: $compressed_file"
     fi
-    inde=$(echo $index)
-}
-
-function undo() {
-    clear 
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
-    echo "Enter '.' to use the default directory." 
-    echo -n "> " 
-    read -r image_path 
-    stty -echo
-    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="$DEFAULT_START_POINT"
-    fi
-    interactive_core "$image_path" "undo"
-}
-
-function user_modification() {
-    clear 
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
-    echo "Enter '.' to use the default directory." 
-    echo -n "> " 
-    read -r image_path 
-    stty -echo
-    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="$DEFAULT_START_POINT"
-    fi
-    interactive_core "$image_path" "user_modification"
-}
-
-function modification() {
-    clear 
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
-    echo "Enter '.' to use the default directory." 
-    echo -n "> " 
-    read -r image_path 
-    stty -echo
-    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="$DEFAULT_START_POINT"
-    fi
-    interactive_core "$image_path" "modification"
-}
-
-function process_user_selected_image() {
-    clear 
-    echo "Enter the path / directory to navigate (default: $DEFAULT_START_POINT)" 
-    echo "Enter '.' to use the default directory." 
-    echo -n "> " 
-    read -r image_path 
-    stty -echo
-    if [ -z "$image_path" ] || [ "$image_path" = "." ]; then
-        image_path="$DEFAULT_START_POINT"
-    fi
-    interactive_core "$image_path" "process_user_selected_image"
 }
 
 function copy_image() {
@@ -1440,7 +1384,7 @@ function print_justified() {
     terminal_width=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
     text_length=$(echo -n "$text" | wc -c)
 
-    if [[ "${text:0:1}" = [0-9] && "${text:1:1}" = "." ]]; then
+    if echo "$text" | grep -q '^[0-9]\+\.'; then
         number_dot=$(echo "$text" | sed 's/\([0-9]\+\.\).*/\1/')
         remaining_text=$(echo "$text" | sed 's/[0-9]\+\.\(.*\)/\1/')
 
@@ -1450,19 +1394,19 @@ function print_justified() {
         left_spaces=$(( (terminal_width - number_dot_length - remaining_text_length) / 2 - 2 ))
         right_spaces=$(( terminal_width - left_spaces - number_dot_length - remaining_text_length ))
 
-        printf "$number_dot%${left_spaces}s%s%${right_spaces}s\n" "" "$remaining_text"
+        printf "%s%${left_spaces}s%s%${right_spaces}s\n" "$number_dot" "" "$remaining_text" ""
 
-    elif [[ "${text:0:1}" = [a-zA-Z] ]]; then
-        left_spaces=$(( (terminal_width - text_length) / 2 ))
+    elif echo "$text" | grep -q '^[a-zA-Z]'; then
+        left_spaces=$(( (terminal_width - text_length) / 2 - 2 ))
         right_spaces=""
 
-        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text"
+        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text" ""
 
     else
-        left_spaces=$(( (terminal_width - text_length) / 2 ))
+        left_spaces=$(( (terminal_width - text_length) / 2 - 2 ))
         right_spaces=$(( terminal_width - left_spaces - text_length ))
 
-        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text"
+        printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text" ""
     fi
 }
 
@@ -1540,7 +1484,7 @@ function GSIRW() {
     case $option in
         1)
             type=1
-            process_user_selected_image
+            interactive_core "process_user_selected_image"
             stty echo
             ;;
         2)
@@ -1555,16 +1499,17 @@ function GSIRW() {
             ;;
         4)
             type=4
-            user_modification
+            interactive_core "user_modification"
             stty echo
             ;;
         5)
             type=4
-            modification
+            interactive_core "modification"
             stty echo
             ;;
         6)
-        	undo
+        	type=6
+        	interactive_core "undo"
         	;;
         	
         7)
@@ -1634,7 +1579,7 @@ function MAIN () {
 	
     case $_GSIRW_CALL in
         "gsirw_proces_image")
-            process_user_selected_image
+            interactive_core "process_user_selected_image"
             ;;
         "gsirw_sys_installed")
            perform_copied_system_image           
@@ -1643,13 +1588,13 @@ function MAIN () {
             ota_rw
             ;;
         "gsirw_user_modification")
-            user_modification
+            interactive_core "user_modification"
             ;;
         "gsirw_mount")
-            modification
+            interactive_core "modification"
             ;;
         "gsirw_undo")
-            undo
+            interactive_core "undo"
             ;;
         "gsirw_settings")
             configure_manually

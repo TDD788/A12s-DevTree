@@ -2,40 +2,32 @@
 
 DEVICE=$(getprop ro.product.system.device)
 
-msg() {
-    echo "$1"
-}
-
 barrier() {
-    msg " "
-    msg "================================"
-}
-
-printico_with_info () {
-    cat /system/etc/logo
+    echo
+    echo "================================"
 }
 
 printinfo() {
     barrier
-    msg " "
-    printico_with_info
-    msg " "
-    msg "OFRP FOR GALAXY $DEVICE - $(cat /system/etc/fox.version)"
+    echo " "
+    echo $(grep /system/etc/logo)
+    echo " "
+    echo "OFRP FOR GALAXY $DEVICE - By : TheDarkDeath788"
     barrier
-    msg "Bootloader: $(getprop ro.boot.bootloader)"
-    msg "Brand: $(getprop ro.product.manufacturer)"
-    msg "Device: $(getprop ro.product.name)"
-    msg "Model: $(getprop ro.product.model)"
-    msg "Hardware: $(getprop ro.hardware)"
-    msg "Treble Compatibility: $(getprop ro.boot.dynamic_partitions)"
-    msg "Platform: $(getprop ro.board.platform)"
-    msg "CPU API: $(getprop ro.system.product.cpu.abilist)"
-    msg "Dynamic: $(getprop ro.boot.dynamic_partitions)"
-    msg "Android: $(getprop ro.build.version.release) , SDK: $(getprop ro.build.version.sdk)"
-    msg "ID: $(getprop ro.build.id)"
-	msg "Kernel: $(uname -r)"
-    msg""
-    msg "END OF ORANGEFETCH"
+    echo "Bootloader: $(getprop ro.boot.bootloader)"
+    echo "Brand: $(getprop ro.product.manufacturer)"
+    echo "Device: $(getprop ro.product.name)"
+    echo "Model: $(getprop ro.product.model)"
+    echo "Hardware: $(getprop ro.hardware)"
+    echo "Treble Compatibility: $(getprop ro.boot.dynamic_partitions)"
+    echo "Platform: $(getprop ro.board.platform)"
+    echo "CPU API: $(getprop ro.system.product.cpu.abilist)"
+    echo "Dynamic: $(getprop ro.boot.dynamic_partitions)"
+    echo "Android: $(getprop ro.build.version.release) , SDK: $(getprop ro.build.version.sdk)"
+    echo "ID: $(getprop ro.build.id)"
+	echo "Kernel: $(uname -r)"
+    echo""
+    echo "END OF ORANGEFETCH"
     barrier
 }
 
