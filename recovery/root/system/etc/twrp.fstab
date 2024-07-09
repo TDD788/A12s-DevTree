@@ -1,12 +1,17 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
-/system_root          ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System";logical
-/system_image         emmc    /dev/block/mapper/system                 flags=flashimg;display="System Image";logical
+/system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System";logical
+/system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
+/system_image         emmc    /dev/block/mapper/system                 flags=flashimg;display="System Image"
 /vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor";logical
-/vendor_image         emmc    /dev/block/mapper/vendor                 flags=flashimg;display="Vendor Image";logical
+/vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=flashimg;display="Vendor Image"
 /product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product";logical
-/product_image        emmc    /dev/block/mapper/product                flags=flashimg;display="Product Image";logical
+/product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
+/product_image        emmc    /dev/block/mapper/product                flags=flashimg;display="Product Image"
 /odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm";logical
-/odm_image            emmc    /dev/block/mapper/odm                    flags=flashimg;display="Odm Image";logical
+/odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
+/odm_image            emmc    /dev/block/mapper/odm                    flags=flashimg;display="Odm Image"
+
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
 /metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui
