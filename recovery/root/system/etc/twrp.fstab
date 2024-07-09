@@ -12,21 +12,24 @@
 /odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
 /odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg;display="Odm Image"
 
-/boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1;
-/recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1;
+/boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1
+/recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1
+/vbmeta_system        emmc    /dev/block/by-name/vbmeta_system         flags=display="VBMETA SYSTEM";flashimg=1;backup=1
+/vbmeta               emmc    /dev/block/by-name/vbmeta                flags=display="VBMETA";flashimg=1;backup=1
 /metadata             ext4    /dev/block/by-name/metadata              flags=display="Metadata";wipeingui
 /data                 f2fs    /dev/block/by-name/userdata              flags=fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized+wrappedkey_v0,metadata_encryption=aes-256-xts:wrappedkey_v0,keydirectory=/metadata/vold/metadata_encryption,fscompress,noatime,nosuid,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,latemount,wait,check,quota,reservedsize=128M,checkpoint=fs,length=-20480
 /cache                ext4    /dev/block/by-name/cache                 flags=display="Cache";wipeingui
-/efs                  ext4    /dev/block/by-name/efs                   flags=backup=1;display="Efs";wipeingui;flashimg
-/sec_efs              ext4    /dev/block/by-name/sec_efs               flags=backup=1;display="Sec Efs";wipeingui;flashimg
+/efs                  ext4    /dev/block/by-name/efs                   flags=backup=1;display="EFS";wipeingui;flashimg
+/sec_efs              ext4    /dev/block/by-name/sec_efs               flags=backup=1;display="Sec EFS";wipeingui;flashimg
 /modem                emmc    /dev/block/by-name/radio                 flags=backup=1;display="Modem"
 /misc                 emmc    /dev/block/by-name/misc
-/dtbo                 emmc    /dev/block/by-name/dtbo                  flags=display="DTBO Image";flashimg=1;backup=1;
-/prism                ext4    /dev/block/by-name/prism                 flags=display="Prism";backup=0;
-/prism_image          emmc    /dev/block/by-name/prism                 flags=display="Prism Image";backup=1;flashimg=1;
-/optics               ext4    /dev/block/by-name/optics                flags=display="Optics";backup=0;
-/optics_image         emmc    /dev/block/by-name/optics                flags=display="Optics Image";backup=1;flashimg=1;
-/up_param             emmc    /dev/block/by-name/up_param              flags=display="Param";backup=1;flashimg=1;
+/dtbo                 emmc    /dev/block/by-name/dtbo                  flags=display="DTBO Image";flashimg=1;backup=1
+/dtb                  emmc    /dev/block/by-name/dtb                   flags=display="DTB Image";flashimg=1;backup=1
+/prism                ext4    /dev/block/by-name/prism                 flags=display="Prism";backup=0
+/prism_image          emmc    /dev/block/by-name/prism                 flags=display="Prism Image";backup=1;flashimg=1
+/optics               ext4    /dev/block/by-name/optics                flags=display="Optics";backup=0
+/optics_image         emmc    /dev/block/by-name/optics                flags=display="Optics Image";backup=1;flashimg=1
+/up_param             emmc    /dev/block/by-name/up_param              flags=display="Param";backup=1;flashimg=1
 /external_sd          auto    /dev/block/mmcblk1p1 /dev/block/mmcblk1  flags=display="Micro SD Card";storage;wipeingui;removable
 /external_sd1         auto    /dev/block/mmcblk1p2 /dev/block/mmcblk2  flags=display="2nd Micro SD Card";storage;wipeingui;removable
 /usb_otg              auto    /dev/block/sda                           flags=display="USB OTG 1st";storage;wipeingui;removable
