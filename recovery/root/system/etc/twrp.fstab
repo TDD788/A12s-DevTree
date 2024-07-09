@@ -1,14 +1,14 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
-/system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System";logical
+/System               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System";logical
 /system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
 /system_image         emmc    /dev/block/mapper/system                 flags=flashimg;display="System Image"
-/vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor";logical
+/Vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor";logical
 /vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
 /vendor_image         emmc    /dev/block/mapper/vendor                 flags=flashimg;display="Vendor Image"
-/product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product";logical
+/Product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product";logical
 /product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
 /product_image        emmc    /dev/block/mapper/product                flags=flashimg;display="Product Image"
-/odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm";logical
+/Odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm";logical
 /odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
 /odm_image            emmc    /dev/block/mapper/odm                    flags=flashimg;display="Odm Image"
 
