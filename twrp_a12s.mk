@@ -19,15 +19,15 @@ DEVICE_PATH := device/samsung/a12s
 # Release name
 PRODUCT_RELEASE_NAME := a12s
 
-# Call Inherit Orange Fox configuration
-$(call inherit-product, $(DEVICE_PATH)/fox_a12s.mk)
-
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 
 # Inherit some common TWRP stuff.
 $(call inherit-product, vendor/twrp/config/common.mk)
+
+# Call Inherit Orange Fox configuration
+$(call inherit-product, $(DEVICE_PATH)/fox_a12s.mk)
 
 # Inherit device configuration
 $(call inherit-product, $(DEVICE_PATH)/device.mk)
