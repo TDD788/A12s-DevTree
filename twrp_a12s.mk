@@ -19,6 +19,9 @@ DEVICE_PATH := device/samsung/a12s
 # Release name
 PRODUCT_RELEASE_NAME := a12s
 
+# Call Inherit Orange Fox configuration
+$(call inherit-product, $(DEVICE_PATH)/fox_a12s.mk)
+
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
@@ -27,14 +30,14 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, vendor/twrp/config/common.mk)
 
 # Inherit device configuration
-$(call inherit-product, device/samsung/a12s/device.mk)
+$(call inherit-product, $(DEVICE_PATH)/device.mk)
 
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, cgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, fixparts)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, lz4)
++ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, lz4.bin)
 
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := a12s
