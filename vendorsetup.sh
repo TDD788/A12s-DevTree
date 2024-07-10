@@ -46,6 +46,7 @@ export_build_vars() {
     export FOX_DELETE_INITD_ADDON=1  # Note: This can cause bootloops
     export FOX_ENABLE_APP_MANAGER=1
     export OF_USE_SAMSUNG_HAPTICS=1
+    export FOX_USE_LZ4_BINARY=1
     export OF_USE_TWRP_SAR_DETECT=1
 	export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export OF_USE_SYSTEM_FINGERPRINT=0
