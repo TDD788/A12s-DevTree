@@ -1,7 +1,5 @@
 #!/system/bin/sh
 
-sudo file -s /dev/block/mmcblk0p38 | grep -o '[A-Z0-9]* filesystem' | awk '{print tolower($1)}'
-
 function generate_date_message() {
   hour=$(echo "$(date +%Hhs:%Mmin)")
   date=$(echo "$(date +%dday/%mmon/%Yyear)")
@@ -77,7 +75,7 @@ function perform_resize_and_unshare_blocks() {
     echo "Try to fix any Error"
     e2fsck -f "$new_name"
     echo "Unsharing block to get RW Image"
-    e2fsck -E unshare_blocks "$new_name" 2>$hider
+    e2fsck -E unshare_blocks "$new_name" > /dev/null 2>>"$hider"
     resize2fs -M "$new_name"
 }
 
@@ -748,7 +746,7 @@ function perform_ota() {
     echo "Try to fix any Error"
     e2fsck -fp "$image"
     echo "Unsharing block to get RW Image"
-    e2fsck -E unshare_blocks "$image" 2>$hider
+    e2fsck -E unshare_blocks "$image" > /dev/null 2>>"$hider"
     resize2fs -M "$image"
 }
 
@@ -793,22 +791,22 @@ function extract_image_from_archive() {
     echo ""
     echo "Extracting $archive..."
     case "$archive" in
-        *.zip) unzip -d "$extracted_dir" "$archive" 2>$hider ;;
-        *.tar.gz | *.tgz) tar -xzf "$archive" -C "$extracted_dir" 2>$hider ;;
-        *.xz) xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)" 2>$hider ;;
-        *.tar.xz) xz -d "$archive" -c | tar -xf - -C "$extracted_dir" 2>$hider ;;
-        *.gz) gunzip -c "$archive" > "$extracted_dir/$(basename "$archive" .gz)" 2>$hider ;;
-        *.tar.bz2 | *.tbz2) tar -xjf "$archive" -C "$extracted_dir" 2>$hider ;;
-        *.bz2) bunzip2 -c "$archive" > "$extracted_dir/$(basename "$archive" .bz2)" 2>$hider ;;
-        *.rar) unrar x "$archive" "$extracted_dir" 2>$hider ;;
-        *.7z) 7z x "$archive" -o"$extracted_dir" 2>$hider ;;
-        *.lz4) lz4 -d "$archive" "$extracted_dir/$(basename "$archive" .lz4)" 2>$hider ;;
-        *.tar.lz4) lz4 -d "$archive" | tar -xf - -C "$extracted_dir" 2>$hider ;;
-        *.Z) uncompress -c "$archive" > "$extracted_dir/$(basename "$archive" .Z)" 2>$hider ;;
+        *.zip) unzip -d "$extracted_dir" "$archive" > /dev/null 2>>"$hider" ;;
+        *.tar.gz | *.tgz) tar -xzf "$archive" -C "$extracted_dir" > /dev/null 2>>"$hider";;
+        *.xz) xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)" > /dev/null 2>>"$hider" ;;
+        *.tar.xz) xz -d "$archive" -c | tar -xf - -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.gz) gunzip -c "$archive" > "$extracted_dir/$(basename "$archive" .gz)" > /dev/null 2>>"$hider" ;;
+        *.tar.bz2 | *.tbz2) tar -xjf "$archive" -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.bz2) bunzip2 -c "$archive" > "$extracted_dir/$(basename "$archive" .bz2)" > /dev/null 2>>"$hider" ;;
+        *.rar) unrar x "$archive" "$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.7z) 7z x "$archive" -o"$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.lz4) lz4 -d "$archive" "$extracted_dir/$(basename "$archive" .lz4)" > /dev/null 2>>"$hider" ;;
+        *.tar.lz4) lz4 -d "$archive" | tar -xf - -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.Z) uncompress -c "$archive" > "$extracted_dir/$(basename "$archive" .Z)" > /dev/null 2>>"$hider" ;;
         *) 
             export extension="${archive##*.}"
             if command -v "$extension" &> $hider; then
-                { "$extension" -d "$archive" -c > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" -C > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -c "$archive" > "$extracted_dir/$(basename "$archive" ."$extension")"; } 2>$hider
+                { "$extension" -d "$archive" -c > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" -C > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -c "$archive" > "$extracted_dir/$(basename "$archive" ."$extension")"; } > /dev/null 2>>"$hider"
             elif command -v "extract_$extension" &> $hider; then
                 "extract_$extension" -d "$archive" -C "$extracted_dir"
             else
@@ -855,7 +853,7 @@ function process_image() {
 }
 
 function find_image_in_directory() {
-    export recent_image_file=$(find "$image_path/" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>$hider | sort -n | tail -n 1 | cut -d' ' -f2-)
+    export recent_image_file=$(find "$image_path/" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + > /dev/null > /dev/null 2>>"$hider" | sort -n | tail -n 1 | cut -d' ' -f2-)
     if [ -n "$recent_image_file" ]; then
         found_dir=$(dirname "$recent_image_file")
         found_file=$(basename "$recent_image_file")
@@ -1067,12 +1065,12 @@ function list_directories_and_files() {
     local index=1
 
     case "$sort_dir_type" in
-        name_asc) directories=($(ls -d "$directory"/*/ 2>$hider | sort));;
-        name_desc) directories=($(ls -d "$directory"/*/ 2>$hider | sort -r));;
-        date_asc) directories=($(ls -dt "$directory"/*/ 2>$hider));;
-        date_desc) directories=($(ls -dt "$directory"/*/ 2>$hider | tac));;
-        size_asc) directories=($(ls -ldS "$directory"/*/ 2>$hider | awk '{print $9}'));;
-        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>$hider | awk '{print $9}'));;
+        name_asc) directories=($(ls -d "$directory"/*/ 2>>"$hider" | sort));;
+        name_desc) directories=($(ls -d "$directory"/*/ 2>>"$hider" | sort -r));;
+        date_asc) directories=($(ls -dt "$directory"/*/ 2>>"$hider"));;
+        date_desc) directories=($(ls -dt "$directory"/*/ 2>>"$hider" | tac));;
+        size_asc) directories=($(ls -ldS "$directory"/*/ 2>>"$hider" | awk '{print $9}'));;
+        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>>"$hider" | awk '{print $9}'));;
         *) echo "Invalid sort type for directories"; return 1;;
     esac
 
@@ -1594,15 +1592,15 @@ function MAIN () {
 	NC='\033[0m'
 	
 	export LOGO="$(
-	    echo -n "$(base64 -d <<< "CiBfICAgICBfX18gICAgX19fCiAgL19cICAgfF8gX3wgIC8gXyBcCiAgLyBfIFwgICB8IHwgIHwg==" 2>$hider)"
-        echo -n "$(base64 -d <<< "KF8pIHwKL18vIFxfXCB8X19ffCAgXF9fXy8KIF9fX18gX19fXyBfX18gICAgICAgICAgICAgICAg==" 2>$hider)"
-        echo -n "$(base64 -d <<< "ICAKIC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KfCB8ICBfXF9fXyBcfCB8X19f==" 2>$hider)"
-        echo -n "$(base64 -d <<< "X198ICdfX1wgXCAvXCAvIC8KfCB8X3wgfF9fXykgfCB8X19fX198IHwgICBcIFYgIFYgLwpcX19f==" 2>$hider)"
-        echo -n "$(base64 -d <<< "X3xfX19fL19fX3wgICAgfF98ICAgIFxfL1xfLwoK==" 2>$hider)"
+	    echo -n "$(base64 -d <<< "CiBfICAgICBfX18gICAgX19fCiAgL19cICAgfF8gX3wgIC8gXyBcCiAgLyBfIFwgICB8IHwgIHwg==" 2>>"$hider" | tee -a "$hider")"
+        echo -n "$(base64 -d <<< "KF8pIHwKL18vIFxfXCB8X19ffCAgXF9fXy8KIF9fX18gX19fXyBfX18gICAgICAgICAgICAgICAg==" 2>>"$hider" | tee -a "$hider")"
+        echo -n "$(base64 -d <<< "ICAKIC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KfCB8ICBfXF9fXyBcfCB8X19f==" 2>>"$hider" | tee -a "$hider")"
+        echo -n "$(base64 -d <<< "X198ICdfX1wgXCAvXCAvIC8KfCB8X3wgfF9fXykgfCB8X19fX198IHwgICBcIFYgIFYgLwpcX19f==" 2>>"$hider" | tee -a "$hider")"
+        echo -n "$(base64 -d <<< "X3xfX19fL19fX3wgICAgfF98ICAgIFxfL1xfLwoK==" 2>>"$hider" | tee -a "$hider")"
     )"
     
     export LOGOV2="$(
-        export LOGOV2="$(echo -n "$(base64 -d <<< "CiguIFkgLikKKSAgICgKKCAgICAgKQo==" 2>$hider)")"
+        export LOGOV2="$(echo -n "$(base64 -d <<< "CiguIFkgLikKKSAgICgKKCAgICAgKQo==" 2>>"$hider" | tee -a "$hider")")"
         center_ansi "$LOGOV2"
     )"
     
@@ -1658,9 +1656,10 @@ function DEBUGER() {
     
     LOG_FILE="/cache/gsirw-$day.log"
 	DEBUG_LOG="/cache/debug_log_$day.log"
+	HIDDEN_ENTRIES="/cache/hidden_$day.log"
 	
 	if [ "$DEBUG" = "true" ]; then
-		hider="/dev/null"
+		hider="$HIDDEN_ENTRIES"
     else
         hider=/dev/null
     fi
@@ -1669,6 +1668,7 @@ function DEBUGER() {
       echo "DEBUG Mode Is Enabled"
       rm -rf /cache/gsirw-*.log
       rm -rf /cache/debug_log_*.log
+      rm -rf /cache/hidden_*.log
     
       echo "Script started at $day" >> "$LOG_FILE"
       echo "Arguments passed: $0" >> "$LOG_FILE"
@@ -1686,14 +1686,17 @@ function DEBUGER() {
     
       set +x > /dev/tty 2>&1
       cat "$DEBUG_LOG" >> "$LOG_FILE"
-      rm "$DEBUG_LOG"
+      cat "$HIDDEN_ENTRIES" >> "$LOG_FILE"
+      rm -rf "$HIDDEN_ENTRIES"
+      rm -rf "$DEBUG_LOG"
     
-      echo "Script finished at $(date)" >> "$LOG_FILE"
+      echo "Script finished at $day" >> "$LOG_FILE"
     else
+      hider=/dev/null
       MAIN "$@"
     fi
 }
 
-DEBUG=true
+DEBUG=false
 
 DEBUGER "$@"
