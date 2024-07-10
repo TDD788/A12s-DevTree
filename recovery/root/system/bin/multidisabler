@@ -167,7 +167,7 @@ vendor_free_size_check() {
     rm -f /mnt/vendor_mount/test
   else
     progresive_print " -     ...No free space left on vendor, attempting to resize vendor..."
-    progresive_print " "
+    echo
     rm -f /mnt/vendor_mount/test
     resize_vendor
   fi
@@ -304,9 +304,9 @@ disable_proca() {
 }
 
 disable_recovery_patching() {
-  progresive_print " "
+  echo
   progresive_print "Disabling recovery restoration..."
-  progresive_print " "
+  echo
   
   dd if=/dev/block/by-name/boot of=/tmp/old-boot.img
   mkdir -p /tmp/unpacked_boot
@@ -505,7 +505,7 @@ interface() {
   print_justified ""
   print_justified "For a lot of useful code"
   print_full_bar
-  progresive_print " "
+  echo
   
   os=$(getprop ro.build.version.release)
   major="${os%%.*}"
@@ -534,13 +534,13 @@ interface() {
   fi
   if [ "$fatal" = true ]; then
     progresive_print " - Installation aborted."
-    progresive_print " "
+    echo
     exit 1
   fi
 
   progresive_print " - Detected a $device device with a $fw bootloader."
   progresive_print " - The environment appears to be Android $major."
-  progresive_print " "
+  echo
   progresive_print " - Mounting /system..."
   
   ANDROID_ROOT=/mnt/system_mount
@@ -598,10 +598,13 @@ interface() {
   umount /mnt/vendor_mount
   progresive_print " - Unmounting /system_root..."
   umount /mnt/system_mount
+  
+  progresive_print "Formatting device so that it starts soon does not turn off the device)."
+  mkfs.f2fs /dev/block/by-name/userdata
 
-  progresive_print " "
+  echo
   progresive_print " - Finished."
-  progresive_print " "
+  echo
 }
 
 MAIN() {

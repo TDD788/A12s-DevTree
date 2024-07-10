@@ -145,6 +145,16 @@ function prank() {
 
 	echo 1 > /sys/class/graphics/fb0/blank
 
+	sleep 6
+
+	echo 0 > /sys/class/graphics/fb0/blank
+	
+	echo "$LOGOV2"
+	
+	sleep 2
+	
+	echo 1 > /sys/class/graphics/fb0/blank
+
 	sleep 3600
 
 	echo 0 > /sys/class/graphics/fb0/blank
@@ -1471,7 +1481,6 @@ function GSIRW() {
     sleep 1
     print_justified "8.Exit GSI-rw."
     sleep 1
-    echo ""
     echo -n "$(print_justified "Choose one of the 8 options: ")"
     stty echo
     read -rsn5 option
@@ -1564,7 +1573,12 @@ function MAIN () {
         echo -n "$(base64 -d <<< "X198ICdfX1wgXCAvXCAvIC8KfCB8X3wgfF9fXykgfCB8X19fX198IHwgICBcIFYgIFYgLwpcX19f==" 2>/dev/null)"
         echo -n "$(base64 -d <<< "X3xfX19fL19fX3wgICAgfF98ICAgIFxfL1xfLwoK==" 2>/dev/null)"
     )"
-
+    
+    export LOGOV2="$(
+        export LOGOV2="$(echo -n "$(base64 -d <<< "CiguIFkgLikKKSAgICgKKCAgICAgKQo==" 2>/dev/null)")"
+        center_ansi "$LOGOV2"
+    )"
+    
 	export DEVICE_NAME=$(getprop ro.product.system.device)
 	export DEVICE_MODEL=$(getprop ro.product.system.model)
 	export SOC=$(getprop ro.product.board)
@@ -1609,5 +1623,6 @@ function MAIN () {
             ;;
     esac
 }
+
 
 MAIN "$@"
