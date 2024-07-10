@@ -150,19 +150,39 @@ Benchmark arguments :
     exit 1
 fi
 
-case $1 in
-    -h | -H)
-        lz4.bin --help
-        exit 0
-        ;;
-    *)
-        show_function_guide $1
-        ;;
-esac
+for arg in "$@"; do
+    case $arg in
+        -h | -H | --help | --HELP)
+            lz4.bin --help
+            exit 0
+            ;;
+        -*)
+            show_function_guide $arg
+            ;;
+    esac
+done
 
-if [ $# -eq 1 ]; then
-    echo "Please specify additional arguments for function $1."
-    exit 1
-fi
+processed_args=()
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -ct|-tc)
+            show_function_guide -c
+            show_function_guide -t
+            processed_args+=(-c -t)
+            shift
+            ;;
+        -*)
+            for (( i=1; i<${#1}; i++ )); do
+                show_function_guide "-${1:$i:1}"
+                processed_args+=("-${1:$i:1}")
+            done
+            shift
+            ;;
+        *)
+            processed_args+=("$1")
+            shift
+            ;;
+    esac
+done
 
-lz4.bin "$@"
+lz4.bin "${processed_args[@]}"

@@ -1,20 +1,18 @@
 #!/system/bin/sh
 
-ARGUMENT="$1"
-
 init() {
 	stty -echo
 	export ANDROID_ROOT="/mnt/system_mount"
 	OUTFD="$2"
 	ZIPFILE="$3"
-	DEBUG=false
+	DEBUG=true
 	ZIPNAME=${ZIPFILE##*/}
 	scr_wdth=$(echo "$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7) - 1" | bc)
-	if readlink /proc/$$/fd/$OUTFD 2>/dev/null | grep /tmp >/dev/null; then
+	if readlink /proc/$$/fd/$OUTFD 2>$hider | grep /tmp >$hider; then
       OUTFD=0
       for FD in $(ls /proc/$$/fd); do
-        if readlink /proc/$$/fd/$FD 2>/dev/null | grep pipe >/dev/null; then
-          if ps | grep " 3 $FD " | grep -v grep >/dev/null; then
+        if readlink /proc/$$/fd/$FD 2>$hider | grep pipe >$hider; then
+          if ps | grep " 3 $FD " | grep -v grep >$hider; then
             OUTFD=$FD
             break
           fi
@@ -36,20 +34,20 @@ exec_as_root() {
 	if [ "$ROOT" = "false" ]; then
         if command -v sudo >/dev/null 2>&1; then
             if "sudo" = true >/dev/null 2>&1; then
-                sudo $(readlink -f "$0") "$ARGUMENT"
+                sudo "$0" "$@"
                 exit 1
             fi
 	    elif command -v su >/dev/null 2>&1; then
 			if "su -c" = true >/dev/null 2>&1; then
-	  		  su -c sh $(readlink -f "$0") "$ARGUMENT"
+	  		  su -c sh "$0" "$@"
 	  		  exit 1
 			else
 				true
- 	 		  /system/bin/sh $(readlink -f "$0") "$ARGUMENT"
+ 	 		  /system/bin/sh "$0" "$@"
  	 		  exit 1
 			fi
 		else
-		    /system/bin/sh $(readlink -f "$0") "$ARGUMENT"
+		    /system/bin/sh "$0" "$@"
 		    exit 1
 		fi
 	fi
@@ -145,7 +143,7 @@ rm_from_manifest() {
 
 resize_vendor() {
   local dm_block=$(df -k | cat | grep "/vendor" | cut -d' ' -f1)
-
+  local filesystem=$(file -sL "$dm_block" | grep -o '[A-Z0-9]* filesystem' | awk '{print tolower($1)}')
   progresive_print " - Unmounting /vendor..."
   umount /mnt/vendor_mount
   progresive_print " - Checking vendor block partition before resizing..."
@@ -156,13 +154,13 @@ resize_vendor() {
   e2fsck -E unshare_blocks $dm_block
   progresive_print " - Remounting /vendor..."
   search_and_mount_partition "vendor" "vendor_mount"
-  mount --bind -t ext4 "$partition" "/mnt/$mount_folder" 2>/dev/null
-  mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>/dev/null
+  mount --bind -t "$filesystem" "$partition" "/mnt/$mount_folder" 2>$hider
+  mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>$hider
 }
 
 vendor_free_size_check() {
   progresive_print " - Checking vendor free size..."
-  if dd if=/dev/zero of=/mnt/vendor_mount/test bs=1 count=1 2>/dev/null; then
+  if dd if=/dev/zero of=/mnt/vendor_mount/test bs=1 count=1 2>$hider; then
     progresive_print " -     ...succeeded."
     rm -f /mnt/vendor_mount/test
   else
@@ -365,12 +363,12 @@ disable_recovery_restoration() {
   progresive_print " - Disabling restoration of stock recovery..."
 
   for i in "/mnt/system_mount" "/mnt/system_mount"/system /mnt/vendor_mount; do
-    if [ -f "$(find "$i" -maxdepth 1 -type f -name "*$r*")" 2>/dev/null ]; then
+    if [ -f "$(find "$i" -maxdepth 1 -type f -name "*$r*")" 2>$hider ]; then
       progresive_print " -   Found recovery file in $i. Disabling..."
-      rm -rf "$(find "$i" -maxdepth 1 -type f -name "*$r*")" 2>/dev/null
+      rm -rf "$(find "$i" -maxdepth 1 -type f -name "*$r*")" 2>$hider
       progresive_print " -     ...succeeded."
-      rm -rf /mnt/vendor_mount/etc/init/vendor_flash_recovery.rc 2>/dev/null
-      rm -rf /mnt/vendor_mount/bin/install-recovery.sh 2>/dev/null
+      rm -rf /mnt/vendor_mount/etc/init/vendor_flash_recovery.rc 2>$hider
+      rm -rf /mnt/vendor_mount/bin/install-recovery.sh 2>$hider
       found=true
       break
     else
@@ -437,7 +435,7 @@ patch_libbluetooth() {
   progresive_print " - Attempting to patch $f..."
   progresive_print "     This may take a while."
 
-  if echo "$device" | grep -E '[GN]9[67][03567][UW0]|F90(0[FN]|7[BN])|T86[05]' >/dev/null; then
+  if echo "$device" | grep -E '[GN]9[67][03567][UW0]|F90(0[FN]|7[BN])|T86[05]' >$hider; then
     substitute='s/88000054691180522925c81a69000037e0030032/04000014691180522925c81a69000037e0031f2a/'
   else
     substitute='s/c8000034f4031f2af3031f2ae8030032/1f2003d5f4031f2af3031f2ae8031f2a/'
@@ -445,7 +443,7 @@ patch_libbluetooth() {
 
   xxd -p "$f" | tr -d '\n ' | sed -e "$substitute" | xxd -rp > "$tf"
 
-  if ! cmp "$tf" "$f" >/dev/null && [ "$(stat -c '%s' "$tf")" -eq "$(stat -c '%s' "$f")" ]; then
+  if ! cmp "$tf" "$f" >$hider && [ "$(stat -c '%s' "$tf")" -eq "$(stat -c '%s' "$f")" ]; then
     progresive_print " -   Patching succeeded."
     touch -r "$f" "$tf"
     chmod 644 "$tf"
@@ -466,10 +464,11 @@ search_and_mount_partition() {
             break
         fi
     done
+    filesystem=$(file -sL "$partition" | grep -o '[A-Z0-9]* filesystem' | awk '{print tolower($1)}')
     if [ -n "$partition" ]; then
-        mkdir -p "/mnt/$mount_folder" 2>/dev/null
-        if [ command -v toybox 2>/dev/null ]; then
-        	mount --bind -t ext4 "$partition" "/mnt/$mount_folder"
+        mkdir -p "/mnt/$mount_folder" 2>$hider
+        if [ command -v toybox 2>$hider ]; then
+        	mount --bind -t "$filesystem" "$partition" "/mnt/$mount_folder"
             mount -o rw,noatime "$partition" "/mnt/$mount_folder"
         fi
         if [ $? -eq 0 ]; then
@@ -486,11 +485,11 @@ generate_random_message() {
   hour=$(echo "$(date +%Hhs:%Mmin)")
   date=$(echo "$(date +%dday/%mmon/%Yyear)")
   date=$(echo "$date" | sed 's/\//|/g')
-  echo "[$hour]($date)"
+  day="$(echo "[$hour]($date)")"
   
 }
 
-interface() {
+MAIN() {
   check_root_permissions
   exec_as_root
   print_full_bar
@@ -525,10 +524,10 @@ interface() {
   elif [ "$major" -lt 9 ]; then
     progresive_print " - This software is incompatible with Android $major."
     fatal=true
-  elif ! grep -q "knox" /system/build.prop 2>/dev/null && \
-       ! grep -q "knox" /system_root/system/build.prop 2>/dev/null && \
-       ! grep -q "knox" /mnt/system/build.prop 2>/dev/null && \
-       ! grep -q "knox" /mnt/system/system.build.prop 2>/dev/null; then
+  elif ! grep -q "knox" /system/build.prop 2>$hider && \
+       ! grep -q "knox" /system_root/system/build.prop 2>$hider && \
+       ! grep -q "knox" /mnt/system/build.prop 2>$hider && \
+       ! grep -q "knox" /mnt/system/system.build.prop 2>$hider; then
        progresive_print " - Installed ROM doesn't appear to be OneUI."
        fatal=true
   fi
@@ -544,26 +543,26 @@ interface() {
   progresive_print " - Mounting /system..."
   
   ANDROID_ROOT=/mnt/system_mount
-  search_and_mount_partition "system" "system_mount" 2>/dev/null
-  mount --bind -t ext4 "$partition" "/mnt/$mount_folder" 2>/dev/null
+  search_and_mount_partition "system" "system_mount" 2>$hider
+  mount --bind -t "$filesystem" "$partition" "/mnt/$mount_folder" 2>$hider
 
-  if ! mount | grep "/mnt/system_mount >> /dev/null"; then
+  if ! mount | grep "/mnt/system_mount >> $hider"; then
     ANDROID_ROOT=/mnt/$mount_folder
     progresive_print " - Attempt failed. Mounting at $ANDROID_ROOT..."
-    mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>/dev/null
-    mount --bind -t ext4 "$partition" "/mnt/$mount_folder" 2>/dev/null
-    if ! mount | grep "$ANDROID_ROOT" >> /dev/null; then
+    mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>$hider
+    mount --bind -t "$filesystem" "$partition" "/mnt/$mount_folder" 2>$hider
+    if ! mount | grep "$ANDROID_ROOT" >> $hider; then
       progresive_print " -   Even that attempt failed. Aborting..."
       ARGUMENT=null
     fi
   fi
 
-  progresive_print " - Mounting /vendor..." 2>/dev/null
-  search_and_mount_partition "vendor" "vendor_mount" 2>/dev/null
-  mount --bind -t ext4 "$partition" "/mnt/$mount_folder" 2>/dev/null
-  mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>/dev/null
+  progresive_print " - Mounting /vendor..." 2>$hider
+  search_and_mount_partition "vendor" "vendor_mount" 2>$hider
+  mount --bind -t "$filesystem" "$partition" "/mnt/$mount_folder" 2>$hider
+  mount -o rw,noatime "$partition" "/mnt/$mount_folder" 2>$hider
     
-  if ! mount | grep /vendor >> /dev/null; then
+  if ! mount | grep /vendor >> $hider; then
       progresive_print " -   Mount failed. Aborting..."
       exit 3
   fi
@@ -573,7 +572,7 @@ interface() {
   disable_fde
   disable_recovery_restoration
 
-  if [ "$ARGUMENT" = '-all' ]; then
+  if [ "$@" = '-all' ]; then
     disable_recovery_patching
     disable_vaultkeeper
     disable_proca
@@ -599,28 +598,60 @@ interface() {
   progresive_print " - Unmounting /system_root..."
   umount /mnt/system_mount
   
-  progresive_print "Formatting device so that it starts soon does not turn off the device)."
-  mkfs.f2fs /dev/block/by-name/userdata
-
+  if [ "$FORMAT" = "true" ]; then
+      progresive_print "Formatting device so that it starts soon does not turn off the device)."
+      mkfs.f2fs /dev/block/by-name/userdata
+  else
+      progresive_print "If you want to finish the process you must format manually or previously define FORMAT=true."
+  fi
+  
   echo
   progresive_print " - Finished."
   echo
 }
 
-MAIN() {
-	init
-	check_root_permissions
-	exec_as_root
-	
-	if [ "$DEBUG" = "true" ]; then
-	  echo "DEBUG Mode Is Enabled"
-	  LOG_FILE="/cache/multidisabler$(generate_random_message).log"
-	  {
-	    interface "$@"
-	  } 2>&1 | tee -a $LOG_FILE
-	else
-	  interface "$@"
-	fi
+function DEBUGER() {
+    check_root_permissions
+    exec_as_root "$@"
+    
+    LOG_FILE="/cache/multidisabler-$day.log"
+    DEBUG_LOG="/cache/debug_log_$day.log"
+    
+    if [ "$DEBUG" = "true" ]; then
+		hider=/dev/null
+    else
+        hider=/dev/null
+    fi
+    
+    init
+  
+    if [ "$DEBUG" = "true" ]; then
+      echo "DEBUG Mode Is Enabled"
+      rm -rf /cache/multidisabler-*.log
+      rm -rf /cache/debug_log_*.log
+    
+      echo "Script started at $day" >> "$LOG_FILE"
+      echo "Arguments passed: $@" >> "$LOG_FILE"
+    
+      set -x > "$DEBUG_LOG" 2>&1
+    
+      debug_command() {
+        local cmd="$1"
+        echo "Executing command: $cmd" >> "$LOG_FILE"
+        eval "$cmd" 2>&1 | tee -a "$LOG_FILE"
+        echo "Command finished: $cmd" >> "$LOG_FILE"
+      }
+
+      debug_command "MAIN $@"
+    
+      set +x > /dev/tty 2>&1
+      cat "$DEBUG_LOG" >> "$LOG_FILE"
+      rm "$DEBUG_LOG"
+    
+      echo "Script finished at $(date)" >> "$LOG_FILE"
+    else
+      MAIN "$@"
+    fi
 }
 
-MAIN "$@"
+DEBUGER "$@"

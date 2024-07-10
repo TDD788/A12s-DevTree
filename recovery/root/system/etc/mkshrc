@@ -23,13 +23,13 @@ InitFox() {
     alias egrep='egrep -n --color=auto'
     alias python=python3
     alias python3=python_cli
-    alias nano='nano --term pansi "$@"'
+    alias nano='nano --term pcansi "$@"'
 
     [ -z "$HOME" ] && export HOME=/sdcard
     [ -z "$SHELL" ] && export SHELL=/sbin/sh
     [ -z "$LINES" ] && export LINES=21
     [ -z "$COLUMNS" ] && export COLUMNS=44
-    [ -z "$TERM" ] && export TERM=pansi
+    [ -z "$TERM" ] && export TERM=pcansi
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
 
     if [ -f /sdcard/Fox/fox.mkshrc ]; then
@@ -44,10 +44,6 @@ InitFox() {
         source "$HOME/.mkshrc" > /dev/null 2>&1
     elif [ -f /sdcard/.mkshrc ]; then
         source /sdcard/.mkshrc > /dev/null 2>&1
-    fi
-    
-    if [ -f /sbin/from_fox_sd.sh ]; then
-        source /sbin/from_fox_sd.sh > /dev/null 2>&1
     fi
     
     local red=$'\x1b[01;31m'
