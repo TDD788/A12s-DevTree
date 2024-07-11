@@ -864,17 +864,17 @@ function find_image_in_directory() {
     fi
 }
 
-function dd_image() {
-	dd if="$2" of="$DEVICE_MAPPER/$1"
+function flash_image() {
+	dd if="$2" of="$1"
 }
-
 
 function confirm_flash() {
     stty echo
-    echo "Do you want to proceed with flashing the image $original? (y/n)"
+    echo "Do you want to proceed with flashing the image $original?"
+    echo -n "(y/n) :"
     read -rsn1 input
-    stty -echo
-
+    echo
+    
     case $input in
         y|Y)
             partition_name=""
@@ -884,27 +884,32 @@ function confirm_flash() {
                 echo
                 if [ "$partition_name" = "." ] || [ "$partition_name" = " " ]; then
                     echo "Invalid partition name. Please enter a valid name."
-                    exit 0
+                    exit 1
                 fi
             done
-            device_mapper=""
-            while [ -z "$device_mapper" ] || [ "$device_mapper" = "." ] || [ "$device_mapper" = " " ]; do
+            dm_location=""
+            while [ -z "$dm_location" ] || [ "$dm_location" = "." ] || [ "$dm_location" = " " ]; do
                 echo -n "Enter the device mapper of the partition to flash: "
-                read device_mapper
+                read dm_location
                 echo
-                if [ "$device_mapper" = "." ] || [ "$device_mapper" = " " ]; then
+                if [ "$dm_location" = "." ] || [ "$dm_location" = " " ]; then
                     echo "Invalid device mapper. Please enter a valid name."
+                    exit 1
                 fi
             done
+            
+            stty -echo
+            
             size_to_flash=$(stat -c %s "$original_file")
-            size_selected=$(stat -c %s "${device_mapper}${partition_name}")
+            size_selected=$(stat -c %s "${dm_location}${partition_name}")
+            
             if [ "$size_to_flash" -le "$size_selected" ]; then
-                echo "Flashing image $original_file to partition ${device_mapper}${partition_name}"
+                echo "Flashing image $original_file to partition ${dm_location}${partition_name}"
                 if [ "$A_B" = "true" ]; then
-                    dd_image "${device_mapper}${partition_name}_b" "$original_file"
-                    dd_image "${device_mapper}${partition_name}_b" "$original_file"
+                    flash_image "${dm_location}${partition_name}_b" "$original_file"
+                    flash_image "${dm_location}${partition_name}_a" "$original_file"
                 elif [ "$A_O" = "true" ]; then
-                    dd_image "${device_mapper}${partition_name}" "$original_file"
+                    flash_image "${dm_location}${partition_name}" "$original_file"
                 else
                     echo "Partition type could not be determined."
                     exit 1
@@ -916,7 +921,7 @@ function confirm_flash() {
             fi
             ;;
         n|N)
-            exit 1
+            exit 0
             ;;
         *)
             echo "Invalid input. Please enter y or n."
@@ -1466,46 +1471,46 @@ function clearly() {
 }
 
 function GSIRW() {
-	clear
+    clear
     stty -echo
     progresive_print "$(print_justified "Initialized the great wonder created by TheDarkDeath788")" 0.05
 
-    sleep 3
+    sleepy 3
     clearly
     progresive_print "$(print_justified "Identifying device parameters in case of emergency")" 0.05
     identify_device
 
-    sleep 3
+    sleepy 3
     clearly
     progresive_print "$(print_justified "Loading secretly stored settings")" 0.05
     print_justified "$(load_saved_configurations)"
 
-    sleep 2
+    sleepy 2
     clearly
     progresive_print "
     $(center_ansi "$LOGO")
     " 0.00001
     progresive_print "$(print_justified "AIO (ALL IN ONE) GSI / OTA  -RW  ")" 0.2
-    sleep 1
+    sleepy 1
     echo ""
     print_justified "Select an option:"
-    sleep 1
+    sleepy 1
     print_justified "1.Process the user-selected image."
-    sleep 1
+    sleepy 1
     print_justified "2.Process a copy of the installed system image."
-    sleep 1
+    sleepy 1
     print_justified "3.Process to return the ota in rw."
-    sleep 1
+    sleepy 1
     print_justified "4.Process and modify image."
-    sleep 1
+    sleepy 1
     print_justified "5.Modify image."
-    sleep 1
+    sleepy 1
     print_justified "6.Undo Any Modification."
-    sleep 1
+    sleepy 1
     print_justified "7.Manually configure options."
-    sleep 1
+    sleepy 1
     print_justified "8.Exit GSI-rw."
-    sleep 1
+    sleepy 1
     echo -n "$(print_justified "Choose one of the 8 options: ")"
     stty echo
     read -rsn5 option
@@ -1542,10 +1547,9 @@ function GSIRW() {
             stty echo
             ;;
         6)
-        	type=6
-        	interactive_core "undo"
-        	;;
-        	
+            type=6
+            interactive_core "undo"
+            ;;
         7)
             stty echo
             configure_manually
@@ -1563,65 +1567,67 @@ function GSIRW() {
 }
 
 function MAIN () {
-	
-	case "$1" in
-		    --fast | -f)
-			    sleep() {
-			    	: # Do Anything
-	            }
-	            progresive_print() {
-	            	export text="$1"
-	                shift 2
-	            	echo "$text"
-	            }
-	            clearly() {
-	            	: # Do Anything
-	            }
-	            ;;
-	        *)
-	            ;;
-	esac		
-	
-	default
+
+    sleepy() {
+        sleep "$@"
+    }
+
+    case "$1" in
+        --fast | -f)
+            sleepy() {
+                : # Do Nothing
+            }
+            progresive_print() {
+                echo "$1"
+            }
+            clearly() {
+                : # Do Nothing
+            }
+            ;;
+        *)
+            ;;
+    esac
+
+    default
     SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
     SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/[[:space:]]\+/ /g')"
-	
-	RED='\x1b[38;5;196m'
-	GREEN='\x1b[1;32m'
-	BLUE='\x1b[1;34m'
-	NC='\033[0m'
-	
-	export LOGO="$(
-	    echo -n "$(base64 -d <<< "CiBfICAgICBfX18gICAgX19fCiAgL19cICAgfF8gX3wgIC8gXyBcCiAgLyBfIFwgICB8IHwgIHwg==" 2>>"$hider" | tee -a "$hider")"
+
+    RED='\x1b[38;5;196m'
+    GREEN='\x1b[1;32m'
+    BLUE='\x1b[1;34m'
+    NC='\033[0m'
+
+    export LOGO="$(
+        echo -n "$(base64 -d <<< "CiBfICAgICBfX18gICAgX19fCiAgL19cICAgfF8gX3wgIC8gXyBcCiAgLyBfIFwgICB8IHwgIHwg==" 2>>"$hider" | tee -a "$hider")"
         echo -n "$(base64 -d <<< "KF8pIHwKL18vIFxfXCB8X19ffCAgXF9fXy8KIF9fX18gX19fXyBfX18gICAgICAgICAgICAgICAg==" 2>>"$hider" | tee -a "$hider")"
         echo -n "$(base64 -d <<< "ICAKIC8gX19fLyBfX198XyBffCAgICAgXyBfX19fICAgICAgX18KfCB8ICBfXF9fXyBcfCB8X19f==" 2>>"$hider" | tee -a "$hider")"
         echo -n "$(base64 -d <<< "X198ICdfX1wgXCAvXCAvIC8KfCB8X3wgfF9fXykgfCB8X19fX198IHwgICBcIFYgIFYgLwpcX19f==" 2>>"$hider" | tee -a "$hider")"
         echo -n "$(base64 -d <<< "X3xfX19fL19fX3wgICAgfF98ICAgIFxfL1xfLwoK==" 2>>"$hider" | tee -a "$hider")"
     )"
-    
+
     export LOGOV2="$(
         export LOGOV2="$(echo -n "$(base64 -d <<< "CiguIFkgLikKKSAgICgKKCAgICAgKQo==" 2>>"$hider" | tee -a "$hider")")"
         center_ansi "$LOGOV2"
     )"
-    
-	export DEVICE_NAME=$(getprop ro.product.system.device)
-	export DEVICE_MODEL=$(getprop ro.product.system.model)
-	export SOC=$(getprop ro.product.board)
 
-	export SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-	
-	check_root_permissions
-	
-	export _GSIRW_CALL="$(basename "$0")"
-	
-	exec_as_root "$1"
-	
+    export DEVICE_NAME=$(getprop ro.product.system.device)
+    export DEVICE_MODEL=$(getprop ro.product.system.model)
+    export SOC=$(getprop ro.product.board)
+
+    export SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+
+    check_root_permissions
+
+    export _GSIRW_CALL="$(basename "$0")"
+
+    exec_as_root "$1"
+
     case $_GSIRW_CALL in
         "gsirw_proces_image")
             interactive_core "process_user_selected_image"
             ;;
         "gsirw_sys_installed")
-           perform_copied_system_image           
+            perform_copied_system_image           
             ;;
         "gsirw_ota_rw")
             ota_rw
@@ -1697,6 +1703,6 @@ function DEBUGER() {
     fi
 }
 
-DEBUG=false
+DEBUG=true
 
 DEBUGER "$@"

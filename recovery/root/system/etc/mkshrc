@@ -13,6 +13,14 @@ export TMPDIR
 
 # OrangeFox
 InitFox() {
+    [ -z "$HOME" ] && export HOME=/sdcard
+    [ -z "$SHELL" ] && export SHELL=/sbin/sh
+    [ -z "$LINES" ] && export LINES=21
+    [ -z "$COLUMNS" ] && export COLUMNS=44
+    [ -z "$TERM" ] && export TERM=pcansi
+    [ -z "$SECRET" ] && export SECRET=$(base64 -d /system/etc/terminfo/x/xterm-r5)
+    [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
+    
     alias dir='ls -all'
     alias la='ls -a'
     alias ll='ls -a -l'
@@ -24,13 +32,7 @@ InitFox() {
     alias python=python3
     alias python3=python_cli
     alias nano='nano --term pcansi "$@"'
-
-    [ -z "$HOME" ] && export HOME=/sdcard
-    [ -z "$SHELL" ] && export SHELL=/sbin/sh
-    [ -z "$LINES" ] && export LINES=21
-    [ -z "$COLUMNS" ] && export COLUMNS=44
-    [ -z "$TERM" ] && export TERM=pcansi
-    [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
+    alias SECRET='echo "$SECRET" 2>/dev/null'
 
     if [ -f /sdcard/Fox/fox.mkshrc ]; then
         source /sdcard/Fox/fox.mkshrc > /dev/null 2>&1
