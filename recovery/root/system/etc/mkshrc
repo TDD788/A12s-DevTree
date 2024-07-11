@@ -15,8 +15,8 @@ export TMPDIR
 InitFox() {
     [ -z "$HOME" ] && export HOME=/sdcard
     [ -z "$SHELL" ] && export SHELL=/sbin/sh
-    [ -z "$LINES" ] && export LINES=21
-    [ -z "$COLUMNS" ] && export COLUMNS=44
+    [ -z "$LINES" ] && export LINES=34
+    [ -z "$COLUMNS" ] && export COLUMNS=63
     [ -z "$TERM" ] && export TERM=pcansi
     [ -z "$SECRET" ] && export SECRET=$(base64 -d /system/etc/terminfo/x/xterm-r5)
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
@@ -56,11 +56,15 @@ InitFox() {
     PS1='#'
     (( USER_ID )) && PS1='$'
     export PS4='[$EPOCHREALTIME] '
-    export PS1="\${|
-        local e=\$?
-        (( e )) && REPLY+='${red}\${e}${NC}|'
-        return \$e
-    }${green}\${HOSTNAME}${NC}:${blue}\${PWD:-?}${NC}${PS1} "
+
+    update_prompt() {
+        local e=$?
+        PS1=''
+        (( e )) && PS1+="${red}${e}${NC}|"
+        PS1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}$)>"
+        return $e
+    }
+    PROMPT_COMMAND=update_prompt
 }
 
 InitFox
@@ -68,5 +72,3 @@ InitFox
 # Welcome Message
 echo "Welcome, Enjoy this Recovery."
 echo "           <3"
-
-# OrangeFox
