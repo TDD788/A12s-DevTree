@@ -99,8 +99,13 @@ jobs:
     - name: Swap Space
       uses: pierotofy/set-swap-space@master
       with:
-        swap-size-gb: 32
-      
+        swap-size-gb: 16
+        
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: ${GITHUB_WORKSPACE}
+        
     - name: Build Environment
       run: |
        sudo apt-get update
@@ -120,6 +125,7 @@ jobs:
        sudo apt install lzma
        sudo apt install git aria2 -y
        sudo apt install nodejs
+       sudo apt install ccache
        git clone https://gitlab.com/OrangeFox/misc/scripts
        cd scripts
        sudo bash setup/android_build_env.sh
@@ -164,9 +170,10 @@ jobs:
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         export BOARD_RAMDISK_USE_LZMA=true
+        export USE_CCACHE=1
+        export CCACHE_dir=${GITHUB_WORKSPACE}
         set -e
         lunch twrp_${{ github.event.inputs.DEVICE_NAME }}-eng && make clean && mka adbd ${{ inputs.BUILD_TARGET }}image -j$(nproc --all)
-      continue-on-error: true
     
     - name: Upload files
       if: ${{ github.event.inputs.RELEASE_TYPE == 'false' }}
