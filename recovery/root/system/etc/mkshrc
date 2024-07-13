@@ -11,14 +11,27 @@ export HOSTNAME
 : ${TMPDIR:=/tmp}
 export TMPDIR
 
-# OrangeFox
+update_prompt() {
+    local e=$?
+    local new_ps1=''
+    (( e )) && new_ps1+="${red}${e}${NC}|"
+
+    new_ps1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}"
+    if [ -n "$VIRTUAL_ENV" ]; then
+        new_ps1+="${purple} (venv:$(basename $VIRTUAL_ENV))${NC}"
+    fi
+
+    new_ps1+=")$> "
+    PS1="$new_ps1"
+    return $e
+}
+
 InitFox() {
     [ -z "$HOME" ] && export HOME=/sdcard
     [ -z "$SHELL" ] && export SHELL=/sbin/sh
     [ -z "$LINES" ] && export LINES=34
     [ -z "$COLUMNS" ] && export COLUMNS=63
     [ -z "$TERM" ] && export TERM=pcansi
-    [ -z "$SECRET" ] && export SECRET=$(base64 -d /system/etc/terminfo/x/xterm-r5)
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
     
     alias dir='ls -all'
@@ -32,7 +45,6 @@ InitFox() {
     alias python=python3
     alias python3=python_cli
     alias nano='nano --term pcansi "$@"'
-    alias SECRET='echo "$SECRET" 2>/dev/null'
 
     if [ -f /sdcard/Fox/fox.mkshrc ]; then
         source /sdcard/Fox/fox.mkshrc > /dev/null 2>&1
@@ -48,27 +60,23 @@ InitFox() {
         source /sdcard/.mkshrc > /dev/null 2>&1
     fi
     
-    local red=$'\x1b[01;31m'
-    local green=$'\x1b[01;32m'
-    local blue=$'\x1b[01;34m'
-    local NC=$'\x1b[0m'
-
-    PS1='#'
-    (( USER_ID )) && PS1='$'
-    export PS4='[$EPOCHREALTIME] '
-
-    update_prompt() {
-        local e=$?
-        PS1=''
-        (( e )) && PS1+="${red}${e}${NC}|"
-        PS1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}$)>"
-        return $e
-    }
+	echo "Welcome, Enjoy this Recovery."
+	echo "           <3"
+    
+    red=$'\x1b[01;31m'
+    green=$'\x1b[01;32m'
+    blue=$'\x1b[01;34m'
+    purple='\[\e[35m\]'
+    NC=$'\x1b[0m'
+    
+    if (( USER_ID )); then
+   	 PS1='$'
+	else
+    	PS1='#'
+	fi
+	export PS4='[$EPOCHREALTIME] '
+    
     PROMPT_COMMAND=update_prompt
 }
 
 InitFox
-
-# Welcome Message
-echo "Welcome, Enjoy this Recovery."
-echo "           <3"
