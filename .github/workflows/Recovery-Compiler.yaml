@@ -34,7 +34,7 @@ on:
       DEVICE_TREE_BRANCH:
         description: 'Device Tree Branch'
         required: true
-        default: 'DT-Builder'
+        default: 'DT-Comunity'
       DEVICE_PATH:
         description: 'Specify your Device Path'
         required: true
