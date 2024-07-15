@@ -12,28 +12,10 @@ export HOSTNAME
 export TMPDIR
 
 update_prompt() {
-    local e=$?
-    local new_ps1=''
-    (( e )) && new_ps1+="${red}${e}${NC}|"
-
-    new_ps1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}"
-    if [ -n "$VIRTUAL_ENV" ]; then
-        new_ps1+="${purple} (venv:$(basename $VIRTUAL_ENV))${NC}"
-    fi
-
-    new_ps1+=")$> "
-    PS1="$new_ps1"
-    return $e
+    
 }
 
 InitFox() {
-    [ -z "$HOME" ] && export HOME=/sdcard
-    [ -z "$SHELL" ] && export SHELL=/sbin/sh
-    [ -z "$LINES" ] && export LINES=34
-    [ -z "$COLUMNS" ] && export COLUMNS=63
-    [ -z "$TERM" ] && export TERM=pcansi
-    [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
-    
     alias dir='ls -all'
     alias la='ls -a'
     alias ll='ls -a -l'
@@ -47,20 +29,29 @@ InitFox() {
     alias nano='nano --term pcansi "$@"'
 
     if [ -f /sdcard/Fox/fox.mkshrc ]; then
-        source /sdcard/Fox/fox.mkshrc > /dev/null 2>&1
-    fi
-
-    if [ -f /sdcard/Fox/fox.bashrc ]; then
-        source /sdcard/Fox/fox.bashrc > /dev/null 2>&1
-    fi
-
-    if [ -f "$HOME/.mkshrc" ]; then
-        source "$HOME/.mkshrc" > /dev/null 2>&1
+       source /sdcard/Fox/fox.mkshrc
+    elif [ -f /sdcard/Fox/fox.bashrc ]; then
+       source /sdcard/Fox/fox.bashrc
+    elif [ -f $HOME/.mkshrc ]; then
+       source $HOME/.mkshrc;
     elif [ -f /sdcard/.mkshrc ]; then
-        source /sdcard/.mkshrc > /dev/null 2>&1
+       source /sdcard/.mkshrc;
+    elif [ -f /FFiles/.mkshrc ]; then
+       source /FFiles/.mkshrc;
+    elif [ -f /data/recovery/.mkshrc ]; then
+       source /data/recovery/.mkshrc;
+    elif [ -f /sdcard1/.mkshrc ]; then
+       source /sdcard1/.mkshrc;
     fi
     
-	echo "Welcome, Enjoy this Recovery."
+    [ -z "$HOME" ] && export HOME=/sdcard
+    [ -z "$SHELL" ] && export SHELL=/sbin/sh
+    [ -z "$LINES" ] && export LINES=34
+    [ -z "$COLUMNS" ] && export COLUMNS=63
+    [ -z "$TERM" ] && export TERM=pcansi
+    [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
+    
+    filcome, Enjoy this Recovery."
 	echo "           <3"
     
     red=$'\x1b[01;31m'
@@ -75,8 +66,18 @@ InitFox() {
     	PS1='#'
 	fi
 	export PS4='[$EPOCHREALTIME] '
-    
-    PROMPT_COMMAND=update_prompt
+	local e=$?
+    local new_ps1=''
+    (( e )) && new_ps1+="${red}${e}${NC}|"
+
+    new_ps1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}"
+    if [ -n "$VIRTUAL_ENV" ]; then
+        new_ps1+="${purple} (venv:$(basename $VIRTUAL_ENV))${NC}"
+    fi
+
+    new_ps1+=")$> "
+    PS1="$new_ps1"
+    return $e
 }
 
 InitFox
