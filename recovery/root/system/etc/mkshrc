@@ -13,8 +13,7 @@ export HOME=/sdcard/Fox
 [ ! -d $HOME ] && export HOME=/sdcard
 
 # shell
-export SHELL=/system/bin/bash
-export HISTFILE=$HOME/.bash_history
+export HISTFILE=$HOME/.sh_history
 export PS1='\s-\v \w > '
 
 # Default TMPDIR
@@ -72,7 +71,7 @@ InitFox() {
     [ -z "$LINES" ] && export LINES=34
     [ -z "$COLUMNS" ] && export COLUMNS=63
     [ -z "$TERM" ] && export TERM=pcansi
-    [ -z "$SHELL" ] && export SHELL=bash
+    [ -z "$SHELL" ] && export SHELL=sh
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
     
     filcome, Enjoy this Recovery."
