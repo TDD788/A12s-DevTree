@@ -7,16 +7,22 @@
 : ${HOSTNAME:=android}
 export HOSTNAME
 
+# HOME
+export HOME=/sdcard/Fox
+[ ! -d $HOME ] && mkdir -p $HOME
+[ ! -d $HOME ] && export HOME=/sdcard
+
+# shell
+export SHELL=/system/bin/bash
+export HISTFILE=$HOME/.bash_history
+export PS1='\s-\v \w > '
+
 # Default TMPDIR
 : ${TMPDIR:=/tmp}
 export TMPDIR
 
-update_prompt() {
-    
-}
-
 InitFox() {
-    alias dir='ls -all'
+    alias dir="ls -all --color=auto"
     alias la='ls -a'
     alias ll='ls -a -l'
     alias lo='ls -a -l'
@@ -27,6 +33,23 @@ InitFox() {
     alias python=python3
     alias python3=python_cli
     alias nano='nano --term pcansi "$@"'
+    alias cls="clear"
+	alias seek='find . -type d -path ./proc -prune -o -name "$@"'
+	alias dirp="ls -all --color=auto -t | more"
+	alias dirt="ls -all --color=auto -t"
+	alias dirs="ls -all --color=auto -S"
+	alias rd="rmdir"
+	alias md="mkdir"
+	alias del="rm -i"
+	alias ren="mv -i"
+	alias copy="cp -i"
+	alias q="exit"
+	alias diskfree="df -Ph"
+	alias path="echo $PATH"
+	alias mem="cat /proc/meminfo && free"
+	alias ver="cat /proc/version"
+	alias makediff="diff -u -d -w -B"
+	alias makediff_recurse="diff -U3 -d -w -rN"
 
     if [ -f /sdcard/Fox/fox.mkshrc ]; then
        source /sdcard/Fox/fox.mkshrc
@@ -49,6 +72,7 @@ InitFox() {
     [ -z "$LINES" ] && export LINES=34
     [ -z "$COLUMNS" ] && export COLUMNS=63
     [ -z "$TERM" ] && export TERM=pcansi
+    [ -z "$SHELL" ] && export SHELL=bash
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
     
     filcome, Enjoy this Recovery."
@@ -81,3 +105,5 @@ InitFox() {
 }
 
 InitFox
+
+$SHELL

@@ -19,7 +19,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_56"
+export FOX_VERSION="R12.1_57"
 export FOX_VARIANT="AOSP"
 
 # Binary and tool settings
@@ -30,7 +30,6 @@ export FOX_USE_TAR_BINARY=1
 export FOX_USE_UNZIP_BINARY=1
 export FOX_USE_XZ_UTILS=1
 export FOX_USE_ZSTD_BINARY=1
-export FOX_COMPRESS_EXECUTABLES=1
 
 # Target device configurations
 export FOX_TARGET_DEVICES="a12s, a12sub, SM-A127M, SM-A127F"
@@ -49,8 +48,8 @@ export_build_vars() {
     export OF_USE_SAMSUNG_HAPTICS=1
     export OF_USE_TWRP_SAR_DETECT=1
 	export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
-    export OF_USE_SYSTEM_FINGERPRINT=0
-    export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/APatch.apk"
+    export OF_USE_SYSTEM_FINGERPRINT=1
+    export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/MagDelta.apk"
 
     # Security configurations
     export OF_ADVANCED_SECURITY=1

@@ -45,11 +45,10 @@ TARGET_USES_UEFI             := true
 TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
-BOARD_NAME                   := exynos850
-BOARD_BOOTIMG_HEADER_VERSION := 2
+BOARD_BOOT_HEADER_VERSION    := 2
 BOARD_KERNEL_BASE            := 0x10000000
 BOARD_KERNEL_IMAGE_NAME      := Image
-BOARD_KERNEL_PAGESIZE        := 2048
+BOARD_KERNEL_PAGESIZE        := 4096
 BOARD_RAMDISK_OFFSET         := 0x01000000
 BOARD_KERNEL_TAGS_OFFSET     := 0x00000100
 
@@ -61,13 +60,6 @@ BOARD_KERNEL_CMDLINE += \
 	androidboot.usbconfigfs=true
 	reboot=panic_warm \
 	androidboot.init_fatal_reboot_target=system
-	
-# MKBOOTARGS
-BOARD_MKBOOTIMG_ARGS =+ --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
-BOARD_MKBOOTIMG_ARGS =+ --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
-BOARD_MKBOOTIMG_ARGS  = --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
-
-BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
 
 # Compile kernel and DTBs
 TARGET_KERNEL_CONFIG         := a12s_defconfig
@@ -80,11 +72,19 @@ TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
 TARGET_PREBUILT_KERNEL        := $(DEVICE_PATH)/prebuilt/twrp-kernel
 TARGET_PREBUILT_DTB           := $(DEVICE_PATH)/prebuilt/twrp-dtb
-BOARD_MKBOOTIMG_ARGS          += --dtb $(TARGET_PREBUILT_DTB)
 BOARD_INCLUDE_DTB_IN_BOOTIMG  := true
 BOARD_PREBUILT_DTBOIMAGE      := $(DEVICE_PATH)/prebuilt/twrp-dtbo
 BOARD_KERNEL_SEPARATED_DTBO   := true
 endif
+
+# MKBOOTARGS
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS += --board $(TARGET_BOOTLOADER_BOARD_NAME)
+
+BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
 
 # Partitions
 BOARD_FLASH_BLOCK_SIZE                 := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
@@ -180,6 +180,7 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 	metadata \
 	omr \
 	optics \
+	spu \
 	bin \
 	sys \
 	prism
