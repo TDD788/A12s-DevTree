@@ -100,12 +100,7 @@ jobs:
       uses: pierotofy/set-swap-space@master
       with:
         swap-size-gb: 16
-        
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: ${GITHUB_WORKSPACE}
-        
+       
     - name: Build Environment
       run: |
        sudo apt-get update
