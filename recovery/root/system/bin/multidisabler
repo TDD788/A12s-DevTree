@@ -54,19 +54,7 @@ exec_as_root() {
 }
 
 progresive_print() {
-	local text="$1"
-	local delay="0.00001"
-	while [ -n "$text" ]; do
-	    local char="${text:0:1}"
-  	  if [ "$char" = " " ]; then
-    	  printf "%s" "$char"
-  	  else
-    	  printf "%s" "$char"
-    	  sleep "$delay"
-   	 fi
-   	 text="${text:1}"
-  	done
-    printf "\n"
+   echo "$@"
 }
 
 debug_print() {
