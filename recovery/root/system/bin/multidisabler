@@ -501,7 +501,7 @@ MAIN() {
 
   fw="${bl:$((${#bl} - 4)):4}"
   device="${bl:0:$((${#bl} - 8))}"
-  mft=$(getprop ro.product.manufacturer | tr '[:upper:]' '[:lower:]')
+  mft=$(getprop ro.product.manufacturer)
 
   if [ "$mtf" != "samsung" ]; then
     progresive_print " - Device appears not to be made by Samsung."
