@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-# Minimal /system/etc/mkshrc for Android
+# Minimal /system/etc/profile for Android using busybox sh or shell X
 
 # Default HOSTNAME if not provided by system
 : ${HOSTNAME:=$(getprop ro.product.device)}
@@ -9,8 +9,8 @@ export HOSTNAME
 
 # HOME
 export HOME=/sdcard/Fox
-[ ! -d $HOME ] && mkdir -p $HOME
-[ ! -d $HOME ] && export HOME=/sdcard
+[ ! -d "$HOME" ] && mkdir -p "$HOME"
+[ ! -d "$HOME" ] && export HOME=/sdcard
 
 # shell
 export HISTFILE=$HOME/.sh_history
@@ -33,37 +33,37 @@ InitFox() {
     alias python3=python_cli
     alias nano='nano --term pcansi "$@"'
     alias cls="clear"
-	alias seek='find . -type d -path ./proc -prune -o -name "$@"'
-	alias dirp="ls -all --color=auto -t | more"
-	alias dirt="ls -all --color=auto -t"
-	alias dirs="ls -all --color=auto -S"
-	alias rd="rmdir"
-	alias md="mkdir"
-	alias del="rm -i"
-	alias ren="mv -i"
-	alias copy="cp -i"
-	alias q="exit"
-	alias diskfree="df -Ph"
-	alias path="echo $PATH"
-	alias mem="cat /proc/meminfo && free"
-	alias ver="cat /proc/version"
-	alias makediff="diff -u -d -w -B"
-	alias makediff_recurse="diff -U3 -d -w -rN"
+    alias seek='find . -type d -path ./proc -prune -o -name "$@"'
+    alias dirp="ls -all --color=auto -t | more"
+    alias dirt="ls -all --color=auto -t"
+    alias dirs="ls -all --color=auto -S"
+    alias rd="rmdir"
+    alias md="mkdir"
+    alias del="rm -i"
+    alias ren="mv -i"
+    alias copy="cp -i"
+    alias q="exit"
+    alias diskfree="df -Ph"
+    alias path="echo $PATH"
+    alias mem="cat /proc/meminfo && free"
+    alias ver="cat /proc/version"
+    alias makediff="diff -u -d -w -B"
+    alias makediff_recurse="diff -U3 -d -w -rN"
 
-    if [ -f /sdcard/Fox/fox.mkshrc ]; then
-       source /sdcard/Fox/fox.mkshrc
+    if [ -f /sdcard/Fox/fox.shrc ]; then
+       . /sdcard/Fox/fox.shrc
     elif [ -f /sdcard/Fox/fox.bashrc ]; then
-       source /sdcard/Fox/fox.bashrc
-    elif [ -f $HOME/.mkshrc ]; then
-       source $HOME/.mkshrc;
-    elif [ -f /sdcard/.mkshrc ]; then
-       source /sdcard/.mkshrc;
-    elif [ -f /FFiles/.mkshrc ]; then
-       source /FFiles/.mkshrc;
-    elif [ -f /data/recovery/.mkshrc ]; then
-       source /data/recovery/.mkshrc;
-    elif [ -f /sdcard1/.mkshrc ]; then
-       source /sdcard1/.mkshrc;
+       . /sdcard/Fox/fox.bashrc
+    elif [ -f $HOME/.shrc ]; then
+       . $HOME/.shrc;
+    elif [ -f /sdcard/.shrc ]; then
+       . /sdcard/.shrc;
+    elif [ -f /FFiles/.shrc ]; then
+       . /FFiles/.shrc;
+    elif [ -f /data/recovery/.shrc ]; then
+       . /data/recovery/.shrc;
+    elif [ -f /sdcard1/.shrc ]; then
+       . /sdcard1/.shrc;
     fi
     
     [ -z "$HOME" ] && export HOME=/sdcard
@@ -74,24 +74,25 @@ InitFox() {
     [ -z "$SHELL" ] && export SHELL=sh
     [ -z "$IS_ORANGEFOX_USER_TERM" ] && export IS_ORANGEFOX_USER_TERM=true
     
-    filcome, Enjoy this Recovery."
-	echo "           <3"
+    echo "Welcome, Enjoy this Recovery."
+    echo "           <3"
     
     red=$'\x1b[01;31m'
     green=$'\x1b[01;32m'
     blue=$'\x1b[01;34m'
-    purple='\[\e[35m\]'
+    purple='\033[35m'
     NC=$'\x1b[0m'
     
-    if (( USER_ID )); then
-   	 PS1='$'
+    if [ "$(id -u)" -eq 0 ]; then
+   	 PS1='# '
 	else
-    	PS1='#'
+    	PS1='$ '
 	fi
-	export PS4='[$EPOCHREALTIME] '
-	local e=$?
+	export PS4='[$(date +%s.%N)] '
+
+    local e=$?
     local new_ps1=''
-    (( e )) && new_ps1+="${red}${e}${NC}|"
+    [ $e -ne 0 ] && new_ps1+="${red}${e}${NC}|"
 
     new_ps1+="(${green}${HOSTNAME}${NC}:${blue}\${PWD}${NC}"
     if [ -n "$VIRTUAL_ENV" ]; then
