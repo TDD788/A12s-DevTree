@@ -505,13 +505,10 @@ MAIN() {
 
   if [ "$mtf" != "samsung" ]; then
     progresive_print " - Device appears not to be made by Samsung."
-    fatal=true
   elif [ -z "$device" ]; then
     progresive_print " - Could not determine device model."
-    fatal=true
   elif [ "$major" -lt 9 ]; then
     progresive_print " - This software is incompatible with Android $major."
-    fatal=true
   elif ! grep -q "knox" /system/build.prop 2>$hider && \
        ! grep -q "knox" /system_root/system/build.prop 2>$hider && \
        ! grep -q "knox" /mnt/system/build.prop 2>$hider && \
@@ -519,6 +516,7 @@ MAIN() {
        progresive_print " - Installed ROM doesn't appear to be OneUI."
        fatal=true
   fi
+
   if [ "$fatal" = true ]; then
     progresive_print " - Installation aborted."
     echo
