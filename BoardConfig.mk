@@ -107,8 +107,8 @@ BOARD_SAMSUNG_DYNAMIC_PARTITIONS_PARTITION_LIST := \
 	product \
 	odm \
 	system_ext \
-	vendor_dlkm \
-	system_dlkm
+	vendor_dlkm
+
 BOARD_SAMSUNG_DYNAMIC_PARTITIONS_SIZE := 9122611200 # TODO: Fix hardcoded value
 
 # Platform
