@@ -1,14 +1,14 @@
 #!/system/bin/sh
 
 init() {
-	stty -echo
-	export ANDROID_ROOT="/mnt/system_mount"
-	OUTFD="$2"
-	ZIPFILE="$3"
-	DEBUG=true
-	ZIPNAME=${ZIPFILE##*/}
-	scr_wdth=$(echo "$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7) - 1" | bc)
-	if readlink /proc/$$/fd/$OUTFD 2>$hider | grep /tmp >$hider; then
+      stty -echo
+      export ANDROID_ROOT="/mnt/system_mount"
+      OUTFD="$2"
+      ZIPFILE="$3"
+      DEBUG=true
+      ZIPNAME=${ZIPFILE##*/}
+      scr_wdth=$(echo "$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7) - 1" | bc)
+      if readlink /proc/$$/fd/$OUTFD 2>$hider | grep /tmp >$hider; then
       OUTFD=0
       for FD in $(ls /proc/$$/fd); do
         if readlink /proc/$$/fd/$FD 2>$hider | grep pipe >$hider; then
