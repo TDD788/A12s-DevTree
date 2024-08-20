@@ -19,7 +19,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_57"
+export FOX_VERSION="R12.1_58"
 export FOX_VARIANT="AOSP"
 
 # Binary and tool settings
@@ -47,7 +47,7 @@ export_build_vars() {
     export FOX_ENABLE_APP_MANAGER=1
     export OF_USE_SAMSUNG_HAPTICS=1
     export OF_USE_TWRP_SAR_DETECT=1
-	export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
+    export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export OF_USE_SYSTEM_FINGERPRINT=1
     export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/MagDelta.apk"
 
