@@ -505,10 +505,13 @@ MAIN() {
 
   if [ "$mtf" != "samsung" ]; then
     progresive_print " - Device appears not to be made by Samsung."
+    progresive_print " - Your manufacturer is $mft."
   elif [ -z "$device" ]; then
     progresive_print " - Could not determine device model."
+    progresive_print " - Your device model is $device."
   elif [ "$major" -lt 9 ]; then
     progresive_print " - This software is incompatible with Android $major."
+    progresive_print " - Your software version is $major."
   elif ! grep -q "knox" /system/build.prop 2>$hider && \
        ! grep -q "knox" /system_root/system/build.prop 2>$hider && \
        ! grep -q "knox" /mnt/system/build.prop 2>$hider && \
