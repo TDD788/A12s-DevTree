@@ -4,7 +4,7 @@
 set +o nohup
 cat /system/etc/logo
 echo '
-         Welcome, Enjoy this Recovery."
+         Welcome, Enjoy this Recovery.
                      ;D
 '
 
@@ -97,13 +97,13 @@ InitRecovery() {
     new_ps1=''
     [ $e -ne 0 ] && new_ps1="${red}${e}${NC}|"
 
-    new_ps1+="${green}[ ${HOSTNAME} | $(whoami) ]${NC}:${blue}\${PWD}${NC}"
+    new_ps1+="${green}[ ${HOSTNAME} | $(whoami) ]${NC} : ${blue}\${PWD}${NC}           ($PS4)"
     if [ -n "$VIRTUAL_ENV" ]; then
         new_ps1+="${purple} (venv:$(basename $VIRTUAL_ENV))${NC}"
     fi
 
     new_ps1+=" 
-$PS1 > "
+$PS1 > :"
     PS1="$new_ps1"
     return $e
     
