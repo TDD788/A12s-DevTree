@@ -1,13 +1,15 @@
 #!/system/bin/sh
 
-function generate_date_message() {
+function generate_date_message()
+{
   hour=$(echo "$(date +%Hhs:%Mmin)")
   date=$(echo "$(date +%dday/%mmon/%Yyear)")
   date=$(echo "$date" | sed 's/\//|/g')
   day="$(echo "[$hour]($date)")"
 }
 
-function default() {
+function default()
+{
 	export DEFAULT_SYSTEM_NAME="system"
 	export DEFAULT_VENDOR_NAME="vendor"
 	export DEFAULT_PRODUCT_NAME="product"
@@ -29,7 +31,8 @@ function default() {
 	"
 }
 
-function check_root_permissions() {
+function check_root_permissions()
+{
     if [ "$(id -u)" -eq 0 ]; then
         ROOT=true
     else
@@ -37,30 +40,33 @@ function check_root_permissions() {
     fi
 }
 
-function exec_as_root() {
+function exec_as_root()
+{
 	if [ "$ROOT" = "false" ]; then
         if command -v sudo >/dev/null 2>&1; then
             if "sudo" = true >/dev/null 2>&1; then
                 sudo "$0" "$@"
                 exit 1
             fi
-	    elif command -v su >/dev/null 2>&1; then
+	    elif command -v "su -c" >/dev/null 2>&1; then
 			if "su -c" = true >/dev/null 2>&1; then
+			    tmux_fs true
 	  		  su -c sh "$0" "$@"
 	  		  exit 1
 			else
 				true
- 	 		  /system/bin/sh "$0" "$@"
+ 	 		  DEBUGER "$@"
  	 		  exit 1
 			fi
 		else
-		    /system/bin/sh "$0" "$@"
+		    DEBUGER "$@"
 		    exit 1
 		fi
 	fi
 }
 
-function root_msg() {
+function root_msg()
+{
 	if [ "$ROOT" = "true" ]; then
 		echo "Congratulations you are running the script at root level"
 	else
@@ -70,20 +76,23 @@ function root_msg() {
 	fi
 }
 
-function perform_resize_and_unshare_blocks() {
+function perform_resize_and_unshare_blocks()
+{
     resize2fs "$new_name" 6G
     echo "Try to fix any Error"
-    e2fsck -f "$new_name"
+    e2fsck -fp "$new_name"
     echo "Unsharing block to get RW Image"
     e2fsck -E unshare_blocks "$new_name" > /dev/null 2>>"$hider"
     resize2fs -M "$new_name"
 }
 
-function generate_random_message() {
+function generate_random_message()
+{
     cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32
 }
 
-function prompt_for_confirmation() {
+function prompt_for_confirmation()
+{
     export input
     info="$@"
 
@@ -112,7 +121,8 @@ function prompt_for_confirmation() {
     done
 }
 
-function simulate_bootloader_patch() {
+function simulate_bootloader_patch()
+{
     echo -e "${NC}Generating specialized patch keys for $DEVICE_MODEL${NC}"
     echo -e "${NC}Modifying kernel for library adjustment${NC}"
     echo -e "${NC}Proceeding with the process for user adaptation${NC}"
@@ -122,7 +132,8 @@ function simulate_bootloader_patch() {
     sleep 3
 }
 
-function prank() {
+function prank()
+{
 	clear
 	bar_length=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
 	BAR=$(echo "$(printf '%*s' "$bar_length" | tr ' ' '-')")
@@ -164,7 +175,8 @@ function prank() {
 	reboot
 }
 
-function check_dd() {
+function check_dd()
+{
   if ! dd if=/dev/zero of=/dev/Nothing bs=1 count=1 &> $hider; then
     echo "The 'dd' command is not available or failed to execute."
   fi
@@ -174,7 +186,8 @@ function check_dd() {
   fi
 }
 
-function set_partition_names() {
+function set_partition_names()
+{
     clear
     echo "Partition Names Configuration:"
     echo "1. System partition name: $CUSTOM_SYSTEM_NAME"
@@ -182,7 +195,7 @@ function set_partition_names() {
     echo "3. Product partition name: $CUSTOM_PRODUCT_NAME"
     echo "4. ODM partition name: $CUSTOM_ODM_NAME"
     echo "5. Restore default values"
-    echo "6. Save and exit"
+    echo "0. Save and exit"
     echo "Select the partition number you want to modify (or 'q' to quit):"
 
     read -rsn1 input
@@ -214,13 +227,14 @@ function set_partition_names() {
             CUSTOM_PRODUCT_NAME="$DEFAULT_PRODUCT_NAME"
             CUSTOM_ODM_NAME="$DEFAULT_ODM_NAME"
             ;;
-        "6")
+        "0")
             save_and_exit
             ;;
     esac
 }
 
-function load_saved_configurations() {
+function load_saved_configurations()
+{
     export config_file="/cache/gsirw.conf"
     if [ -f "$config_file" ]; then
         if source "$config_file"; then
@@ -236,7 +250,8 @@ function load_saved_configurations() {
     fi
 }
 
-function configure_manually() {
+function configure_manually()
+{
     while true; do
         clear
         echo "Manual Configuration:"
@@ -392,7 +407,8 @@ function configure_manually() {
     done
 }
 
-function configure_file_extensions() {
+function configure_file_extensions()
+{
     while true; do
         clear
         echo "Configure file extensions:"
@@ -427,7 +443,8 @@ function configure_file_extensions() {
     done
 }
 
-function add_extension() {
+function add_extension()
+{
     clear
     echo "Add a new file extension:"
     echo -n "Enter the extension (e.g., tar, lz4): "
@@ -446,7 +463,8 @@ function add_extension() {
     read -rsn1
 }
 
-function remove_extension() {
+function remove_extension()
+{
     clear
     echo "Remove a file extension:"
     echo "Current extensions: ${FILE_EXTENSIONS}"
@@ -462,7 +480,8 @@ function remove_extension() {
     read -rsn1
 }
 
-function list_extensions() {
+function list_extensions()
+{
     clear
     echo "Current file extensions:"
     echo "${FILE_EXTENSIONS:-None}"
@@ -470,7 +489,8 @@ function list_extensions() {
     read -rsn1
 }
 
-function gsirw_interface() {
+function gsirw_interface()
+{
     clear
     echo "1. Mouse style (default: \">\")"
     echo "2. Configure shortcuts"
@@ -544,7 +564,8 @@ function gsirw_interface() {
     esac
 }
 
-function save_configurations() {
+function save_configurations()
+{
     config_file="$HOME/gsirw.conf"
     echo "Saving configurations to $config_file..."
     {
@@ -598,7 +619,8 @@ function save_configurations() {
     fi
 }
 
-function look() {
+function look()
+{
     clear
     echo ""
     root_msg
@@ -631,7 +653,8 @@ function look() {
     read -rsn1
 }
 
-function manage_shortcuts() {
+function manage_shortcuts()
+{
     export shortcut_name
     export shortcut_dir
 
@@ -740,7 +763,8 @@ function manage_shortcuts() {
     done
 }
 
-function perform_ota() {
+function perform_ota()
+{
 	export image="$1"
     resize2fs "$image" 6G
     echo "Try to fix any Error"
@@ -750,13 +774,15 @@ function perform_ota() {
     resize2fs -M "$image"
 }
 
-function ask() {
+function ask()
+{
 	clear
 	echo "Press any key to continue..."
 	read -rsn1
 }
 
-function identify_device() {
+function identify_device()
+{
     if [ -z "$DYNAMIC" ] || [ -z "$GENERIC" ] || [ -z "$DEVICE_MAPPER" ] || [ -z "$A_B" ] || [ -z "$A_O" ]; then
         if ls /dev/block/mapper >$hider 2>&1; then
             export DYNAMIC="true"
@@ -782,7 +808,8 @@ function identify_device() {
     fi
 }
 
-function extract_image_from_archive() {
+function extract_image_from_archive()
+{
     export archive="$1"
     export extracted_dir="$(dirname "$archive")/extracted"
     
@@ -792,42 +819,39 @@ function extract_image_from_archive() {
     echo "Extracting $archive..."
     case "$archive" in
         *.zip) unzip -d "$extracted_dir" "$archive" > /dev/null 2>>"$hider" ;;
-        *.tar.gz | *.tgz) tar -xzf "$archive" -C "$extracted_dir" > /dev/null 2>>"$hider";;
-        *.xz) xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)" > /dev/null 2>>"$hider" ;;
-        *.tar.xz) xz -d "$archive" -c | tar -xf - -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
-        *.gz) gunzip -c "$archive" > "$extracted_dir/$(basename "$archive" .gz)" > /dev/null 2>>"$hider" ;;
+        *.tar.gz | *.tgz) tar -xzf "$archive" -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
+        *.xz) xz -d "$archive" -c > "$extracted_dir/$(basename "$archive" .xz)" 2>>"$hider" ;;
+        *.tar.xz) xz -d "$archive" -c | tar -xf - -C "$extracted_dir" 2>>"$hider" ;;
+        *.gz) gunzip -c "$archive" > "$extracted_dir/$(basename "$archive" .gz)" 2>>"$hider" ;;
         *.tar.bz2 | *.tbz2) tar -xjf "$archive" -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
-        *.bz2) bunzip2 -c "$archive" > "$extracted_dir/$(basename "$archive" .bz2)" > /dev/null 2>>"$hider" ;;
+        *.bz2) bunzip2 -c "$archive" > "$extracted_dir/$(basename "$archive" .bz2)" 2>>"$hider" ;;
         *.rar) unrar x "$archive" "$extracted_dir" > /dev/null 2>>"$hider" ;;
         *.7z) 7z x "$archive" -o"$extracted_dir" > /dev/null 2>>"$hider" ;;
-        *.lz4) lz4 -d "$archive" "$extracted_dir/$(basename "$archive" .lz4)" > /dev/null 2>>"$hider" ;;
-        *.tar.lz4) lz4 -d "$archive" | tar -xf - -C "$extracted_dir" > /dev/null 2>>"$hider" ;;
-        *.Z) uncompress -c "$archive" > "$extracted_dir/$(basename "$archive" .Z)" > /dev/null 2>>"$hider" ;;
+        *.lz4) lz4 -d "$archive" "$extracted_dir/$(basename "$archive" .lz4)" 2>>"$hider" ;;
+        *.tar.lz4) lz4 -d "$archive" | tar -xf - -C "$extracted_dir" 2>>"$hider" ;;
+        *.Z) uncompress -c "$archive" > "$extracted_dir/$(basename "$archive" .Z)" 2>>"$hider" ;;
         *) 
             export extension="${archive##*.}"
-            if command -v "$extension" &> $hider; then
+            if command -v "$extension" &> "$hider"; then
                 { "$extension" -d "$archive" -c > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" -C > "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -d "$archive" "$extracted_dir/$(basename "$archive" ."$extension")" || "$extension" -c "$archive" > "$extracted_dir/$(basename "$archive" ."$extension")"; } > /dev/null 2>>"$hider"
-            elif command -v "extract_$extension" &> $hider; then
+            elif command -v "extract_$extension" &> "$hider"; then
                 "extract_$extension" -d "$archive" -C "$extracted_dir"
             else
-                echo "Unsupported archive format: $archive"; sleep 5; return 1
+                echo "Unsupported archive format: $archive" >&2; sleep 5; return 1
             fi ;;
     esac
 }
 
-function process_image() {
+function process_image()
+{
     if [ "$type" = "1" ]; then
       ask
-      export original_file="$found_dir/$found_file"
-      export new_name="$found_dir/system.img"
       rename_image "$original_file" "$new_name"
       perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       rename_image "$new_name" "$original_file"
       confirm_flash
     elif [ "$type" = "6" ]; then
       ask
-      export original_file="$found_dir/$found_file"
-      export new_name="$found_dir/system.img"
       rename_image "$original_file" "$new_name"
       undo_resize_and_unshare_blocks || echo "Failed to undo resize and unshare blocks."
       rename_image "$new_name" "$original_file"  
@@ -836,8 +860,6 @@ function process_image() {
       if [ ! -d "$CUSTOM_MOUNT_POINT" ]; then
           mkdir -p "$CUSTOM_MOUNT_POINT"
       fi
-      export original_file="$found_dir/$found_file" 
-      export new_name="$found_dir/system.img"
       rename_image "$original_file" "$new_name"
       perform_resize_and_unshare_blocks || echo "Failed to resize and unshare blocks."
       resize2fs "$new_name" 6G
@@ -852,11 +874,14 @@ function process_image() {
     fi
 }
 
-function find_image_in_directory() {
-    export recent_image_file=$(find "$image_path/" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + > /dev/null > /dev/null 2>>"$hider" | sort -n | tail -n 1 | cut -d' ' -f2-)
+function find_image_in_directory()
+{
+	export recent_image_file=$(find "$extracted_dir" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>>"$hider" | sort -n | tail -n 1 | cut -d' ' -f2-)
     if [ -n "$recent_image_file" ]; then
         found_dir=$(dirname "$recent_image_file")
         found_file=$(basename "$recent_image_file")
+        export original_file="$found_dir/$found_file"
+        export new_name="$found_dir/system.img"
         echo "Found recent system image: $found_file in $found_dir"
         process_image
     else
@@ -864,11 +889,13 @@ function find_image_in_directory() {
     fi
 }
 
-function flash_image() {
-	dd if="$2" of="$1"
+function flash_image()
+{
+	dd if="$2" of="$1" bs=16M status=progress
 }
 
-function confirm_flash() {
+function confirm_flash()
+{
     stty echo
     echo "Do you want to proceed with flashing the image $original?"
     echo -n "(y/n) :"
@@ -926,18 +953,20 @@ function confirm_flash() {
         *)
             echo "Invalid input. Please enter y or n."
             read -rsn1
-            confirm_flash
+            exit
             ;;
     esac
 }
 
-function rename_image() {
+function rename_image()
+{
     export original_file="$1"
     export new_name="$2"
     mv "$original_file" "$new_name"
 }
 
-function check_extension() {
+function check_extension()
+{
     export file="$1"
     export extension="${file##*.}"
     if [[ -n "$FILE_EXTENSIONS" ]]; then
@@ -957,14 +986,15 @@ function check_extension() {
     COMPRESS=false
 }
 
-function mount_dual() {
-    local partition="$1"
-    local mount_point="$2"
+function mount_dual()
+{
+    export partition="$1"
+    export mount_point="$2"
 
     if [ -x "/system/bin/toybox" ]; then
         TOYBOX_BIN="/system/bin/toybox"
         echo "Attempting to mount using toybox..."
-        $TOYBOX_BIN mount --bind -t $filesystem "$partition" "$mount_point" >$hider 2>&1
+        $TOYBOX_BIN mount --bind "$partition" "$mount_point" >$hider 2>&1
         if [ $? -eq 0 ]; then
             echo "Mount successful using toybox"
             success=true
@@ -997,13 +1027,17 @@ function mount_dual() {
     fi
 }
 
-function mount_device() {
-    local partition="$1"
-    local mount_point="$2"
-    local success=false
+function mount_device()
+{
+    export partition="$1"
+    export mount_point="$2"
+    export success=false
+    export filesystem="$(blkid "$partition" | grep -oP 'TYPE="\K[^"]+')"
     
     loop_device=$(losetup -f)
     success=false
+    
+    mkdir $mount_point
 
     if losetup "$loop_device" "$partition"; then
         if mount -t $filesystem -o rw,noatime "$loop_device" "$mount_point" >$hider 2>&1; then
@@ -1046,7 +1080,8 @@ function mount_device() {
     fi
 }
 
-function undo_resize_and_unshare_blocks() {
+function undo_resize_and_unshare_blocks()
+{
     undo_file="$new_name"
     if [ ! -f "$undo_file" ]; then
         echo "Undo file not found: $undo_file"
@@ -1059,15 +1094,16 @@ function undo_resize_and_unshare_blocks() {
     echo "Changes reverted successfully."
 }
 
-function list_directories_and_files() {
-    local directory="$1"
-    local extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
-    local sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
-    local sort_file_type="${SORT_FILE_TYPE:-name_asc}"
+function list_directories_and_files()
+{
+    export directory="$1"
+    export extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
+    export sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
+    export sort_file_type="${SORT_FILE_TYPE:-name_asc}"
     IFS=$'\n'
-    local directories
-    local files    
-    local index=1
+    export directories
+    export files    
+    export index=1
 
     case "$sort_dir_type" in
         name_asc) directories=($(ls -d "$directory"/*/ 2>>"$hider" | sort));;
@@ -1142,7 +1178,8 @@ function list_directories_and_files() {
     ((index--))
 }
 
-function interactive_core() {
+function interactive_core()
+{
     export mode="$1"
     export selected_index=1
     export selected_symbol="$MOUSE "
@@ -1273,7 +1310,8 @@ function interactive_core() {
     stty echo
 }
 
-function right_logic() {
+function right_logic()
+{
     compressed_file="$select_file"
     check_extension "$compressed_file"
     if [ "${select_file##*.}" = "img" ]; then
@@ -1314,15 +1352,18 @@ function right_logic() {
     fi
 }
 
-function copy_image() {
+function copy_image()
+{
 	cp "$DEVICE_MAPPER/$1" "/sdcard/$2.img"
 }
 
-function dd_images() {
+function dd_images()
+{
 	dd if="/sdcard/$2.img" of="$DEVICE_MAPPER/$1"
 }
 
-function ota_rw() {
+function ota_rw()
+{
     ask
 
     if [ "$A_B" = "true" ]; then
@@ -1377,7 +1418,8 @@ function ota_rw() {
     fi
 }
 
-function perform_copied_system_image() {
+function perform_copied_system_image()
+{
     ask
 
     if [ "$A_B" = "true" ]; then
@@ -1411,7 +1453,8 @@ function perform_copied_system_image() {
     fi
 }    
 
-function center_ansi() {
+function center_ansi()
+{
 	ascii_art=$1
 	lenght=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
 	echo "$ascii_art" | awk -v term_lenght="$lenght" '{
@@ -1419,7 +1462,8 @@ function center_ansi() {
 	}'
 }
 
-function print_justified() {
+function print_justified()
+{
     text="$@"
     terminal_width=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
     text_length=$(echo -n "$text" | wc -c)
@@ -1431,66 +1475,88 @@ function print_justified() {
         number_dot_length=$(echo -n "$number_dot" | wc -c)
         remaining_text_length=$(echo -n "$remaining_text" | wc -c)
 
-        left_spaces=$(( (terminal_width - number_dot_length - remaining_text_length) / 2 - 2 ))
+        left_spaces=$(( (terminal_width - number_dot_length - remaining_text_length) / 2))
         right_spaces=$(( terminal_width - left_spaces - number_dot_length - remaining_text_length ))
 
         printf "%s%${left_spaces}s%s%${right_spaces}s\n" "$number_dot" "" "$remaining_text" ""
 
     elif echo "$text" | grep -q '^[a-zA-Z]'; then
-        left_spaces=$(( (terminal_width - text_length) / 2 - 2 ))
+        left_spaces=$(( (terminal_width - text_length) / 2))
         right_spaces=""
 
         printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text" ""
 
     else
         left_spaces=$(( (terminal_width - text_length) / 2 - 2 ))
-        right_spaces=$(( terminal_width - left_spaces - text_length ))
+        right_spaces=""
 
         printf "%${left_spaces}s%s%${right_spaces}s\n" "" "$text" ""
     fi
 }
 
-function progresive_print() {
-  export text="$1"
-  export delay="$2"
-  while [ -n "$text" ]; do
-    export char="${text:0:1}"
-    if [ "$char" = " " ]; then
-      printf "%s" "$char"
-    else
-      printf "%s" "$char"
-      sleep "$delay"
-    fi
-    text="${text:1}"
-  done
-  printf "\n"
+function progressive_print()
+{
+    export text="$1"
+    export delay="$2"
+    export length=${#text}
+
+    while [ $length -gt 0 ]; do
+        export char="${text:0:1}"
+        if [ "$char" = " " ]; then
+            printf "%s" "$char"
+        else
+            printf "%s" "$char"
+            sleep "$delay"
+        fi
+        text="${text:1}"
+        length=${#text}
+    done
+    printf "\n"
 }
 
-function clearly() {
+function clearly()
+{
 	clear "$@"
 }
 
-function GSIRW() {
+function annuller()
+{
+	sleepy()
+	{
+		: # Do Nothing
+	}
+	progressive_print()
+    {
+		echo "$1"
+	}
+	clearly()
+    {
+		: # Do Nothing
+	}
+}    
+
+function GSIRW()
+{
     clear
     stty -echo
-    progresive_print "$(print_justified "Initialized the great wonder created by TheDarkDeath788")" 0.05
+    progressive_print "$(print_justified "Initialized the great wonder created by Dark")" 0.05
 
-    sleepy 3
+    sleepy 2
     clearly
-    progresive_print "$(print_justified "Identifying device parameters in case of emergency")" 0.05
+    progressive_print "$(print_justified "Identifying device parameters in case of emergency")" 0.05
     identify_device
 
-    sleepy 3
+    sleepy 2
     clearly
-    progresive_print "$(print_justified "Loading secretly stored settings")" 0.05
+    progressive_print "$(print_justified "Loading secretly stored settings")" 0.05
     print_justified "$(load_saved_configurations)"
 
     sleepy 2
     clearly
-    progresive_print "
+    progressive_print "
     $(center_ansi "$LOGO")
     " 0.00001
-    progresive_print "$(print_justified "AIO (ALL IN ONE) GSI / OTA  -RW  ")" 0.2
+    progressive_print "$(print_justified "AIO (ALL IN ONE) GSI / OTA  -RW  ")" 0.2
     sleepy 1
     echo ""
     print_justified "Select an option:"
@@ -1509,7 +1575,7 @@ function GSIRW() {
     sleepy 1
     print_justified "7.Manually configure options."
     sleepy 1
-    print_justified "8.Exit GSI-rw."
+    print_justified "0.Exit GSI-rw."
     sleepy 1
     echo -n "$(print_justified "Choose one of the 8 options: ")"
     stty echo
@@ -1554,40 +1620,32 @@ function GSIRW() {
             stty echo
             configure_manually
             ;;
-        8)
+        0)
             echo
-            progresive_print "$(print_justified "Why did you want to enter the GSIRW if you are ultimately going to leave?")" 1
+            progressive_print "$(print_justified "Why did you want to enter the GSIRW if you are ultimately going to leave?")" 1
             exit
             ;;
         *)
             print_justified "Invalid option."
             read -rsn1
-            GSIRW "$@"
+            annuller
+            GSIRW
     esac
 }
 
-function MAIN () {
-
-    sleepy() {
+function MAIN ()
+{
+	sleepy()
+{
         sleep "$@"
     }
 
     case "$1" in
         --fast | -f)
-            sleepy() {
-                : # Do Nothing
-            }
-            progresive_print() {
-                echo "$1"
-            }
-            clearly() {
-                : # Do Nothing
-            }
-            ;;
-        *)
+            annuller
             ;;
     esac
-
+    
     default
     SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
     SHORTCUTS="$(echo "$SHORTCUTS" | sed -e 's/[[:space:]]\+/ /g')"
@@ -1613,14 +1671,8 @@ function MAIN () {
     export DEVICE_NAME=$(getprop ro.product.system.device)
     export DEVICE_MODEL=$(getprop ro.product.system.model)
     export SOC=$(getprop ro.product.board)
-
     export SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-
-    check_root_permissions
-
     export _GSIRW_CALL="$(basename "$0")"
-
-    exec_as_root "$1"
 
     case $_GSIRW_CALL in
         "gsirw_proces_image")
@@ -1655,54 +1707,116 @@ function MAIN () {
     esac
 }
 
-function DEBUGER() {
-    check_root_permissions
-    exec_as_root "$@"
-    generate_date_message
+Quiero que los comandos y su output también se guarde en un 4 y 5 archivo
+
+function DEBUGER()
+{
+    [ -n "$TERMUX_VERSION" ] && export HOME="/data/data/com.termux/files/home"
+    [ -z "$TERMUX_VERSION" ] && export HOME="/mnt"
+    [ -w "/cache" ] && CACHE=true
     
-    LOG_FILE="/cache/gsirw-$day.log"
-	DEBUG_LOG="/cache/debug_log_$day.log"
-	HIDDEN_ENTRIES="/cache/hidden_$day.log"
-	
-	if [ "$DEBUG" = "true" ]; then
-		hider="$HIDDEN_ENTRIES"
-    else
-        hider=/dev/null
-    fi
+    generate_date_message
+    LOG_FILE="$HOME/gsirw-$day.log"
+	DEBUG_LOG="$HOME/debug_log_$day.log"
+	HIDDEN_ENTRIES="$HOME/hidden_$day.log"
+	hider="$HIDDEN_ENTRIES"
     
     if [ "$DEBUG" = "true" ]; then
       echo "DEBUG Mode Is Enabled"
-      rm -rf /cache/gsirw-*.log
-      rm -rf /cache/debug_log_*.log
-      rm -rf /cache/hidden_*.log
+      rm -f $HOME/gsirw-*.log
+      rm -f $HOME/debug_log_*.log
+      rm -f $HOME/hidden_*.log
+      [ "$CACHE" = true ] && rm -rf /cache/gsirw-*.log
     
       echo "Script started at $day" >> "$LOG_FILE"
       echo "Arguments passed: $0" >> "$LOG_FILE"
     
+      set +e > "$DEBUG_LOG" 2>&1
       set -x > "$DEBUG_LOG" 2>&1
     
-      debug_command() {
-        local cmd="$1"
+      debug_command()
+      {
+        export cmd="$1"
         echo "Executing command: $cmd" >> "$LOG_FILE"
         eval "$cmd" 2>&1 | tee -a "$LOG_FILE"
         echo "Command finished: $cmd" >> "$LOG_FILE"
       }
 
       debug_command "MAIN $@"
-    
+      
       set +x > /dev/tty 2>&1
-      cat "$DEBUG_LOG" >> "$LOG_FILE"
-      cat "$HIDDEN_ENTRIES" >> "$LOG_FILE"
-      rm -rf "$HIDDEN_ENTRIES"
-      rm -rf "$DEBUG_LOG"
-    
+      set -e > /dev/tty 2>&1
+      
+      {
+    	  echo
+    	  echo
+     	 echo "Debug Log"
+   	   cat "$DEBUG_LOG"
+    	  echo
+     	 echo
+     	 echo "Hidden Entries"
+     	 cat "$HIDDEN_ENTRIES"
+      } >> "$LOG_FILE"
+      
+      rm -f $HOME/debug_log_*.log
+      rm -f $HOME/hidden_*.log
+      
+      {
+    	  echo
+     	 echo
+    	  echo "Every Flag Used in Script"
+    	  export
+    	  echo
+   	   echo
+      } >> "$LOG_FILE"
+      generate_date_message
       echo "Script finished at $day" >> "$LOG_FILE"
+      [ "$CACHE" = true ] && cat "$LOG_FILE" > "/cache/gsirw-$day.log"
+      echo "
+      
+      "
+      echo "Log file at \"$LOG_FILE\""
+      echo
+      [ "$CACHE" = true ] && echo "And also saved at \"/cache/gsirw-$day.log\""
     else
       hider=/dev/null
       MAIN "$@"
     fi
 }
 
+function CHECK_ROOT()
+{
+    if [ -n "$TERMUX_VERSION" ]; then
+        echo "Preparing termux for a suitable environment." | tee
+        {
+            echo "Updating packages" | tee
+            apt update -y | tee
+            echo "Packages Updated..." | tee
+            clear
+            echo "Upgrading Packages" | tee
+            apt upgrade -y | tee
+            echo "Packages Upgraded..." | tee
+            clear
+            echo "Installing packages and script requirements." | tee
+            REQUIRED_PACKAGES=("android-tools" "e2fsprogs" "mount-utils" "tsu" "xz-utils" "zip" "unzip" "lz4" "tar")
+            for package in "${REQUIRED_PACKAGES[@]}"; do
+                if ! dpkg -s $package >/dev/null 2>&1; then
+                    echo "Installing $package..." | tee
+                    apt install $package -y | tee
+                else
+                    echo "$package is already installed." | tee
+                fi
+            done
+
+            echo "The environment is now prepared." | tee
+            sleep 1
+        }
+    fi
+    check_root_permissions
+    exec_as_root "$@"
+    DEBUGER "$@"
+}
+
 DEBUG=true
 
-DEBUGER "$@"
+CHECK_ROOT "$@"
