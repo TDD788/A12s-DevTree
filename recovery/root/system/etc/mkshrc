@@ -84,11 +84,11 @@ InitFox() {
     NC=$'\x1b[0m'
     
     if [ "$(id -u)" -eq 0 ]; then
-   	 PS1='# '
-	else
-    	PS1='$ '
-	fi
-	export PS4='[$(date +%s.%N)] '
+        PS1='# '
+    else
+        PS1='$ '
+    fi
+    export PS4='[$(date +%s.%N)] '
 
     local e=$?
     local new_ps1=''
