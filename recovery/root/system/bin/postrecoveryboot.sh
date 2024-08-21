@@ -9,14 +9,11 @@ gsitouchfix() {
 }
 
 monitor_events() {
-    while true; do
-        getevent | while read event2; do
-            case "$event2" in
-                *"/dev/input/event2: 0001 0074 00000000"*)
-                    gsitouchfix
-                    ;;
-            esac
-        done
+    getevent | while read event2
+    do
+        if [[ "$event2" == *"/dev/input/event2: 0001 0074 00000000"* ]]; then
+            gsitouchfix
+        fi
     done
 }
 
