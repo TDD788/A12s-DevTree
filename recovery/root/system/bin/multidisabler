@@ -5,7 +5,7 @@ init() {
       export ANDROID_ROOT="/mnt/system_mount"
       OUTFD="$2"
       ZIPFILE="$3"
-      DEBUG=true
+      DEBUG=false
       ZIPNAME=${ZIPFILE##*/}
       scr_wdth=$(echo "$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7) - 1" | bc)
       if readlink /proc/$$/fd/$OUTFD 2>$hider | grep /tmp >$hider; then
@@ -498,26 +498,22 @@ MAIN() {
   major="${os%%.*}"
   bl=$(getprop ro.boot.bootloader)
   dp=$(getprop ro.boot.dynamic_partitions)
-
   fw="${bl:$((${#bl} - 4)):4}"
   device="${bl:0:$((${#bl} - 8))}"
-  mft=$(getprop ro.product.manufacturer)
+  mtf=$(getprop ro.product.manufacturer)
 
   if [ "$mtf" != "samsung" ]; then
     progresive_print " - Device appears not to be made by Samsung."
-    progresive_print " - Your manufacturer is $mft."
+    progresive_print " - Your manufacturer is $mtf."
+    fatal=true
   elif [ -z "$device" ]; then
     progresive_print " - Could not determine device model."
     progresive_print " - Your device model is $device."
+    fatal=true
   elif [ "$major" -lt 9 ]; then
     progresive_print " - This software is incompatible with Android $major."
     progresive_print " - Your software version is $major."
-  elif ! grep -q "knox" /system/build.prop 2>$hider && \
-       ! grep -q "knox" /system_root/system/build.prop 2>$hider && \
-       ! grep -q "knox" /mnt/system/build.prop 2>$hider && \
-       ! grep -q "knox" /mnt/system/system.build.prop 2>$hider; then
-       progresive_print " - Installed ROM doesn't appear to be OneUI."
-       fatal=true
+    fatal=true
   fi
 
   if [ "$fatal" = true ]; then
