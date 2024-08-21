@@ -4,18 +4,42 @@ if [ -f /sbin/from_fox_sd.sh ]; then
    source /sbin/from_fox_sd.sh
 fi
 
+is_screen_on() {
+    brightness=$(cat /sys/class/backlight/*/brightness)
+    if [ "$brightness" -gt 0 ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 screentouchfix() {
     echo check_connection > /sys/class/sec/tsp/cmd && cat /sys/class/sec/tsp/cmd_result
 }
+
+previous_screen_state=1
 
 monitor_events() {
     getevent | while read event2
     do
         if [[ "$event2" == *"/dev/input/event2: 0001 0074 00000000"* ]]; then
-            screentouchfix
+            if is_screen_on; then
+                current_screen_state=0
+            else
+                current_screen_state=1
+            fi
+            if [ "$previous_screen_state" -eq 1 ] && [ "$current_screen_state" -eq 0 ]; then
+                screentouchfix
+            fi
+            previous_screen_state=$current_screen_state
         fi
     done
 }
 
-screentouchfix
+if is_screen_on; then
+    previous_screen_state=0
+else
+    previous_screen_state=1
+fi
+
 monitor_events &
