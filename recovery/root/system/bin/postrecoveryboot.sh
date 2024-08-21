@@ -6,11 +6,7 @@ fi
 
 is_screen_on() {
     brightness=$(cat /sys/class/backlight/*/brightness)
-    if [ "$brightness" -gt 0 ]; then
-        return 0
-    else
-        return 1
-    fi
+    [ "$brightness" -gt 0 ]
 }
 
 screentouchfix() {
@@ -28,9 +24,11 @@ monitor_events() {
             else
                 current_screen_state=1
             fi
+
             if [ "$previous_screen_state" -eq 1 ] && [ "$current_screen_state" -eq 0 ]; then
                 screentouchfix
             fi
+            
             previous_screen_state=$current_screen_state
         fi
     done
