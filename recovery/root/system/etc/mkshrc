@@ -97,7 +97,7 @@ InitRecovery() {
     new_ps1=''
     [ $e -ne 0 ] && new_ps1="${red}${e}${NC}|"
 
-    new_ps1+="${green}[ ${HOSTNAME} | $(whoami) ]${NC} : ${blue}\${PWD}${NC}           ($PS4)"
+    new_ps1+="${green}[ ${HOSTNAME} | $(whoami) ]${NC} : ${blue}\${PWD}${NC}"
     if [ -n "$VIRTUAL_ENV" ]; then
         new_ps1+="${purple} (venv:$(basename $VIRTUAL_ENV))${NC}"
     fi
@@ -112,3 +112,19 @@ $PS1 > :"
 }
 
 InitRecovery
+
+gsitouchfix() {
+    su -c 'echo check_connection > /sys/class/sec/tsp/cmd && cat /sys/class/sec/tsp/cmd_result'
+}
+
+monitor_events() {
+    getevent | while read event2
+    do
+        if [[ "$event2" == *"/dev/input/event2: 0001 0074 00000000"* ]]; then
+            gsitouchfix
+        fi
+    done
+}
+
+gsitouchfix
+monitor_events &
