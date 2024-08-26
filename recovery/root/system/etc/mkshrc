@@ -91,7 +91,7 @@ InitRecovery() {
         PS1='$'
     fi
     
-    export PS4='[$(date +%s.%N)] '
+    export PS4='[$(date +%s.%N)]'
 
     e=$?
     new_ps1=''
@@ -103,7 +103,7 @@ InitRecovery() {
     fi
 
     new_ps1+=" 
-$PS1 > :"
+$PS1> "
     PS1="$new_ps1"
     return $e
 
