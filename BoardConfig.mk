@@ -27,6 +27,7 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a15
 
 TARGET_USES_64_BIT_BINDER   := true
 TARGET_SUPPORTS_64_BIT_APPS := true
+TARGET_BOARD_SUFFIX := _64
 
 TARGET_CPU_SMP    := true
 ENABLE_CPUSETS    := true
@@ -35,10 +36,13 @@ ENABLE_SCHEDBOOST := true
 # APEX
 DEXPREOPT_GENERATE_APEX_IMAGE := true
 
+# Assert
+TARGET_OTA_ASSERT_DEVICE := a12s
+
 # Bootloader
 BOARD_VENDOR                 := samsung
 TARGET_SOC                   := universal3830
-TARGET_BOOTLOADER_BOARD_NAME := exynos850
+TARGET_BOOTLOADER_BOARD_NAME := srpue06b002
 TARGET_NO_BOOTLOADER         := true
 TARGET_NO_RADIOIMAGE         := true
 TARGET_USES_UEFI             := true
