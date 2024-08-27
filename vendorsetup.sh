@@ -19,8 +19,8 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_57"
-export FOX_VARIANT="AOSP"
+export FOX_VERSION="R12.1_60"
+export FOX_VARIANT="ONEUI"
 
 # Binary and tool settings
 export FOX_CUSTOM_BINS_TO_SDCARD=2
