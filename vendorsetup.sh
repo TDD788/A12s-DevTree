@@ -18,7 +18,7 @@ export LC_ALL="C"
 # General configurations
 echo "General Configurations"
 export OF_MAINTAINER="BladeTN"
-export FOX_BUILD_TYPE="Stable"
+export FOX_BUILD_TYPE="TEST"
 export FOX_VERSION="R12.1_1"
 export FOX_VARIANT="ONEUI"
 
