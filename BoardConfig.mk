@@ -36,9 +36,6 @@ ENABLE_SCHEDBOOST := true
 # APEX
 DEXPREOPT_GENERATE_APEX_IMAGE := true
 
-# Assert
-TARGET_OTA_ASSERT_DEVICE := a12s
-
 # Bootloader
 BOARD_VENDOR                 := samsung
 TARGET_SOC                   := universal3830
