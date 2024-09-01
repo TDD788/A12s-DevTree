@@ -26,6 +26,10 @@ function default()
 	export SORT_FILE_TYPE="name_asc"
 	identify_device
 	export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
+        declare -a previous_directories
+        declare -a previous_files
+        declare -a previous_shortcuts
+        previous_directory=""
 	export SHORTCUTS="DATA /data
 	SDCARD /sdcard
 	"
@@ -1100,18 +1104,34 @@ function list_directories_and_files()
     export extensions="${FILE_EXTENSIONS:-img|gzip|xz|tar|zip}"
     export sort_dir_type="${SORT_DIR_TYPE:-name_asc}"
     export sort_file_type="${SORT_FILE_TYPE:-name_asc}"
-    IFS=$'\n'
-    export directories
-    export files    
     export index=1
 
+    if [[ "$directory" == "$previous_directory" ]]; then
+        for shortcut in "${previous_shortcuts[@]}"; do
+            echo "$index~[S]~$shortcut"
+            ((index++))
+        done
+        for dir in "${previous_directories[@]}"; do
+            echo "$index~[D]~$dir"
+            ((index++))
+        done
+        for file in "${previous_files[@]}"; do
+            echo "$index~[F]~$file"
+            ((index++))
+        done
+        ((index--))
+        return 0
+    fi
+
+    IFS=$'\n'
+
     case "$sort_dir_type" in
-        name_asc) directories=($(ls -d "$directory"/*/ 2>>"$hider" | sort));;
-        name_desc) directories=($(ls -d "$directory"/*/ 2>>"$hider" | sort -r));;
-        date_asc) directories=($(ls -dt "$directory"/*/ 2>>"$hider"));;
-        date_desc) directories=($(ls -dt "$directory"/*/ 2>>"$hider" | tac));;
-        size_asc) directories=($(ls -ldS "$directory"/*/ 2>>"$hider" | awk '{print $9}'));;
-        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>>"$hider" | awk '{print $9}'));;
+        name_asc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort));;
+        name_desc) directories=($(ls -d "$directory"/*/ 2>/dev/null | sort -r));;
+        date_asc) directories=($(ls -dt "$directory"/*/ 2>/dev/null));;
+        date_desc) directories=($(ls -dt "$directory"/*/ 2>/dev/null | tac));;
+        size_asc) directories=($(ls -ldS "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
+        size_desc) directories=($(ls -ldSr "$directory"/*/ 2>/dev/null | awk '{print $9}'));;
         *) echo "Invalid sort type for directories"; return 1;;
     esac
 
@@ -1126,6 +1146,7 @@ function list_directories_and_files()
         *) echo "Invalid sort type for files"; return 1;;
     esac
 
+    previous_shortcuts=()
     if [ "$UP_SHORTCUTS" = true ]; then
         for line in $SHORTCUTS; do
             line="${line#"${line%%[![:space:]]*}"}"
@@ -1135,6 +1156,7 @@ function list_directories_and_files()
             shortcut_dir=${line#* }
             if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
                 echo "$index~[S]~$shortcut_name~$shortcut_dir"
+                previous_shortcuts+=("$shortcut_name~$shortcut_dir")
                 ((index++))
             else
                 echo "Invalid shortcut: $line"
@@ -1142,19 +1164,23 @@ function list_directories_and_files()
         done
     fi
 
+    previous_directories=()
     for dir in "${directories[@]}"; do
         dir=${dir%*/}
         dir_name=${dir##*/}
         echo "$index~[D]~$dir_name"
+        previous_directories+=("$dir_name")
         ((index++))
     done
 
+    previous_files=()
     for file in "${files[@]}"; do
         file_extension="${file##*.}"
         case "|$extensions|" in
             *"|$file_extension|"*)
                 file_name=${file##*/}
                 echo "$index~[F]~$file_name"
+                previous_files+=("$file_name")
                 ((index++))
                 ;;
         esac
@@ -1169,6 +1195,7 @@ function list_directories_and_files()
             shortcut_dir=${line#* }
             if [ -n "$shortcut_name" ] && [ "$shortcut_name" != "." ] && [ -n "$shortcut_dir" ] && [ "$shortcut_dir" != "." ]; then
                 echo "$index~[S]~$shortcut_name~$shortcut_dir"
+                previous_shortcuts+=("$shortcut_name~$shortcut_dir")
                 ((index++))
             else
                 echo "Invalid shortcut: $line"
@@ -1176,6 +1203,8 @@ function list_directories_and_files()
         done
     fi
     ((index--))
+
+    previous_directory="$directory"
 }
 
 function interactive_core()
