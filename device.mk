@@ -3,6 +3,9 @@ LOCAL_PATH := device/samsung/a12s
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
+# LibUUID
+PRODUCT_PACKAGES += libuuid
+
 # Fastbootd
 PRODUCT_PACKAGES += \
     android.hardware.fastboot@1.1-impl-mock \
@@ -11,8 +14,8 @@ PRODUCT_PACKAGES += \
 
 # Props
 PRODUCT_PROPERTY_OVERRIDES +=\
-	ro.fastbootd.available=true
-	ro.boot.dynamic_partitions=true 
+    ro.fastbootd.available=true
+    ro.boot.dynamic_partitions=true 
 	
 # TWRP Fastbootd
 TW_INCLUDE_FASTBOOTD := true
