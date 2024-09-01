@@ -40,6 +40,7 @@ export FOX_BUILD_DEVICE="a12s, a12sub, SM-A127M, SM-A127F"
 export_build_vars() {
     echo -e "${GREEN}Exporting build vars from the a12s tree${RESET}"
     # Important build flags
+    export FOX_VANILLA_BUILD=1
     export FOX_DELETE_AROMAFM=0
     export OF_CHECK_OVERWRITE_ATTEMPTS=1
     export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
@@ -48,6 +49,7 @@ export_build_vars() {
     export OF_USE_SAMSUNG_HAPTICS=1
     export OF_USE_TWRP_SAR_DETECT=1
     export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
+    export FOX_REPLACE_TOOLBOX_GETPROP=1
     export OF_USE_SYSTEM_FINGERPRINT=1
     export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/MagDelta.apk"
 
