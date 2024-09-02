@@ -1736,8 +1736,6 @@ function MAIN ()
     esac
 }
 
-Quiero que los comandos y su output también se guarde en un 4 y 5 archivo
-
 function DEBUGER()
 {
     [ -n "$TERMUX_VERSION" ] && export HOME="/data/data/com.termux/files/home"
