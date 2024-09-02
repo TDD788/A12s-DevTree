@@ -42,7 +42,7 @@ TARGET_SOC                   := universal3830
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER         := true
 TARGET_NO_RADIOIMAGE         := true
-TARGET_USES_UEFI             := true
+TARGET_USES_UEFI             := false
 TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
@@ -142,7 +142,7 @@ BOARD_USES_VENDOR_DLKMIMAGE     := true
 BOARD_USES_SYSTEM_DLKMIMAGE     := true
 
 # TWRP
-TW_DEVICE_VERSION    := Last-On-Resource
+TW_DEVICE_VERSION    := LTS
 TW_THEME             := portrait_hdpi
 TW_FRAMERATE         := 60
 TARGET_SCREEN_WIDTH  := 720
@@ -157,7 +157,7 @@ TW_DEFAULT_BRIGHTNESS         := 153
 # TWRP Settings
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
 TW_EXCLUDE_DEFAULT_USB_INIT := true
-TW_NO_REBOOT_BOOTLOADER     := false
+TW_NO_REBOOT_BOOTLOADER     := true
 TW_USE_TOOLBOX              := true
 TW_INPUT_BLACKLIST          := hbtp_vm
 TW_HAS_DOWNLOAD_MODE        := true
