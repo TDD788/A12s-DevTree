@@ -27,7 +27,7 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a15
 
 TARGET_USES_64_BIT_BINDER   := true
 TARGET_SUPPORTS_64_BIT_APPS := true
-TARGET_BOARD_SUFFIX := _64
+TARGET_BOARD_SUFFIX         := _64
 
 TARGET_CPU_SMP    := true
 ENABLE_CPUSETS    := true
@@ -39,7 +39,7 @@ DEXPREOPT_GENERATE_APEX_IMAGE := true
 # Bootloader
 BOARD_VENDOR                 := samsung
 TARGET_SOC                   := universal3830
-TARGET_BOOTLOADER_BOARD_NAME := srpue06b002
+TARGET_BOOTLOADER_BOARD_NAME := exynos850
 TARGET_NO_BOOTLOADER         := true
 TARGET_NO_RADIOIMAGE         := true
 TARGET_USES_UEFI             := true
@@ -71,7 +71,7 @@ TARGET_KERNEL_ARCH           := arm64
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-TARGET_PREBUILT_KERNEL        := $(DEVICE_PATH)/prebuilt/twrp-kernel
+TARGET_PREBUILT_KERNEL        := $(DEVICE_PATH)/prebuilt/twrp-uc-kernel
 TARGET_PREBUILT_DTB           := $(DEVICE_PATH)/prebuilt/twrp-dtb
 BOARD_INCLUDE_DTB_IN_BOOTIMG  := true
 BOARD_PREBUILT_DTBOIMAGE      := $(DEVICE_PATH)/prebuilt/twrp-dtbo
