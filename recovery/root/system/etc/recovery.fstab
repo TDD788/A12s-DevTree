@@ -7,11 +7,4 @@ odm                              /odm                 ext4          ro,barrier=1
 /dev/block/by-name/metadata      /metadata           ext4          defaults    noatime,nosuid,nodev,discard                     wait,formattable,wrappedkey,first_stage_mount
 /dev/block/by-name/userdata      /data               f2fs          noatime,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,inlinecrypt	latemount,wait,check,quota,reservedsize=128M,fileencryption=aes-256-xts:aes-256-cts:v2,checkpoint=fs,length=-20480,keydirectory=/metadata/vold/metadata_encryption
 /dev/block/by-name/misc          /misc               emmc          defaults    recoveryonly                                     defaults
-/dev/block/by-name/cache         /cache              ext4          defaults
-/dev/block/by-name/efs           /efs                ext4          defaults                                                     
-/dev/block/by-name/sec_efs       /sec_efs            ext4          defaults
-/dev/block/by-name/boot          /boot               emmc          defaults
-/dev/block/by-name/recovery      /recovery           emmc          defaults
-/dev/block/by-name/vbmeta_system /vbmeta_system      emmc          defaults
-/dev/block/by-name/vbmeta        /vbmeta             emmc          defaults
-/dev/block/by-name/up_param      /up_param           emmc          defaults
+
