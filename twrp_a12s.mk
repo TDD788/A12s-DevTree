@@ -22,6 +22,7 @@ PRODUCT_RELEASE_NAME := a12s
 # Inherit from common AOSP config
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
 
 # Inherit some common TWRP stuff.
 $(call inherit-product, vendor/twrp/config/common.mk)
@@ -31,6 +32,7 @@ $(call inherit-product, $(DEVICE_PATH)/device.mk)
 
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
++ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, motd.d)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, cgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, fixparts)
