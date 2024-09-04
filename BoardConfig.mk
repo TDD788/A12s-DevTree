@@ -91,7 +91,6 @@ BOARD_CUSTOM_BOOTIMG_MK      := $(DEVICE_PATH)/prebuilt/mkboot/bootimg.mk
 BOARD_FLASH_BLOCK_SIZE                 := 131072 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_BOOTIMAGE_PARTITION_SIZE         := 46137344
 BOARD_RECOVERYIMAGE_PARTITION_SIZE     := 55574528
-BOARD_HAS_LARGE_FILESYSTEM             := true
 BOARD_SYSTEMIMAGE_PARTITION_TYPE       := ext4
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE     := ext4
 BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE   := f2fs
@@ -143,6 +142,8 @@ BOARD_USES_SYSTEM_DLKMIMAGE     := true
 TW_DEVICE_VERSION    := LTS-UC
 TW_THEME             := portrait_hdpi
 TW_FRAMERATE         := 60
+TW_Y_OFFSET          := 48
+TW_H_OFFSET          := -48
 TARGET_SCREEN_WIDTH  := 720
 TARGET_SCREEN_HEIGHT := 1600
 
@@ -154,6 +155,7 @@ TW_DEFAULT_BRIGHTNESS         := 153
 
 # TWRP Settings
 TARGET_SYSTEM_PROP := $(DEVICE_PATH)/system.prop
+TW_NO_LEGACY_PROPS          := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER     := true
 TW_USE_TOOLBOX              := true
@@ -164,13 +166,14 @@ TW_USE_NEW_MINADBD          := true
 TARGET_USES_MKE2FS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
-
-# Making the recovery.img smaller
-BOARD_HAS_NO_REAL_SDCARD := true
-RECOVERY_SDCARD_ON_DATA  := true
+TW_INCLUDE_NTFS_3G          := true
+TW_SKIP_COMPATIBILITY_CHECK := true
 
 # System as root
-BOARD_SUPPRESS_SECURE_ERASE := true
+BOARD_HAS_LARGE_FILESYSTEM    := true
+BOARD_HAS_NO_SELECT_BUTTON    := true
+BOARD_SUPPRESS_SECURE_ERASE   := true
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 BOARD_ROOT_EXTRA_FOLDERS += \
 	cache \
 	carrier \
@@ -182,9 +185,22 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 	omr \
 	optics \
 	spu \
-	bin \
 	sys \
 	prism
+
+# Making the recovery.img smaller with
+# LZMA Compression
+LZMA_COMPRESSION := -9
+BOARD_RAMDISK_USE_LZMA := true
+LZMA_RAMDISK_TARGETS := recovery
+
+# Optimize ramdisk size
+TW_INTERNAL_STORAGE_PATH        := "/data/media/0"
+TW_INTERNAL_STORAGE_MOUNT_POINT := "data"
+TW_EXTERNAL_STORAGE_PATH        := "/external_sd"
+TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
+BOARD_HAS_NO_REAL_SDCARD := true
+RECOVERY_SDCARD_ON_DATA  := true
 
 # TWRP flags selected by TDD788
 TW_INCLUDE_REPACKTOOLS   := true
@@ -194,6 +210,8 @@ TW_INCLUDE_RESETPROP     := true
 TW_SCREEN_BLANK_ON_BOOT  := true
 TWRP_INCLUDE_LOGCAT      := true
 TARGET_USES_LOGD         := true
+TW_FORCE_CPUINFO_FOR_DEVICE_ID := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/kernel/config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file"
 
 # Exclude from backup
 TW_BACKUP_EXCLUSIONS += \
