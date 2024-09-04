@@ -71,11 +71,11 @@ TARGET_KERNEL_ARCH           := arm64
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-    TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/twrp-kernel
-    TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/twrp-dtb
+    TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel.gz
+    TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb
     BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
     BOARD_INCLUDE_DTB_IN_BOOTIMG := true
-    BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/twrp-dtbo
+    BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo
     BOARD_KERNEL_SEPARATED_DTBO := true
 endif
 
