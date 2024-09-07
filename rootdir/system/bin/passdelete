@@ -1,4 +1,4 @@
-#!/sbin/sh
+#!/bin/sh
 
 OUTFD=$2
 SDAT=/data/system

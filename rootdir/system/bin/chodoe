@@ -1,0 +1,163 @@
+#!/bin/sh
+###########################################
+# Last Updated : 2024, September 07
+###########################################
+#
+
+
+print() {
+  echo "$1"
+}
+
+TMP="/tmp"
+SYSTEM="$(dirname "$ZIPFILE")/system.img"
+PRODUCT="$(dirname "$ZIPFILE")/product.img"
+VENDOR="$(dirname "$ZIPFILE")/vendor.img"
+SYSTEM_EXT="$(dirname "$ZIPFILE")/system_ext.img"
+
+print "ENVIRONMENT SETUP"
+
+print "| Unmounting System"
+umount /system 2>/dev/null
+umount /system_root 2>/dev/null
+umount /system_ext 2>/dev/null
+umount /product 2>/dev/null
+umount /vendor 2>/dev/null
+
+active_slot=$(getprop ro.boot.slot_suffix)
+dynamic=$(getprop ro.boot.dynamic_partitions)
+
+print "| Detecting Partition Layout"
+
+if [ "$dynamic" = "true" ]; then
+  print "| Dynamic partition detected"
+  
+  if [ ! -z "$active_slot" ]; then
+    system_block=$(ls -l /dev/block/mapper | grep system | grep -o '/dev/block/dm[^ ]*')$active_slot
+    product_block=$(ls -l /dev/block/mapper | grep product | grep -o '/dev/block/dm[^ ]*')$active_slot
+    vendor_block=$(ls -l /dev/block/mapper | grep vendor | grep -o '/dev/block/dm[^ ]*')$active_slot
+    system_ext_block=$(ls -l /dev/block/mapper | grep system_ext | grep -o '/dev/block/dm[^ ]*')$active_slot
+  else
+    system_block=$(ls -l /dev/block/mapper | grep system | grep -o '/dev/block/dm[^ ]*')
+    product_block=$(ls -l /dev/block/mapper | grep product | grep -o '/dev/block/dm[^ ]*')
+    vendor_block=$(ls -l /dev/block/mapper | grep vendor | grep -o '/dev/block/dm[^ ]*')
+    system_ext_block=$(ls -l /dev/block/mapper | grep system_ext | grep -o '/dev/block/dm[^ ]*')
+  fi
+
+  print "| System Block: $system_block"
+  blockdev --setrw $system_block
+
+  [ ! -z "$product_block" ] && print "| Product Block: $product_block" && blockdev --setrw $product_block
+  [ ! -z "$vendor_block" ] && print "| Vendor Block: $vendor_block" && blockdev --setrw $vendor_block
+  [ ! -z "$system_ext_block" ] && print "| System_Ext Block: $system_ext_block" && blockdev --setrw $system_ext_block
+
+else
+  if [ ! -z "$active_slot" ]; then
+    system_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*system' | cut -f -1 | head -1)$active_slot
+    product_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*product' | cut -f -1 | head -1)$active_slot
+    vendor_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*vendor' | cut -f -1 | head -1)$active_slot
+  else
+    system_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*system' | cut -f -1 | head -1)
+    product_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*product' | cut -f -1 | head -1)
+    vendor_block=$(cat /etc/recovery.fstab | grep -o '/dev/[^ ]*vendor' | cut -f -1 | head -1)
+  fi
+
+  print "| System Block: $system_block"
+  [ ! -z "$product_block" ] && print "| Product Block: $product_block"
+  [ ! -z "$vendor_block" ] && print "| Vendor Block: $vendor_block"
+fi
+
+sleep 0.5
+
+OLD_LD_LIB=$LD_LIBRARY_PATH
+OLD_LD_PRE=$LD_PRELOAD
+OLD_LD_CFG=$LD_CONFIG_FILE
+unset LD_LIBRARY_PATH
+unset LD_PRELOAD
+unset LD_CONFIG_FILE
+
+print " "
+print "FLASHING SYSTEM IMAGE"
+if [ -e $SYSTEM ]; then
+  if simg2img $SYSTEM $system_block; then
+    print "| System flashed as sparse image"
+  else
+    dd if=$SYSTEM of=$system_block bs=4096
+    print "| System flashed as raw image"
+  fi
+  print "| Attempt to Resize Partition"
+  blockdev --setrw $system_block
+  e2fsck -fy $system_block
+  resize2fs $system_block
+  print "| Done"
+else
+  print "| Can't find system.img"
+fi
+
+if [ ! -z "$product_block" ]; then
+  print " "
+  print "FLASHING PRODUCT IMAGE"
+  if [ -e $PRODUCT ]; then
+    if simg2img $PRODUCT $product_block; then
+      print "| Product flashed as sparse image"
+    else
+      dd if=$PRODUCT of=$product_block bs=4096
+      print "| Product flashed as raw image"
+    fi
+    print "| Attempt to Resize Partition"
+    blockdev --setrw $product_block
+    e2fsck -fy $product_block
+    resize2fs $product_block
+    print "| Done"
+  else
+    print "| Can't find product.img"
+  fi
+fi
+
+if [ ! -z "$vendor_block" ]; then
+  print " "
+  print "FLASHING VENDOR IMAGE"
+  if [ -e $VENDOR ]; then
+    if simg2img $VENDOR $vendor_block; then
+      print "| Vendor flashed as sparse image"
+    else
+      dd if=$VENDOR of=$vendor_block bs=4096
+      print "| Vendor flashed as raw image"
+    fi
+    print "| Attempt to Resize Partition"
+    blockdev --setrw $vendor_block
+    e2fsck -fy $vendor_block
+    resize2fs $vendor_block
+    print "| Done"
+  else
+    print "| Can't find vendor.img"
+  fi
+fi
+
+if [ ! -z "$system_ext_block" ]; then
+  print " "
+  print "FLASHING SYSTEM_EXT IMAGE"
+  if [ -e $SYSTEM_EXT ]; then
+    if simg2img $SYSTEM_EXT $system_ext_block; then
+      print "| System_ext flashed as sparse image"
+    else
+      dd if=$SYSTEM_EXT of=$system_ext_block bs=4096
+      print "| System_ext flashed as raw image"
+    fi
+    print "| Attempt to Resize Partition"
+    blockdev --setrw $system_ext_block
+    e2fsck -fy $system_ext_block
+    resize2fs $system_ext_block
+    print "| Done"
+  else
+    print "| Can't find system_ext.img"
+  fi
+fi
+
+sleep 1.0
+
+[ -z $OLD_LD_LIB ] || export LD_LIBRARY_PATH=$OLD_LD_LIB
+[ -z $OLD_LD_PRE ] || export LD_PRELOAD=$OLD_LD_PRE
+[ -z $OLD_LD_CFG ] || export LD_CONFIG_FILE=$OLD_LD_CFG
+
+print "| Done"

@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 
 DEVICE=$(getprop ro.product.system.device)
 

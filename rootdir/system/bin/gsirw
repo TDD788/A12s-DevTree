@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/bin/sh
 
 function generate_date_message()
 {
