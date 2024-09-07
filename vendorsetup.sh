@@ -42,7 +42,6 @@ export_build_vars() {
     # Important build flags
     export FOX_VANILLA_BUILD=1
     export FOX_DELETE_AROMAFM=0
-    export OF_CHECK_OVERWRITE_ATTEMPTS=1
     export OF_WIPE_METADATA_AFTER_DATAFORMAT=1
     export FOX_DELETE_INITD_ADDON=1  # Note: This can cause bootloops
     export FOX_ENABLE_APP_MANAGER=1
@@ -51,14 +50,14 @@ export_build_vars() {
     export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export FOX_REPLACE_TOOLBOX_GETPROP=1
     export OF_USE_SYSTEM_FINGERPRINT=1
-    export FOX_USE_SPECIFIC_MAGISK_ZIP="$PWD/device/samsung/a12s/prebuilt/su/MagDelta.apk"
+    export FOX_USE_SPECIFIC_MAGISK_ZIP="device/samsung/a12s/prebuilt/su/MagDelta.apk"
 
     # Security configurations
     export OF_ADVANCED_SECURITY=1
 
     # Screen Settings
-    export OF_STATUS_INDENT_RIGHT=48
-    export OF_STATUS_INDENT_LEFT=48
+    export OF_STATUS_INDENT_RIGHT=42
+    export OF_STATUS_INDENT_LEFT=42
     export OF_STATUS_H=88
     export OF_SCREEN_H=2400
     export OF_OPTIONS_LIST_NUM=10
@@ -76,7 +75,6 @@ export_build_vars() {
 
     # Specific features configurations
     export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-    export OF_IGNORE_LOGICAL_MOUNT_ERRORS=1
     export OF_USE_HEXDUMP=1
     export OF_ENABLE_LPTOOLS=1
     export FOX_NO_SAMSUNG_SPECIAL=0
