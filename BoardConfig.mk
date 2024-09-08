@@ -187,7 +187,7 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 
 # Making the recovery.img smaller with
 # LZMA Compression
-LZMA_COMPRESSION       := -9
+# LZMA_COMPRESSION       := -9
 BOARD_RAMDISK_USE_LZMA := true
 LZMA_RAMDISK_TARGETS   := recovery
 
