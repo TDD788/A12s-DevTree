@@ -142,19 +142,20 @@ BOARD_USES_VENDOR_DLKMIMAGE     := true
 BOARD_USES_SYSTEM_DLKMIMAGE     := true
 
 # TWRP
-TW_DEVICE_VERSION    := LTS-UC
-TW_THEME             := portrait_hdpi
-TW_FRAMERATE         := 60
-TW_Y_OFFSET          := 42
-TW_H_OFFSET          := -42
-TARGET_SCREEN_WIDTH  := 720
-TARGET_SCREEN_HEIGHT := 1600
+TW_DEVICE_VERSION     := LTS-UC
+TW_THEME              := portrait_hdpi
+TW_HAS_DOWNLOAD_MODE  := true
+TW_MTP_DEVICE         := "Galaxy MTP"
+TW_INPUT_BLACKLIST    := hbtp_vm
 
 # Screen
 TARGET_RECOVERY_PIXEL_FORMAT  := ABGR_8888
 TW_BRIGHTNESS_PATH            := /system/backlight/brightness
 TW_MAX_BRIGHTNESS             := 306
 TW_DEFAULT_BRIGHTNESS         := 153
+TW_FRAMERATE                  := 60
+TARGET_SCREEN_WIDTH           := 720
+TARGET_SCREEN_HEIGHT          := 1600
 
 # TWRP Settings
 TARGET_SYSTEM_PROP               := $(DEVICE_PATH)/system.prop
@@ -162,15 +163,11 @@ RECOVERY_GRAPHICS_USE_LINELENGTH := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER     := true
 TW_USE_TOOLBOX              := true
-TW_INPUT_BLACKLIST          := hbtp_vm
-TW_HAS_DOWNLOAD_MODE        := true
-TW_MTP_DEVICE               := "Galaxy MTP"
 TW_USE_NEW_MINADBD          := true
 TARGET_USES_MKE2FS          := true
 TW_INCLUDE_FUSE_EXFAT       := true
 TW_INCLUDE_FUSE_NTFS        := true
 TW_INCLUDE_NTFS_3G          := true
-TW_SKIP_COMPATIBILITY_CHECK := true
 
 # System as root
 BOARD_HAS_LARGE_FILESYSTEM    := true
