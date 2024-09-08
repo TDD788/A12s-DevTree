@@ -1,12 +1,12 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
 /system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
-/system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg;display="System Image";logical
+/system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg;display="System";logical
 /vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
-/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=0;flashimg;display="Vendor Image";logical
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=0;flashimg;display="Vendor";logical
 /product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
-/product_image        emmc    /dev/block/mapper/product                flags=backup=0;flashimg;display="Product Image";logical
+/product_image        emmc    /dev/block/mapper/product                flags=backup=0;flashimg;display="Product";logical
 /odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
-/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg;display="Odm Image";logical
+/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg;display="Odm";logical
 
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1
 /recovery             emmc    /dev/block/by-name/recovery              flags=display="Recovery";backup=1;flashimg=1
