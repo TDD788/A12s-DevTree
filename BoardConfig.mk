@@ -27,8 +27,6 @@ TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a15
 
 TARGET_USES_64_BIT_BINDER   := true
 TARGET_SUPPORTS_64_BIT_APPS := true
-TARGET_BOARD_SUFFIX         := _64
-
 TARGET_CPU_SMP    := true
 ENABLE_CPUSETS    := true
 ENABLE_SCHEDBOOST := true
@@ -158,8 +156,8 @@ TARGET_SCREEN_WIDTH           := 720
 TARGET_SCREEN_HEIGHT          := 1600
 
 # TWRP Settings
-TARGET_SYSTEM_PROP               := $(DEVICE_PATH)/system.prop
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
+TARGET_SYSTEM_PROP                := $(DEVICE_PATH)/system.prop
+RECOVERY_GRAPHICS_USE_LINELENGTH  := true
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_NO_REBOOT_BOOTLOADER     := true
 TW_USE_TOOLBOX              := true
@@ -189,9 +187,9 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 
 # Making the recovery.img smaller with
 # LZMA Compression
-LZMA_COMPRESSION := -9
+LZMA_COMPRESSION       := -9
 BOARD_RAMDISK_USE_LZMA := true
-LZMA_RAMDISK_TARGETS := recovery
+LZMA_RAMDISK_TARGETS   := recovery
 
 # Optimize ramdisk size
 TW_INTERNAL_STORAGE_PATH        := "/data/media/0"
@@ -209,8 +207,8 @@ TW_INCLUDE_RESETPROP     := true
 TW_SCREEN_BLANK_ON_BOOT  := true
 TWRP_INCLUDE_LOGCAT      := true
 TARGET_USES_LOGD         := true
-TW_FORCE_CPUINFO_FOR_DEVICE_ID := true
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/sys/kernel/config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file"
+TW_FORCE_CPUINFO_FOR_DEVICE_ID   := true
+TARGET_USE_CUSTOM_LUN_FILE_PATH  := "/sys/kernel/config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file"
 
 # Exclude from backup
 TW_BACKUP_EXCLUSIONS += \
