@@ -1,8 +1,8 @@
 #<src>                           <mnt_point>          <type>        <mnt_flags and options>                                     <fs_mgr_flags>
-system                           /system              ext4          ro,barrier=1,discard                                        wait,avb=vbmeta_system,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
-vendor                           /vendor              ext4          ro,barrier=1,discard                                        wait,avb=vbmeta_system,logical,first_stage_mount
-product                          /product             ext4          ro,barrier=1,discard                                        wait,avb,logical,first_stage_mount
-odm                              /odm                 ext4          ro,barrier=1,discard                                        wait,avb,logical,first_stage_mount
+system                           /system              ext4          barrier=1,discard                                        wait,avb=vbmeta_system,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
+vendor                           /vendor              ext4          barrier=1,discard                                        wait,avb=vbmeta_system,logical,first_stage_mount
+product                          /product             ext4          barrier=1,discard                                        wait,avb,logical,first_stage_mount
+odm                              /odm                 ext4          barrier=1,discard                                        wait,avb,logical,first_stage_mount
 
 /dev/block/by-name/metadata      /metadata           ext4          defaults    noatime,nosuid,nodev,discard                     wait,formattable,wrappedkey,first_stage_mount
 /dev/block/by-name/userdata      /data               f2fs          noatime,nodev,discard,usrquota,grpquota,fsync_mode=nobarrier,reserve_root=32768,resgid=5678,inlinecrypt	latemount,wait,check,quota,reservedsize=128M,fileencryption=aes-256-xts:aes-256-cts:v2,checkpoint=fs,length=-20480,keydirectory=/metadata/vold/metadata_encryption
