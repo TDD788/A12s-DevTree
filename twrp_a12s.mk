@@ -32,7 +32,6 @@ $(call inherit-product, $(DEVICE_PATH)/device.mk)
 
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
-+ PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, cgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, fixparts)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, lz4.bin)
