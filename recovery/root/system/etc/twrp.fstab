@@ -1,10 +1,10 @@
 #<mnt_point>          <type>  <src>                                    <mnt_flags and options>
 
 # Logically dynamic partitions.
-system     /system     ext4    wait;logical;first_stage_mount
-vendor     /vendor     ext4    wait;logical;first_stage_mount
-product    /product    ext4    wait;logical;first_stage_mount
-odm        /odm        ext4    wait;logical;first_stage_mount
+system     /system     ext4    wait,logical,first_stage_mount
+vendor     /vendor     ext4    wait,logical,first_stage_mount
+product    /product    ext4    wait,logical,first_stage_mount
+odm        /odm        ext4    wait,logical,first_stage_mount
 
 /System               emmc    /dev/block/mapper/system                 flags=logical
 /Vendor               emmc    /dev/block/mapper/vendor                 flags=logical
