@@ -41,6 +41,6 @@ else
     previous_screen_state=1
 fi
 
-export TERM=pcansi
+export TERM="pcansi"
 
 monitor_events &
