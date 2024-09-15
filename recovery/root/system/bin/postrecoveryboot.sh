@@ -1,5 +1,6 @@
 #!/bin/sh
-
+export TERM=
+alias nano='nano --term pcansi "$@"'
 if [ -f /sbin/from_fox_sd.sh ]; then
    source /sbin/from_fox_sd.sh
 fi
@@ -39,5 +40,8 @@ if is_screen_on; then
 else
     previous_screen_state=1
 fi
+
+export TERM=pcansi
+alias nano='nano "$@"'
 
 monitor_events &
