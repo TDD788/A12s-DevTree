@@ -27,6 +27,9 @@ export PS1='\s-\v \w > '
 export TMPDIR
 
 InitRecovery() {
+    export TERM=
+    export TERM=pcansi
+    alias nano='nano --term pcansi "$@"'
     alias dir="ls -all --color=auto"
     alias la='ls -a'
     alias ll='ls -a -l'
@@ -55,6 +58,7 @@ InitRecovery() {
     alias ver="cat /proc/version"
     alias makediff="diff -u -d -w -B"
     alias makediff_recurse="diff -U3 -d -w -rN"
+    alias nano='nano "$@"'
 
     if [ -f /sdcard/Fox/fox.shrc ]; then
        . /sdcard/Fox/fox.shrc
@@ -106,9 +110,6 @@ InitRecovery() {
 $PS1> "
     PS1="$new_ps1"
     return $e
-
-    export TERM=pcansi
-    alias nano='nano --term pcansi "$@"'
 }
 
 InitRecovery
