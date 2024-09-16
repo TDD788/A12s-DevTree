@@ -30,6 +30,9 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 # Inherit device configuration
 $(call inherit-product, $(DEVICE_PATH)/device.mk)
 
+# Enable project quotas and casefolding for emulated storage without sdcardfs
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
+
 - PRODUCT_COPY_FILES += $(call find-copy-subdir-files,*,$(DEVICE_PATH)/recovery/root,recovery/root)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, sgdisk)
 + PRODUCT_COPY_FILES += $(call cc_prebuilt_binary, gdisk)
