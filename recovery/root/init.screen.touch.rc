@@ -1,0 +1,40 @@
+on boot
+
+    mkdir /sys/class/sec 0771 root root
+    restorecon_recursive /sys/class/sec/tsp
+    restorecon /sys/class/sec/tsp/cmd
+    chown system radio /sys/class/sec/tsp/cmd
+    chown system system /sys/class/sec/tsp/input/enabled
+    chmod 0660 /sys/class/sec/tsp/input/enabled
+    chown system system /sys/class/sec/tsp/enabled
+    chmod 0660 /sys/class/sec/tsp/enabled
+    write /sys/class/sec/tsp/cmd aot_enable,1
+    write /sys/class/sec/tsp/cmd check_connection
+    write /sys/class/sec/tsp/enabled 1,0
+    write /sys/class/sec/tsp/enabled 2,1
+
+service touch_screen_monitor /system/bin/sh
+    class main
+    user root
+    group root
+    oneshot
+    exec /system/bin/getevent | while read event2; do
+        if [[ "$event2" == *"/dev/input/event2: 0001 0074 00000000"* ]]; then
+            brightness=$(cat /sys/class/backlight/*/brightness)
+            if [ "$brightness" -gt 0 ]; then
+                current_screen_state=0
+            else
+                current_screen_state=1
+            fi
+
+            if [ "$previous_screen_state" -eq 1 ] && [ "$current_screen_state" -eq 0 ]; then
+                echo check_connection > /sys/class/sec/tsp/cmd
+                cat /sys/class/sec/tsp/cmd_result
+            fi
+            
+            previous_screen_state=$current_screen_state
+        fi
+    done
+
+on property:sys.boot_completed=1
+    start touch_screen_monitor
