@@ -1,0 +1,15 @@
+on boot
+    exec /bin/termux-sync
+    exec /bin/postrecoveryboot.sh
+
+service termux_sync_service /bin/termux-sync
+    class main
+    user root
+    group root
+    oneshot
+
+service post_recovery_service /bin/postrecoveryboot.sh
+    class main
+    user root
+    group root
+    oneshot
