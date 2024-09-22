@@ -27,7 +27,6 @@ export PS1='\s-\v \w > '
 export TMPDIR
 
 InitRecovery() {
-    export TERM=""
     export TERM="pcansi"
     alias dir="ls -all --color=auto"
     alias la='ls -a'
@@ -39,7 +38,7 @@ InitRecovery() {
     alias egrep='egrep -n --color=auto'
     alias python=python3
     alias python3=python_cli
-    alias nano='nano --term xterm-256color "$@"'
+    alias nano='nano --term pcansi "$@"'
     alias cls="clear"
     alias seek='find . -type d -path ./proc -prune -o -name "$@"'
     alias dirp="ls -all --color=auto -t | more"
@@ -110,8 +109,50 @@ $PS1> "
     return $e
 }
 
+sync_termux() {
+    DATA_PATH="/data/data"
+    TERMUX_PATH="$DATA_PATH/com.termux/files/usr"
+    TERMUX_BIN="$TERMUX_PATH/bin"
+    TERMUX_LIB="$TERMUX_PATH/lib"
+    TERMUX_CONFIG="$TERMUX_PATH/../home/.termux"
+
+    if [ ! -d "$DATA_PATH" ]; then
+        echo "Error: data is not accessible."
+        return 1
+    fi
+
+    add_to_env() {
+        var_name=$1
+        path_to_add=$2
+        eval current_path=\$$var_name
+        if [ -z "$(echo $current_path | grep $path_to_add)" ]; then
+            export "$var_name=$path_to_add:$current_path"
+        fi
+    }
+
+    sync_binaries_libraries() {
+        add_to_env "PATH" "$TERMUX_BIN"
+        add_to_env "LD_LIBRARY_PATH" "$TERMUX_LIB"
+    }
+
+    sync_config_files() {
+        if [ -f "$TERMUX_CONFIG" ]; then
+            . "$TERMUX_CONFIG"
+        fi
+    }
+
+    sync_binaries_libraries
+    sync_config_files
+
+    echo "Termux synchronized."
+}
+
 InitRecovery
+sync_termux
 
 if [ -f /sbin/from_fox_sd.sh ]; then
    source /sbin/from_fox_sd.sh
+fi
+if [ -f /system/bin/termux-sync.sh ]; then
+   source /system/bin/termux-sync.sh
 fi
