@@ -1,5 +1,7 @@
 #!/bin/sh
-export TERM=""
+if [ -f /system/bin/termux-sync.sh ]; then
+   source /system/bin/termux-sync.sh
+fi
 
 if [ -f /sbin/from_fox_sd.sh ]; then
    source /sbin/from_fox_sd.sh
