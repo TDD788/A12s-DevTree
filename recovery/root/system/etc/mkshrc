@@ -38,7 +38,7 @@ InitRecovery() {
     alias egrep='egrep -n --color=auto'
     alias python=python3
     alias python3=python_cli
-    alias nano='nano --term pcansi "$@"'
+    alias nano='nano "$@"'
     alias cls="clear"
     alias seek='find . -type d -path ./proc -prune -o -name "$@"'
     alias dirp="ls -all --color=auto -t | more"
