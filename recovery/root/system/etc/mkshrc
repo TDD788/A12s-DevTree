@@ -27,7 +27,7 @@ export PS1='\s-\v \w > '
 export TMPDIR
 
 InitRecovery() {
-    export TERM="pcansi"
+    export TERM="linux"
     alias dir="ls -all --color=auto"
     alias la='ls -a'
     alias ll='ls -a -l'
