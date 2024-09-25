@@ -7,10 +7,10 @@
 /Odm                  emmc    /dev/block/mapper/odm                    flags=logical
 
 # System as root and mountable logical partitions.
-/system               ext4    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
-/vendor               ext4    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
-/product              ext4    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
-/odm                  ext4    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
+/system               auto    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
+/vendor               auto    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
+/product              auto    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
+/odm                  auto    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
 
 # Unmountable Logical Partitions.
 /system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg;display="System";logical

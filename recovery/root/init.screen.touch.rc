@@ -1,5 +1,4 @@
 on boot
-
     mkdir /sys/class/sec 0771 root root
     restorecon_recursive /sys/class/sec/tsp
     restorecon /sys/class/sec/tsp/cmd

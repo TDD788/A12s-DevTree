@@ -1,14 +1,13 @@
+include /init.recovery.display.rc
+include /init.recovery.essentials.rc
+include /init.recovery.samsung.rc
+include /init.screen.touch.rc
+include /init.sec-charger.rc
+include /servicemanager.recovery.rc
+include /ueventd.rc
+
 on init
     write /proc/sys/kernel/hung_task_timeout_secs 0
-
-on boot
-    include /init.recovery.display.rc
-    include /init.recovery.essentials.rc
-    include /init.recovery.samsung.rc
-    include /init.screen.touch.rc
-    include /init.sec-charger.rc
-    include /servicemanager.recovery.rc
-    include /ueventd.rc
 
 on late-init
     setprop ro.debuggable 1

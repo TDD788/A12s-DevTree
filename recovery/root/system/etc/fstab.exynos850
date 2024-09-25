@@ -3,10 +3,10 @@
 # The filesystem that contains the filesystem checker binary (typically /system) cannot
 # specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
 
-system    /system        ext4      barrier=1             wait,avb=vbmeta,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
-vendor    /vendor        ext4      barrier=1             wait,avb,logical,first_stage_mount
-product   /product       ext4      errors=panic          wait,avb,logical,first_stage_mount
-odm       /odm           ext4      errors=panic          wait,avb,logical,first_stage_mount
+system    /system        auto      barrier=1             wait,avb=vbmeta,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
+vendor    /vendor        auto      barrier=1             wait,avb,logical,first_stage_mount
+product   /product       auto      errors=panic          wait,avb,logical,first_stage_mount
+odm       /odm           auto      errors=panic          wait,avb,logical,first_stage_mount
 
 /dev/block/by-name/prism       /prism               ext4    barrier=1    nofail,avb,first_stage_mount
 /dev/block/by-name/optics      /optics              ext4    barrier=1    nofail,avb,first_stage_mount
