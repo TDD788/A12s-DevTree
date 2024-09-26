@@ -40,22 +40,22 @@ DEXPREOPT_GENERATE_APEX_IMAGE := true
 BOARD_VENDOR                 := samsung
 TARGET_SOC                   := universal3830
 TARGET_BOOTLOADER_BOARD_NAME := exynos850
-TARGET_NO_BOOTLOADER         := false
+TARGET_NO_BOOTLOADER         := true
 TARGET_NO_RADIOIMAGE         := true
 TARGET_USES_UEFI             := false
 TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
 BOARD_BOOT_HEADER_VERSION    := 2
-BOARD_KERNEL_BASE            := 0x10000000
-BOARD_KERNEL_IMAGE_NAME      := Image
+BOARD_KERNEL_BASE            := 0x40000000
+BOARD_KERNEL_IMAGE_NAME      := Image.gz
 BOARD_KERNEL_PAGESIZE        := 4096
 BOARD_RAMDISK_OFFSET         := 0x11000000
-BOARD_KERNEL_TAGS_OFFSET     := 0x00000100
+BOARD_KERNEL_TAGS_OFFSET     := 0x00001000
 
 BOARD_KERNEL_CMDLINE += \
 	androidboot.hardware=exynos850 \
-	androidboot.selinux=enforcing \
+	androidboot.selinux=permissive \
 	loop.max_part=35 \
 	androidboot.usbcontroller=13600000.dwc3 \
 	androidboot.usbconfigfs=true
@@ -71,7 +71,7 @@ TARGET_KERNEL_ARCH           := arm64
 # Kernel - prebuilt
 TARGET_FORCE_PREBUILT_KERNEL := true
 ifeq ($(TARGET_FORCE_PREBUILT_KERNEL),true)
-    TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/zImage
+    TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/zImage.gz
     TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
     BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
     BOARD_INCLUDE_DTB_IN_BOOTIMG := true
@@ -188,10 +188,10 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 	prism
 
 # Making the recovery.img smaller with
-# LZMA Compression
-# LZMA_COMPRESSION       := -9
-BOARD_RAMDISK_USE_LZMA := true
-LZMA_RAMDISK_TARGETS   := recovery
+# LZ4 Compression
+LZ4_COMPRESSION       := -9
+BOARD_RAMDISK_USE_LZ4 := true
+LZ4_RAMDISK_TARGETS   := recovery
 
 # Optimize ramdisk size
 TW_INTERNAL_STORAGE_PATH        := "/data/media/0"
@@ -210,7 +210,6 @@ TW_SCREEN_BLANK_ON_BOOT  := true
 TWRP_INCLUDE_LOGCAT      := true
 TARGET_USES_LOGD         := true
 TW_FORCE_CPUINFO_FOR_DEVICE_ID   := true
-TARGET_USE_CUSTOM_LUN_FILE_PATH  := "/sys/kernel/config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file"
 
 # Exclude from backup
 TW_BACKUP_EXCLUSIONS += \
@@ -223,10 +222,7 @@ TW_BACKUP_EXCLUSIONS += \
 	/data/local \
 	/data/gsi \
 	/data/adb
-
-# PBRP
-PB_FORCE_DD_FLASH := TRUE
-
+	
 #SHRP
 SHRP_PATH                      := device/samsung/a12s
 SHRP_MAINTAINER                := TheDarkDeath788

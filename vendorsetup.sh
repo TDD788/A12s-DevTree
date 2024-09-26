@@ -19,7 +19,7 @@ export LC_ALL="C"
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="R12.1_61"
+export FOX_VERSION="R12.1_62"
 export FOX_VARIANT="AOSP"
 
 # Binary and tool settings
@@ -50,7 +50,7 @@ export_build_vars() {
     export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export FOX_REPLACE_TOOLBOX_GETPROP=1
     export OF_USE_SYSTEM_FINGERPRINT=1
-    export FOX_USE_SPECIFIC_MAGISK_ZIP="device/samsung/a12s/prebuilt/su/MagDelta.apk"
+    export FOX_USE_SPECIFIC_MAGISK_ZIP="device/samsung/a12s/prebuilt/su/Magisk.apk"
 
     # Security configurations
     export OF_ADVANCED_SECURITY=1
@@ -64,7 +64,8 @@ export_build_vars() {
     export OF_CLOCK_POS=1
     
     # Tools and utilities configurations
-    export OF_USE_LZMA_COMPRESSION=1
+    export OF_USE_LZ4_COMPRESSION=1
+    # export OF_USE_LZMA_COMPRESSION=1
     export OF_ENABLE_FS_COMPRESSION=1
     export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
     export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
@@ -75,7 +76,10 @@ export_build_vars() {
 
     # Specific features configurations
     export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
-    export OF_USE_HEXDUMP=1
+    export OF_FORCE_DATA_FORMAT_F2FS=1
+    export OF_DEFAULT_TIMEZONE="ART3"
+    export FOX_COMPRESS_EXECUTABLES=1
+    export FOX_SETTINGS_ROOT_DIRECTORY="/sdcard/OrangeFox/Fox"
     export OF_ENABLE_LPTOOLS=1
     export FOX_NO_SAMSUNG_SPECIAL=0
     export OF_PATCH_AVB20=1
