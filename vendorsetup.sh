@@ -79,7 +79,6 @@ export_build_vars() {
     export OF_FORCE_DATA_FORMAT_F2FS=1
     export OF_DEFAULT_TIMEZONE="ART3"
     export FOX_COMPRESS_EXECUTABLES=1
-    export FOX_SETTINGS_ROOT_DIRECTORY="/sdcard/OrangeFox/Fox"
     export OF_ENABLE_LPTOOLS=1
     export FOX_NO_SAMSUNG_SPECIAL=0
     export OF_PATCH_AVB20=1
