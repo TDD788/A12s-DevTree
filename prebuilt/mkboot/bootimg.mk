@@ -23,7 +23,6 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_FILES) $(BOOTIM
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
 	$(hide) echo -n "SEANDROIDENFORCE" >> $@
 	@echo "Made boot image: $@"
-	$(hide) tar -C $(PRODUCT_OUT) -c boot.img > $(FLASH_IMAGE_TARGET)
 	@echo "Made flashable $(FLASH_IMAGE_TARGET): $@"
 	
 FLASH_IMAGE_TARGET ?= $(PRODUCT_OUT)/recovery.tar
