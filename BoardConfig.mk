@@ -188,10 +188,10 @@ BOARD_ROOT_EXTRA_FOLDERS += \
 	prism
 
 # Making the recovery.img smaller with
-# LZ4 Compression
-LZ4_COMPRESSION       := -9
-BOARD_RAMDISK_USE_LZ4 := true
-LZ4_RAMDISK_TARGETS   := recovery
+# LZMA Compression
+LZMA_COMPRESSION       := -9
+BOARD_RAMDISK_USE_LZMA := true
+LZMA_RAMDISK_TARGETS   := recovery
 
 # Optimize ramdisk size
 TW_INTERNAL_STORAGE_PATH        := "/data/media/0"
