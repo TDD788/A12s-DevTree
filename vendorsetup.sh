@@ -64,8 +64,9 @@ export_build_vars() {
     export OF_CLOCK_POS=1
     
     # Tools and utilities configurations
-    export OF_USE_LZ4_COMPRESSION=1
-    # export OF_USE_LZMA_COMPRESSION=1
+    # export FOX_COMPRESS_EXECUTABLES=1
+    # export OF_USE_LZ4_COMPRESSION=1
+    export OF_USE_LZMA_COMPRESSION=1
     export OF_ENABLE_FS_COMPRESSION=1
     export FOX_RECOVERY_INSTALL_PARTITION="/dev/block/by-name/recovery"
     export FOX_RECOVERY_VENDOR_PARTITION="/dev/block/mapper/vendor"
@@ -78,7 +79,6 @@ export_build_vars() {
     export OF_NO_TREBLE_COMPATIBILITY_CHECK=0
     export OF_FORCE_DATA_FORMAT_F2FS=1
     export OF_DEFAULT_TIMEZONE="ART3"
-    export FOX_COMPRESS_EXECUTABLES=1
     export OF_ENABLE_LPTOOLS=1
     export FOX_NO_SAMSUNG_SPECIAL=0
     export OF_PATCH_AVB20=1
