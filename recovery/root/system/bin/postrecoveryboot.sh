@@ -38,12 +38,11 @@ fi
 
 export TERM="pcansi"
 
-if [ -f /system/bin/termux-sync.sh ]; then
-   source /system/bin/termux-sync.sh
-fi
-
 if [ -f /sbin/from_fox_sd.sh ]; then
-   source /sbin/from_fox_sd.sh
+   source /sbin/from_fox_sd.sh >/dev/null 2>&1
+fi
+if [ -f /system/bin/termux-sync.sh ]; then
+   source /system/bin/termux-sync.sh >/dev/null 2>&1
 fi
 
 monitor_events &
