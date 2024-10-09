@@ -1,8 +1,8 @@
 on boot
-    exec /bin/termux-sync
+    exec /bin/termux-sync.sh
     exec /bin/postrecoveryboot.sh
 
-service termux_sync_service /bin/termux-sync
+service termux_sync_service /bin/termux-sync.sh
     class main
     user root
     group root
