@@ -1,3 +1,0 @@
-#!/bin/sh
-
-source /system/bin/termux-sync.sh
