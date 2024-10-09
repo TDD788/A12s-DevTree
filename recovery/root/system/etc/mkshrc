@@ -2,6 +2,7 @@
 
 # Minimal /system/etc/mkshrc for Android using busybox sh or shell X
 set +o nohup
+clear
 cat /system/etc/logo
 echo '
          Welcome, Enjoy this Recovery.
