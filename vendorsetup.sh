@@ -1,3 +1,25 @@
+# Colour Fix
+PATCH_DIR="$ANDROID_BUILD_TOP/patches"
+PATCH_PATH="$PATCH_DIR/bluefox_patch.diff"
+TARGET_DIR="$ANDROID_BUILD_TOP"
+
+if [ ! -d "$PATCH_DIR" ]; then
+    echo "Creating patches directory..."
+    mkdir -p "$PATCH_DIR"
+fi
+
+if [ ! -f "$PATCH_PATH" ]; then
+    echo "Generating Blue Fox patch..."
+    diff -u "$ANDROID_BUILD_TOP/minuitwrp/original_file.cpp" "$ANDROID_BUILD_TOP/minuitwrp/modified_file.cpp" > "$PATCH_PATH"
+fi
+
+if ! patch -p1 --dry-run < "$PATCH_PATH" &> /dev/null; then
+    echo "Applying Blue Fox patch..."
+    patch -p1 < "$PATCH_PATH"
+else
+    echo "Blue Fox patch already applied or not needed."
+fi
+
 # MKBOOTIMG
 chmod a+x device/samsung/a12s/prebuilt/mkboot/mkbootimg
 
