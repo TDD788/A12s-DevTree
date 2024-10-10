@@ -1,0 +1,97 @@
+diff --git a/minuitwrp/Android.bp b/minuitwrp/Android.bp
+--- a/minuitwrp/Android.bp
++++ b/minuitwrp/Android.bp
+@@ -8,7 +8,8 @@ bootstrap_go_package {
+     ],
+     srcs: [
+         "libminuitwrp_defaults.go",
+-        "../soong/makevars.go"
++        "../soong/makevars.go",
++        "../orangefox_defaults.go"
+     ],
+     pluginFor: ["soong_build"]
+ }
+diff --git a/minuitwrp/graphics.cpp b/minuitwrp/graphics.cpp
+--- a/minuitwrp/graphics.cpp
++++ b/minuitwrp/graphics.cpp
+@@ -203,7 +203,7 @@ void gr_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a
+ {
+     GGLContext *gl = gr_context;
+     GGLint color[4];
+-#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA)
++#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA) || defined(RECOVERY_ABGR) && !defined(FOX_RECOVERY_AGRB)
+     color[0] = ((b << 8) | r) + 1;
+     color[1] = ((g << 8) | g) + 1;
+     color[2] = ((r << 8) | b) + 1;
+diff --git a/minuitwrp/libminuitwrp_defaults.go b/minuitwrp/libminuitwrp_defaults.go
+--- a/minuitwrp/libminuitwrp_defaults.go
++++ b/minuitwrp/libminuitwrp_defaults.go
+@@ -78,6 +78,7 @@ func globalFlags(ctx android.BaseContext) []string {
+ 			cflags = append(cflags, "-DTW_ROTATION=0")
+ 		}
+ 	}
++
+ 	return cflags
+ }
+ 
+@@ -199,6 +200,11 @@ func libMinuiTwrpDefaults(ctx android.LoadHookContext) {
+ 	requiredModules := globalRequiredModules(ctx)
+ 	p.Required = requiredModules
+ 	ctx.AppendProperties(p)
++	// Darth9
++	f := &props{}
++	f.Cflags = fox_globalFlags(ctx)
++	ctx.AppendProperties(f)
++	// Darth9
+ }
+ 
+ func init() {
+diff --git a/minuitwrp/resources.cpp b/minuitwrp/resources.cpp
+--- a/minuitwrp/resources.cpp
++++ b/minuitwrp/resources.cpp
+@@ -224,7 +224,7 @@ int res_create_surface_png(const char* name, gr_surface* pSurface) {
+         goto exit;
+     }
+ 
+-#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA)
++#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA) || defined(RECOVERY_ABGR) && !defined(FOX_RECOVERY_AGRB)
+     png_set_bgr(png_ptr);
+ #endif
+ 
+@@ -320,7 +320,7 @@ int res_create_surface_jpg(const char* name, gr_surface* pSurface) {
+             unsigned char g = pRow[sx + 1];
+             unsigned char b = pRow[sx + 2];
+             unsigned char a = 0xff;
+-#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA)
++#if defined(RECOVERY_ARGB) || defined(RECOVERY_BGRA) || defined(RECOVERY_ABGR) && !defined(FOX_RECOVERY_AGRB)
+             pRow[dx    ] = b; // r
+             pRow[dx + 1] = g; // g
+             pRow[dx + 2] = r; // b
+diff --git a/orangefox.mk b/orangefox.mk
+--- a/orangefox.mk
++++ b/orangefox.mk
+@@ -714,4 +714,9 @@ endif
+ ifeq ($(OF_FORCE_DATA_FORMAT_F2FS),1)
+     LOCAL_CFLAGS += -DOF_FORCE_DATA_FORMAT_F2FS
+ endif
++
++# whether the display colours are inverted
++ifeq ($(FOX_RECOVERY_AGRB),1)
++    LOCAL_CFLAGS += -DFOX_RECOVERY_AGRB
++endif
+ #
+diff --git a/orangefox_defaults.go b/orangefox_defaults.go
+--- a/orangefox_defaults.go
++++ b/orangefox_defaults.go
+@@ -45,6 +45,10 @@ func fox_globalFlags(ctx android.BaseContext) []string {
+ 		foxflags = append(foxflags, "-DFOX_SETTINGS_ROOT_DIRECTORY="+getMakeVars(ctx, "FOX_SETTINGS_ROOT_DIRECTORY"))
+ 	}
+ 
++	if ctx.AConfig().Getenv("FOX_RECOVERY_AGRB") == "1" {
++		foxflags = append(foxflags, "-DFOX_RECOVERY_AGRB=1")
++	}
++
+ 	return foxflags
+ }
+
+ 
