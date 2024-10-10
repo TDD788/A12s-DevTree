@@ -1,18 +1,5 @@
 # Colour Fix
-PATCH_DIR="patches"
-PATCH_PATH="bluefox_patch.diff"
-TARGET_DIR="$PWD"
-
-if [ ! -d "$PATCH_DIR" ]; then
-    echo "Creating patches directory..."
-    mkdir -p "$PATCH_DIR"
-fi
-
-if [ ! -f "$PATCH_PATH" ]; then
-    echo "Generating Blue Fox patch..."
-    diff -u "$ANDROID_BUILD_TOP/minuitwrp/original_file.cpp" "$ANDROID_BUILD_TOP/minuitwrp/modified_file.cpp" > "$PATCH_PATH"
-fi
-
+PATCH_PATH="device/samsung/a12s/colour_fix.diff"
 if ! patch -p1 --dry-run < "$PATCH_PATH" &> /dev/null; then
     echo "Applying Blue Fox patch..."
     patch -p1 < "$PATCH_PATH"
