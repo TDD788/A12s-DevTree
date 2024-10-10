@@ -7,16 +7,16 @@
 /Odm                  emmc    /dev/block/mapper/odm                    flags=logical
 
 # System as root and mountable logical partitions.
-/system               auto    /dev/block/mapper/system                 flags=backup=1;wipeingui;display="System"
-/vendor               auto    /dev/block/mapper/vendor                 flags=backup=1;wipeingui;display="Vendor"
-/product              auto    /dev/block/mapper/product                flags=backup=1;wipeingui;display="Product"
-/odm                  auto    /dev/block/mapper/odm                    flags=backup=1;wipeingui;display="Odm"
+/system               auto    /dev/block/mapper/system                 flags=backup=1;wipeingui=1;display="System"
+/vendor               auto    /dev/block/mapper/vendor                 flags=backup=1;wipeingui=1;display="Vendor"
+/product              auto    /dev/block/mapper/product                flags=backup=1;wipeingui=1;display="Product"
+/odm                  auto    /dev/block/mapper/odm                    flags=backup=1;wipeingui=1;display="Odm"
 
 # Unmountable Logical Partitions.
-/system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg;display="System";logical
-/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=0;flashimg;display="Vendor";logical
-/product_image        emmc    /dev/block/mapper/product                flags=backup=0;flashimg;display="Product";logical
-/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg;display="Odm";logical
+/system_image         emmc    /dev/block/mapper/system                 flags=backup=0;flashimg=1;display="System";logical
+/vendor_image         emmc    /dev/block/mapper/vendor                 flags=backup=0;flashimg=1;display="Vendor";logical
+/product_image        emmc    /dev/block/mapper/product                flags=backup=0;flashimg=1;display="Product";logical
+/odm_image            emmc    /dev/block/mapper/odm                    flags=backup=0;flashimg=1;display="Odm";logical
 
 # Physical Partitions.
 /boot                 emmc    /dev/block/by-name/boot                  flags=display="Boot";backup=1;flashimg=1
