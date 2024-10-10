@@ -1,7 +1,7 @@
 # Colour Fix
-PATCH_DIR="$ANDROID_BUILD_TOP/patches"
-PATCH_PATH="$PATCH_DIR/bluefox_patch.diff"
-TARGET_DIR="$ANDROID_BUILD_TOP"
+PATCH_DIR="patches"
+PATCH_PATH="bluefox_patch.diff"
+TARGET_DIR="$PWD"
 
 if [ ! -d "$PATCH_DIR" ]; then
     echo "Creating patches directory..."
