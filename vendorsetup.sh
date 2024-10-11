@@ -4,12 +4,8 @@ ls "$PWD"
 
 # Colour Fix
 PATCH_PATH="device/samsung/a12s/colour_fix.diff"
-if ! patch -p1 --dry-run < "$PATCH_PATH" ; then
-    echo "Applying Blue Fox patch..."
-    patch -p1 -s -f < "$PATCH_PATH"
-else
-    echo "Blue Fox patch already applied or not needed."
-fi
+echo "Applying Blue Fox patch..."
+patch -p1 -s -f < "$PATCH_PATH"
 
 # Magisk Downloader
 GITHUB_REPO="topjohnwu/Magisk"
