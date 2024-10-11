@@ -1,11 +1,15 @@
 # Primary and safety reviews
 echo "$PWD"
-ls "$PWD"
+find . -name "*maintainer*"
 
 # Colour Fix
-PATCH_PATH="device/samsung/a12s/colour_fix.diff"
+PATCH_PATH="$PWD/device/samsung/a12s/colour_fix.diff"
+ANDROID_RECOVERY_ROOT="$PWD"
+cd bootable/recovery
 echo "Applying Blue Fox patch..."
 patch -p1 -s -f < "$PATCH_PATH"
+echo "Patch applied"
+cd "$ANDROID_RECOVERY_ROOT"
 
 # Magisk Downloader
 USER='topjohnwu'
