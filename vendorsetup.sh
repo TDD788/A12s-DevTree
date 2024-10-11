@@ -1,11 +1,27 @@
+# Primary and safety reviews
+echo "$PWD"
+ls "$PWD"
+
 # Colour Fix
 PATCH_PATH="device/samsung/a12s/colour_fix.diff"
-if ! patch -p1 --dry-run < "$PATCH_PATH" &> /dev/null; then
+if ! patch -p1 --dry-run < "$PATCH_PATH" ; then
     echo "Applying Blue Fox patch..."
-    patch -p1 < "$PATCH_PATH"
+    patch -p1 -s -f < "$PATCH_PATH"
 else
     echo "Blue Fox patch already applied or not needed."
 fi
+
+# Magisk Downloader
+GITHUB_REPO="topjohnwu/Magisk"
+DOWNLOAD_DIR="$PWD"
+
+latest_tag=$(curl -s "https://api.github.com/repos/$GITHUB_REPO/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": ".*".*/\1/')
+download_url="https://github.com/$GITHUB_REPO/releases/download/$latest_tag/Magisk-$latest_tag.zip"
+
+mkdir -p "$DOWNLOAD_DIR"
+curl -L -o "$DOWNLOAD_DIR/Magisk-$latest_tag.zip" "$download_url"
+
+export FOX_USE_SPECIFIC_MAGISK_ZIP="$DOWNLOAD_DIR/Magisk-$latest_tag.zip"
 
 # MKBOOTIMG
 chmod a+x device/samsung/a12s/prebuilt/mkboot/mkbootimg
@@ -59,7 +75,6 @@ export_build_vars() {
     export OF_QUICK_BACKUP_LIST="/super;/boot;/vbmeta;/dtbo;/efs;/sec_efs"
     export FOX_REPLACE_TOOLBOX_GETPROP=1
     export OF_USE_SYSTEM_FINGERPRINT=1
-    export FOX_USE_SPECIFIC_MAGISK_ZIP="device/samsung/a12s/prebuilt/su/Magisk.apk"
 
     # Security configurations
     export OF_ADVANCED_SECURITY=1
