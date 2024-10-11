@@ -1,19 +1,19 @@
-diff --git a/minuitwrp/Android.bp b/minuitwrp/Android.bp
---- a/minuitwrp/Android.bp
-+++ b/minuitwrp/Android.bp
+diff --git a/bootable/recovery/minuitwrp/Android.bp b/bootable/recovery/minuitwrp/Android.bp
+--- a/bootable/recovery/minuitwrp/Android.bp
++++ b/bootable/recovery/minuitwrp/Android.bp
 @@ -8,7 +8,8 @@ bootstrap_go_package {
      ],
      srcs: [
          "libminuitwrp_defaults.go",
 -        "../soong/makevars.go"
-+        "../soong/makevars.go",
-+        "../orangefox_defaults.go"
++        "soong/makevars.go",
++        "orangefox_defaults.go"
      ],
      pluginFor: ["soong_build"]
  }
-diff --git a/minuitwrp/graphics.cpp b/minuitwrp/graphics.cpp
---- a/minuitwrp/graphics.cpp
-+++ b/minuitwrp/graphics.cpp
+diff --git a/bootable/recovery/minuitwrp/graphics.cpp b/bootable/recovery/minuitwrp/graphics.cpp
+--- a/bootable/recovery/minuitwrp/graphics.cpp
++++ b/bootable/recovery/minuitwrp/graphics.cpp
 @@ -203,7 +203,7 @@ void gr_color(unsigned char r, unsigned char g, unsigned char b, unsigned char a
  {
      GGLContext *gl = gr_context;
@@ -23,9 +23,9 @@ diff --git a/minuitwrp/graphics.cpp b/minuitwrp/graphics.cpp
      color[0] = ((b << 8) | r) + 1;
      color[1] = ((g << 8) | g) + 1;
      color[2] = ((r << 8) | b) + 1;
-diff --git a/minuitwrp/libminuitwrp_defaults.go b/minuitwrp/libminuitwrp_defaults.go
---- a/minuitwrp/libminuitwrp_defaults.go
-+++ b/minuitwrp/libminuitwrp_defaults.go
+diff --git a/bootable/recovery/minuitwrp/libminuitwrp_defaults.go b/bootable/recovery/minuitwrp/libminuitwrp_defaults.go
+--- a/bootable/recovery/minuitwrp/libminuitwrp_defaults.go
++++ b/bootable/recovery/minuitwrp/libminuitwrp_defaults.go
 @@ -78,6 +78,7 @@ func globalFlags(ctx android.BaseContext) []string {
  			cflags = append(cflags, "-DTW_ROTATION=0")
  		}
@@ -46,9 +46,9 @@ diff --git a/minuitwrp/libminuitwrp_defaults.go b/minuitwrp/libminuitwrp_default
  }
  
  func init() {
-diff --git a/minuitwrp/resources.cpp b/minuitwrp/resources.cpp
---- a/minuitwrp/resources.cpp
-+++ b/minuitwrp/resources.cpp
+diff --git a/bootable/recovery/minuitwrp/resources.cpp b/bootable/recovery/minuitwrp/resources.cpp
+--- a/bootable/recovery/minuitwrp/resources.cpp
++++ b/bootable/recovery/minuitwrp/resources.cpp
 @@ -224,7 +224,7 @@ int res_create_surface_png(const char* name, gr_surface* pSurface) {
          goto exit;
      }
@@ -67,9 +67,9 @@ diff --git a/minuitwrp/resources.cpp b/minuitwrp/resources.cpp
              pRow[dx    ] = b; // r
              pRow[dx + 1] = g; // g
              pRow[dx + 2] = r; // b
-diff --git a/orangefox.mk b/orangefox.mk
---- a/orangefox.mk
-+++ b/orangefox.mk
+diff --git a/bootable/recovery/orangefox.mk b/bootable/recovery/orangefox.mk
+--- a/bootable/recovery/orangefox.mk
++++ b/bootable/recovery/orangefox.mk
 @@ -714,4 +714,9 @@ endif
  ifeq ($(OF_FORCE_DATA_FORMAT_F2FS),1)
      LOCAL_CFLAGS += -DOF_FORCE_DATA_FORMAT_F2FS
@@ -80,9 +80,9 @@ diff --git a/orangefox.mk b/orangefox.mk
 +    LOCAL_CFLAGS += -DFOX_RECOVERY_AGRB
 +endif
  #
-diff --git a/orangefox_defaults.go b/orangefox_defaults.go
---- a/orangefox_defaults.go
-+++ b/orangefox_defaults.go
+diff --git a/bootable/recovery/orangefox_defaults.go b/bootable/recovery/orangefox_defaults.go
+--- a/bootable/recovery/orangefox_defaults.go
++++ b/bootable/recovery/orangefox_defaults.go
 @@ -45,6 +45,10 @@ func fox_globalFlags(ctx android.BaseContext) []string {
  		foxflags = append(foxflags, "-DFOX_SETTINGS_ROOT_DIRECTORY="+getMakeVars(ctx, "FOX_SETTINGS_ROOT_DIRECTORY"))
  	}
@@ -93,5 +93,3 @@ diff --git a/orangefox_defaults.go b/orangefox_defaults.go
 +
  	return foxflags
  }
-
- 
