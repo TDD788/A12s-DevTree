@@ -6,8 +6,8 @@ diff --git a/bootable/recovery/minuitwrp/Android.bp b/bootable/recovery/minuitwr
      srcs: [
          "libminuitwrp_defaults.go",
 -        "../soong/makevars.go"
-+        "soong/makevars.go",
-+        "orangefox_defaults.go"
++        "../soong/makevars.go",
++        "../orangefox_defaults.go"
      ],
      pluginFor: ["soong_build"]
  }
