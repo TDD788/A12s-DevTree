@@ -1,6 +1,5 @@
 # Primary and safety reviews
-echo "$PWD"
-find . -name "*maintainer*"
+
 
 # Colour Fix
 PATCH_PATH="$PWD/device/samsung/a12s/colour_fix.diff"
@@ -69,6 +68,10 @@ export LC_ALL="C"
 # General configurations
 echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
+SRC="device/samsung/a12s/prebuilt/maintainer/processed_image1.png"
+DST="bootable/recovery/gui/theme/portrait_hdpi/images/Default/About/maintainer.png"
+cp "$SRC" "$DST"
+
 export FOX_BUILD_TYPE="Stable"
 export FOX_VERSION="R12.1_62"
 export FOX_VARIANT="AOSP"
