@@ -8,16 +8,42 @@ echo "Applying Blue Fox patch..."
 patch -p1 -s -f < "$PATCH_PATH"
 
 # Magisk Downloader
-GITHUB_REPO="topjohnwu/Magisk"
-DOWNLOAD_DIR="$PWD"
+USER='topjohnwu'
+REPO='Magisk'
+PATTERN="$USER/$REPO/releases/download/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+\.apk"
+URL_BASE="https://github.com/$USER/$REPO/releases"
+URL_LATEST="$URL_BASE/latest"
 
-latest_tag=$(curl -s "https://api.github.com/repos/$GITHUB_REPO/releases/latest" | grep '"tag_name":' | sed 's/.*"tag_name": ".*".*/\1/')
-download_url="https://github.com/$GITHUB_REPO/releases/download/$latest_tag/Magisk-$latest_tag.zip"
+echo 'Searching for latest Magisk...'
+REDIRECT_URL="$(curl "$URL_LATEST" -S -L -I -o /dev/null -w '%{url_effective}')" || {
+    echo "Failed to open $URL_LATEST"
+    exit $?
+}
 
-mkdir -p "$DOWNLOAD_DIR"
-curl -L -o "$DOWNLOAD_DIR/Magisk-$latest_tag.zip" "$download_url"
+# Extract tag
+VERSION_TAG="${REDIRECT_URL/$URL_BASE\/tag\/}"
+URL="https://github.com/$USER/$REPO/releases/expanded_assets/$VERSION_TAG"
 
-export FOX_USE_SPECIFIC_MAGISK_ZIP="$DOWNLOAD_DIR/Magisk-$latest_tag.zip"
+echo 'Searching for Magisk download link...'
+HTML="$(curl -S -L "$URL")" || {
+    echo "Failed to download $URL"
+    exit $?
+}
+
+FILE_LINK="$(echo "$HTML" | grep -Eo "$PATTERN" | head -n 1)"
+DOWNLOAD_LINK="https://github.com/$FILE_LINK"
+FILE_NAME="/tmp/$(basename "${FILE_LINK/apk/zip}")"
+
+echo "Downloading Magisk from $DOWNLOAD_LINK"
+RESPONSE_CODE="$(curl -S -L "$DOWNLOAD_LINK" -w '%{http_code}' -o "$FILE_NAME")"; CODE=$?
+
+if [ $CODE -gt 0 ] || [ $RESPONSE_CODE -ge 400 ]; then
+    echo "Failed to download $DOWNLOAD_LINK"
+    exit $CODE
+fi
+echo "Latest Magisk has been saved to: $FILE_NAME"
+
+export FOX_USE_SPECIFIC_MAGISK_ZIP="$FILE_NAME"
 
 # MKBOOTIMG
 chmod a+x device/samsung/a12s/prebuilt/mkboot/mkbootimg
