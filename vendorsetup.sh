@@ -3,7 +3,7 @@ BOOTABLE="bootable/recovery"
 DEVIE_PATH="device/samsung/a12s"
 rm -rf $BOOTABLE/minui*
 rm -rf $BOOTABLE/fb2png
-mv -R $DEVIE_PATH/source_changes/bootable/"*" $BOOTABLE/
+cp -R $DEVIE_PATH/source_changes/bootable/"*" $BOOTABLE/
 
 # Magisk Downloader
 USER='topjohnwu'
