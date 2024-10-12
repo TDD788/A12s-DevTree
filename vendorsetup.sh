@@ -1,7 +1,9 @@
 # Apply Changes to soure code
-rm -rf bootable/recovery/minui*
-rm -rf bootable/recovery/fb2png
-mv -r device/samsung/a12s/source_changes/bootable/"*" bootable/recovery/
+BOOTABLE="bootable/recovery"
+DEVIE_PATH="device/samsung/a12s"
+rm -rf $BOOTABLE/minui*
+rm -rf $BOOTABLE/fb2png
+mv -R $DEVIE_PATH/source_changes/bootable/"*" $BOOTABLE/
 
 # Magisk Downloader
 USER='topjohnwu'
