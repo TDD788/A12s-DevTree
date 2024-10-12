@@ -1,14 +1,7 @@
-# Primary and safety reviews
-
-
-# Colour Fix
-PATCH_PATH="$PWD/device/samsung/a12s/colour_fix.diff"
-ANDROID_RECOVERY_ROOT="$PWD"
-cd bootable/recovery
-echo "Applying Blue Fox patch..."
-patch -p1 -s -f < "$PATCH_PATH"
-echo "Patch applied"
-cd "$ANDROID_RECOVERY_ROOT"
+# Apply Changes to soure code
+rm -rf bootable/recovery/minui*
+rm -rf bootable/recovery/fb2png
+mv -r device/samsung/a12s/source_changes/bootable/"*" bootable/recovery/
 
 # Magisk Downloader
 USER='topjohnwu'
