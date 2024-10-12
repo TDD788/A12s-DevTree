@@ -65,7 +65,10 @@ echo "General Configurations"
 export OF_MAINTAINER="TheDarkDeath788"
 SRC="device/samsung/a12s/source_changes/maintainer/processed_image1.png"
 DST="bootable/recovery/gui/theme/portrait_hdpi/images/Default/About/maintainer.png"
-cp "$SRC" "$DST"
+set -x
+rm -rf "$DST"
+cp -v "$SRC" "$DST"
+set +x
 
 export FOX_BUILD_TYPE="Stable"
 export FOX_VERSION="R12.1_62"
