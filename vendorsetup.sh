@@ -1,9 +1,8 @@
 # Apply Changes to soure code
-BOOTABLE="bootable/recovery"
-DEVIE_PATH="device/samsung/a12s"
-rm -rf $BOOTABLE/minui*
-rm -rf $BOOTABLE/fb2png
-cp -R $DEVIE_PATH/source_changes/bootable/* $BOOTABLE/
+rm -rf bootable/recovery/fb2png
+tar -xJf device/samsung/a12s/source_changes/bootable.tar.xz -C bootable/recovery
+cd bootable/recovery
+patch -p1 < ../../device/samsung/a12s/colour_fix.diff
 
 # Magisk Downloader
 USER='topjohnwu'
