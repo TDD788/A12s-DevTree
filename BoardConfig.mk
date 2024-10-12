@@ -149,7 +149,7 @@ TW_MTP_DEVICE         := "Galaxy MTP"
 TW_INPUT_BLACKLIST    := hbtp_vm
 
 # Screen
-TARGET_RECOVERY_PIXEL_FORMAT  := ARGB_8888
+TARGET_RECOVERY_PIXEL_FORMAT  := ABGR_8888
 TW_BRIGHTNESS_PATH            := /system/backlight/brightness
 TW_MAX_BRIGHTNESS             := 306
 TW_DEFAULT_BRIGHTNESS         := 153
