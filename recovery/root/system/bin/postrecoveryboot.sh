@@ -36,7 +36,7 @@ else
     previous_screen_state=1
 fi
 
-export TERM="pcansi"
+export TERM="screen"
 
 if [ -f /sbin/from_fox_sd.sh ]; then
    source /sbin/from_fox_sd.sh >/dev/null 2>&1
