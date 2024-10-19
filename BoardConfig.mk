@@ -55,7 +55,7 @@ BOARD_KERNEL_TAGS_OFFSET     := 0x00001000
 
 BOARD_KERNEL_CMDLINE += \
 	androidboot.hardware=exynos850 \
-	androidboot.selinux=permissive \
+	androidboot.selinux=enforcing \
 	loop.max_part=35 \
 	androidboot.usbcontroller=13600000.dwc3 \
 	androidboot.usbconfigfs=true
