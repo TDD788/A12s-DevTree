@@ -46,14 +46,15 @@ TARGET_USES_UEFI             := false
 TARGET_SCREEN_DENSITY        := 300
 
 # Kernel
-BOARD_BOOT_HEADER_VERSION    := 2
+BOARD_BOOT_HEADER_VERSION    := 4
 BOARD_KERNEL_BASE            := 0x10000000
 BOARD_KERNEL_IMAGE_NAME      := Image
 BOARD_KERNEL_PAGESIZE        := 4096
 BOARD_RAMDISK_OFFSET         := 0x11000000
 BOARD_KERNEL_TAGS_OFFSET     := 0x00001000
 
-BOARD_KERNEL_CMDLINE += \
+BOARD_KERNEL_CMDLINE += bootconfig
+BOARD_BOOTCONFIG += \
 	androidboot.hardware=exynos850 \
 	androidboot.selinux=enforcing \
 	loop.max_part=35 \
