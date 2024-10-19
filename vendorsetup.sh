@@ -71,8 +71,8 @@ cp -v "$SRC" "$DST"
 set +x
 
 export FOX_BUILD_TYPE="Stable"
-export FOX_VERSION="WC12.1_1"
-export FOX_VARIANT="AOSP"
+export FOX_VERSION="S12.1_64"
+export FOX_VARIANT="Vanilla"
 
 # Binary and tool settings
 export FOX_CUSTOM_BINS_TO_SDCARD=2
