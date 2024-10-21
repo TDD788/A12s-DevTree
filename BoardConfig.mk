@@ -53,13 +53,12 @@ BOARD_KERNEL_PAGESIZE        := 4096
 BOARD_RAMDISK_OFFSET         := 0x11000000
 BOARD_KERNEL_TAGS_OFFSET     := 0x00001000
 
-BOARD_KERNEL_CMDLINE += bootconfig
-BOARD_BOOTCONFIG += \
+BOARD_KERNEL_CMDLINE += \
 	androidboot.hardware=exynos850 \
 	androidboot.selinux=enforcing \
 	loop.max_part=35 \
 	androidboot.usbcontroller=13600000.dwc3 \
-	androidboot.usbconfigfs=true
+	androidboot.usbconfigfs=true \
 	reboot=panic_warm \
 	androidboot.init_fatal_reboot_target=system
 
