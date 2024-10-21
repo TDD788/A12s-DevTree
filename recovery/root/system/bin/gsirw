@@ -10,28 +10,28 @@ function generate_date_message()
 
 function default()
 {
-	export DEFAULT_SYSTEM_NAME="system"
-	export DEFAULT_VENDOR_NAME="vendor"
-	export DEFAULT_PRODUCT_NAME="product"
-	export DEFAULT_ODM_NAME="odm"
-	export CUSTOM_SYSTEM_NAME="system"
-	export CUSTOM_VENDOR_NAME="vendor"
-	export CUSTOM_PRODUCT_NAME="product"
-	export CUSTOM_ODM_NAME="odm"
-	export CUSTOM_MOUNT_POINT="/cache/system"
-	export DEFAULT_START_POINT="/sdcard"
-	export MOUSE=">"
-	export UP_SHORTCUTS=true
-	export SORT_DIR_TYPE="name_asc"
-	export SORT_FILE_TYPE="name_asc"
-	identify_device
-	export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
-	previous_directories=""
-	previous_files=""
-	previous_shortcuts=""
-	export SHORTCUTS="DATA /data
-	SDCARD /sdcard
-	"
+    export DEFAULT_SYSTEM_NAME="system"
+    export DEFAULT_VENDOR_NAME="vendor"
+    export DEFAULT_PRODUCT_NAME="product"
+    export DEFAULT_ODM_NAME="odm"
+    export CUSTOM_SYSTEM_NAME="system"
+    export CUSTOM_VENDOR_NAME="vendor"
+    export CUSTOM_PRODUCT_NAME="product"
+    export CUSTOM_ODM_NAME="odm"
+    export CUSTOM_MOUNT_POINT="/cache/system"
+    export DEFAULT_START_POINT="/sdcard"
+    export MOUSE=">"
+    export UP_SHORTCUTS=true
+    export SORT_DIR_TYPE="name_asc"
+    export SORT_FILE_TYPE="name_asc"
+    identify_device
+    export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
+    previous_directories=""
+    previous_files=""
+    previous_shortcuts=""
+    export SHORTCUTS="DATA /data
+    SDCARD /sdcard
+    "
 }
 
 function check_root_permissions()
@@ -45,38 +45,38 @@ function check_root_permissions()
 
 function exec_as_root()
 {
-	if [ "$ROOT" = "false" ]; then
+    if [ "$ROOT" = "false" ]; then
         if command -v sudo >/dev/null 2>&1; then
             if "sudo" = true >/dev/null 2>&1; then
                 sudo "$0" "$@"
                 exit 1
             fi
-	    elif command -v "su -c" >/dev/null 2>&1; then
-			if "su -c" = true >/dev/null 2>&1; then
-			    tmux_fs true
-	  		  su -c sh "$0" "$@"
-	  		  exit 1
-			else
-				true
- 	 		  DEBUGER "$@"
- 	 		  exit 1
-			fi
-		else
-		    DEBUGER "$@"
-		    exit 1
-		fi
-	fi
+        elif command -v "su -c" >/dev/null 2>&1; then
+            if "su -c" = true >/dev/null 2>&1; then
+                tmux_fs true
+                su -c sh "$0" "$@"
+                exit 1
+            else
+                true
+                DEBUGER "$@"
+                exit 1
+            fi
+        else
+            DEBUGER "$@"
+            exit 1
+        fi
+    fi
 }
 
 function root_msg()
 {
-	if [ "$ROOT" = "true" ]; then
-		echo "Congratulations you are running the script at root level"
-	else
-		if [ "$ROOT" = "false" ]; then
-			echo "Running a script that needs a root level, bruh"
-  	  fi
-	fi
+    if [ "$ROOT" = "true" ]; then
+        echo "Congratulations you are running the script at root level"
+    else
+        if [ "$ROOT" = "false" ]; then
+            echo "Running a script that needs a root level, bruh"
+        fi
+    fi
 }
 
 function perform_resize_and_unshare_blocks()
@@ -137,45 +137,45 @@ function simulate_bootloader_patch()
 
 function prank()
 {
-	clear
-	bar_length=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
-	BAR=$(echo "$(printf '%*s' "$bar_length" | tr ' ' '-')")
-	echo -e "${GREEN}Initializing attempt to remove Bootloader security patches on ${DEVICE_NAME}...${NC}"
-	simulate_bootloader_patch
+    clear
+    bar_length=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
+    BAR=$(echo "$(printf '%*s' "$bar_length" | tr ' ' '-')")
+    echo -e "${GREEN}Initializing attempt to remove Bootloader security patches on ${DEVICE_NAME}...${NC}"
+    simulate_bootloader_patch
 
-	echo ""
-	echo -e "${RED}$(echo "$BAR")"
-	echo -e "${RED}ERROR: A critical problem has been detected in the system.${NC}"
-	echo -e "${RED}Please do not turn off the device and wait for instructions.${NC}"
-	echo -e "${RED}$BAR"
-	echo ""
+    echo ""
+    echo -e "${RED}$(echo "$BAR")"
+    echo -e "${RED}ERROR: A critical problem has been detected in the system.${NC}"
+    echo -e "${RED}Please do not turn off the device and wait for instructions.${NC}"
+    echo -e "${RED}$BAR"
+    echo ""
 
-	echo -e "Bootloader SOC Log: ${RED}$(generate_random_message)${NC}"
-	echo -e "${RED}Checking total integrity of SELinux${NC}"
-	sleep 2
-	echo -e "${RED}Failed: Do not restart your device${NC}"
-	echo -e "${RED}Please press any key to try to repair your device${NC}"
-	read -rsn1
+    echo -e "Bootloader SOC Log: ${RED}$(generate_random_message)${NC}"
+    echo -e "${RED}Checking total integrity of SELinux${NC}"
+    sleep 2
+    echo -e "${RED}Failed: Do not restart your device${NC}"
+    echo -e "${RED}Please press any key to try to repair your device${NC}"
+    read -rsn1
 
-	echo 1 > /sys/class/graphics/fb0/blank
+    echo 1 > /sys/class/graphics/fb0/blank
 
-	sleep 6
+    sleep 6
 
-	echo 0 > /sys/class/graphics/fb0/blank
-	
-	echo "$LOGOV2"
-	
-	sleep 2
-	
-	echo 1 > /sys/class/graphics/fb0/blank
+    echo 0 > /sys/class/graphics/fb0/blank
+    
+    echo "$LOGOV2"
+    
+    sleep 2
+    
+    echo 1 > /sys/class/graphics/fb0/blank
 
-	sleep 3600
+    sleep 3600
 
-	echo 0 > /sys/class/graphics/fb0/blank
-	
-	sleep 10
+    echo 0 > /sys/class/graphics/fb0/blank
+    
+    sleep 10
 
-	reboot
+    reboot
 }
 
 function check_dd()
@@ -740,17 +740,17 @@ function manage_shortcuts()
                 read -rsn1 short
                 echo ""
                 case $short in
-                	1)
-                	    echo "Selected Up Shortcuts"
-                	    UP_SHORTCUTS=true
-                	    ;;
-                	2)
-                	    echo "Selected Down Shortcuts"
-                	    UP_SHORTCUTS=false
-                	    ;;
-                	*)
-                	    echo "Invalid option. Please try again."
-                	    ;;
+                    1)
+                        echo "Selected Up Shortcuts"
+                        UP_SHORTCUTS=true
+                        ;;
+                    2)
+                        echo "Selected Down Shortcuts"
+                        UP_SHORTCUTS=false
+                        ;;
+                    *)
+                        echo "Invalid option. Please try again."
+                        ;;
                 esac
                 ;;
             6)
@@ -768,7 +768,7 @@ function manage_shortcuts()
 
 function perform_ota()
 {
-	export image="$1"
+    export image="$1"
     resize2fs "$image" 6G
     echo "Try to fix any Error"
     e2fsck -fp "$image"
@@ -779,9 +779,9 @@ function perform_ota()
 
 function ask()
 {
-	clear
-	echo "Press any key to continue..."
-	read -rsn1
+    clear
+    echo "Press any key to continue..."
+    read -rsn1
 }
 
 function identify_device()
@@ -879,7 +879,7 @@ function process_image()
 
 function find_image_in_directory()
 {
-	export recent_image_file=$(find "$extracted_dir" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>>"$hider" | sort -n | tail -n 1 | cut -d' ' -f2-)
+    export recent_image_file=$(find "$extracted_dir" -type f -name "*.img" -mmin -17 -exec stat --format='%Y %n' {} + 2>>"$hider" | sort -n | tail -n 1 | cut -d' ' -f2-)
     if [ -n "$recent_image_file" ]; then
         found_dir=$(dirname "$recent_image_file")
         found_file=$(basename "$recent_image_file")
@@ -894,7 +894,7 @@ function find_image_in_directory()
 
 function flash_image()
 {
-	dd if="$2" of="$1" bs=16M status=progress
+    dd if="$2" of="$1" bs=16M status=progress
 }
 
 function confirm_flash()
@@ -1247,14 +1247,14 @@ function interactive_core()
         echo "Contents of $image_path:"
         
         list_directories_and_files "$image_path" | cut -d '~' -f 3 | awk -v idx="$selected_index" -v sym="$selected_symbol" '
-    	{
-	        if (NR == idx) {
-	            print sym, $0
-	        } else {
-	            print " ", $0
-	        }
-	    }'
-	    
+        {
+            if (NR == idx) {
+                print sym, $0
+            } else {
+                print " ", $0
+            }
+        }'
+        
         read -rsn1 input
 
         case "$input" in
@@ -1382,12 +1382,12 @@ function right_logic()
 
 function copy_image()
 {
-	cp "$DEVICE_MAPPER/$1" "/sdcard/$2.img"
+    cp "$DEVICE_MAPPER/$1" "/sdcard/$2.img"
 }
 
 function dd_images()
 {
-	dd if="/sdcard/$2.img" of="$DEVICE_MAPPER/$1"
+    dd if="/sdcard/$2.img" of="$DEVICE_MAPPER/$1"
 }
 
 function ota_rw()
@@ -1483,11 +1483,11 @@ function perform_copied_system_image()
 
 function center_ansi()
 {
-	ascii_art=$1
-	lenght=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
-	echo "$ascii_art" | awk -v term_lenght="$lenght" '{
-	    printf "%*s\n", (term_lenght + length($0)) / 2, $0
-	}'
+    ascii_art=$1
+    lenght=$(stty -a | grep columns | sed 's/;//g' | cut -d' ' -f7)
+    echo "$ascii_art" | awk -v term_lenght="$lenght" '{
+        printf "%*s\n", (term_lenght + length($0)) / 2, $0
+    }'
 }
 
 function print_justified()
@@ -1544,22 +1544,22 @@ function progressive_print()
 
 function annuller()
 {
-	sleepy()
-	{
-		: # Do Nothing
-	}
-	progressive_print()
+    sleepy()
+    {
+        : # Do Nothing
+    }
+    progressive_print()
         {
-		echo "$1"
-	}
+        echo "$1"
+    }
 }
 
 function enabler()
 {
-	sleepy()
-	{
-		sleep "$@"
-	}
+    sleepy()
+    {
+        sleep "$@"
+    }
 }
 
 function GSIRW()
@@ -1737,9 +1737,9 @@ function DEBUGER()
     
     generate_date_message
     LOG_FILE="$HOME/gsirw-$day.log"
-	DEBUG_LOG="$HOME/debug_log_$day.log"
-	HIDDEN_ENTRIES="$HOME/hidden_$day.log"
-	hider="$HIDDEN_ENTRIES"
+    DEBUG_LOG="$HOME/debug_log_$day.log"
+    HIDDEN_ENTRIES="$HOME/hidden_$day.log"
+    hider="$HIDDEN_ENTRIES"
     
     if [ "$DEBUG" = "true" ]; then
       echo "DEBUG Mode Is Enabled"
@@ -1768,26 +1768,26 @@ function DEBUGER()
       set -e > /dev/tty 2>&1
       
       {
-    	  echo
-    	  echo
-     	 echo "Debug Log"
-   	   cat "$DEBUG_LOG"
-    	  echo
-     	 echo
-     	 echo "Hidden Entries"
-     	 cat "$HIDDEN_ENTRIES"
+          echo
+          echo
+          echo "Debug Log"
+          cat "$DEBUG_LOG"
+          echo
+          echo
+          echo "Hidden Entries"
+          cat "$HIDDEN_ENTRIES"
       } >> "$LOG_FILE"
       
       rm -f $HOME/debug_log_*.log
       rm -f $HOME/hidden_*.log
       
       {
-    	  echo
-     	 echo
-    	  echo "Every Flag Used in Script"
-    	  export
-    	  echo
-   	   echo
+          echo
+          echo
+          echo "Every Flag Used in Script"
+          export
+          echo
+          echo
       } >> "$LOG_FILE"
       generate_date_message
       echo "Script finished at $day" >> "$LOG_FILE"
