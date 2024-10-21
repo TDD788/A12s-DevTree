@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 function generate_date_message()
 {
@@ -26,9 +26,9 @@ function default()
     export SORT_FILE_TYPE="name_asc"
     identify_device
     export FILE_EXTENSIONS="img|gzip|xz|tar|zip"
-    previous_directories=""
-    previous_files=""
-    previous_shortcuts=""
+    export previous_directories=""
+    export previous_files=""
+    export previous_shortcuts=""
     export SHORTCUTS="DATA /data
     SDCARD /sdcard
     "
@@ -1662,6 +1662,8 @@ function GSIRW()
 
 function MAIN ()
 {
+    annuller
+    
     case "$1" in
         --animation | -a)
             enabler
@@ -1742,65 +1744,65 @@ function DEBUGER()
     hider="$HIDDEN_ENTRIES"
     
     if [ "$DEBUG" = "true" ]; then
-      echo "DEBUG Mode Is Enabled"
-      rm -f $HOME/gsirw-*.log
-      rm -f $HOME/debug_log_*.log
-      rm -f $HOME/hidden_*.log
-      [ "$CACHE" = true ] && rm -rf /cache/gsirw-*.log
+        echo "DEBUG Mode Is Enabled"
+        rm -f $HOME/gsirw-*.log
+        rm -f $HOME/debug_log_*.log
+        rm -f $HOME/hidden_*.log
+        [ "$CACHE" = true ] && rm -rf /cache/gsirw-*.log
     
-      echo "Script started at $day" >> "$LOG_FILE"
-      echo "Arguments passed: $0" >> "$LOG_FILE"
+        echo "Script started at $day" >> "$LOG_FILE"
+        echo "Arguments passed: $0" >> "$LOG_FILE"
     
-      set +e > "$DEBUG_LOG" 2>&1
-      set -x > "$DEBUG_LOG" 2>&1
+        set +e > "$DEBUG_LOG" 2>&1
+        set -x > "$DEBUG_LOG" 2>&1
     
-      debug_command()
-      {
-        export cmd="$1"
-        echo "Executing command: $cmd" >> "$LOG_FILE"
-        eval "$cmd" 2>&1 | tee -a "$LOG_FILE"
-        echo "Command finished: $cmd" >> "$LOG_FILE"
-      }
+        debug_command()
+        {
+            export cmd="$1"
+            echo "Executing command: $cmd" >> "$LOG_FILE"
+            eval "$cmd" 2>&1 | tee -a "$LOG_FILE"
+            echo "Command finished: $cmd" >> "$LOG_FILE"
+        }
 
-      debug_command "MAIN $@"
+        debug_command "MAIN $@"
       
-      set +x > /dev/tty 2>&1
-      set -e > /dev/tty 2>&1
+        set +x > /dev/tty 2>&1
+        set -e > /dev/tty 2>&1
       
-      {
-          echo
-          echo
-          echo "Debug Log"
-          cat "$DEBUG_LOG"
-          echo
-          echo
-          echo "Hidden Entries"
-          cat "$HIDDEN_ENTRIES"
-      } >> "$LOG_FILE"
+        {
+            echo
+            echo
+            echo "Debug Log"
+            cat "$DEBUG_LOG"
+            echo
+            echo
+            echo "Hidden Entries"
+            cat "$HIDDEN_ENTRIES"
+        } >> "$LOG_FILE"
       
-      rm -f $HOME/debug_log_*.log
-      rm -f $HOME/hidden_*.log
+        rm -f $HOME/debug_log_*.log
+        rm -f $HOME/hidden_*.log
       
-      {
-          echo
-          echo
-          echo "Every Flag Used in Script"
-          export
-          echo
-          echo
-      } >> "$LOG_FILE"
-      generate_date_message
-      echo "Script finished at $day" >> "$LOG_FILE"
-      [ "$CACHE" = true ] && cat "$LOG_FILE" > "/cache/gsirw-$day.log"
-      echo "
+        {
+            echo
+            echo
+            echo "Every Flag Used in Script"
+            export
+            echo
+            echo
+        } >> "$LOG_FILE"
+        generate_date_message
+        echo "Script finished at $day" >> "$LOG_FILE"
+        [ "$CACHE" = true ] && cat "$LOG_FILE" > "/cache/gsirw-$day.log"
+        echo "
       
-      "
-      echo "Log file at \"$LOG_FILE\""
-      echo
-      [ "$CACHE" = true ] && echo "And also saved at \"/cache/gsirw-$day.log\""
+        "
+        echo "Log file at \"$LOG_FILE\""
+        echo
+        [ "$CACHE" = true ] && echo "And also saved at \"/cache/gsirw-$day.log\""
     else
-      hider=/dev/null
-      MAIN "$@"
+        hider=/dev/null
+        MAIN "$@"
     fi
 }
 
@@ -1818,7 +1820,7 @@ function CHECK_ROOT()
             echo "Packages Upgraded..." | tee
             clear
             echo "Installing packages and script requirements." | tee
-            REQUIRED_PACKAGES=("android-tools" "e2fsprogs" "mount-utils" "tsu" "xz-utils" "zip" "unzip" "lz4" "tar")
+            REQUIRED_PACKAGES=("android-tools" "file" "e2fsprogs" "mount-utils" "tsu" "xz-utils" "zip" "unzip" "lz4" "tar")
             for package in "${REQUIRED_PACKAGES[@]}"; do
                 if ! dpkg -s $package >/dev/null 2>&1; then
                     echo "Installing $package..." | tee
@@ -1836,7 +1838,5 @@ function CHECK_ROOT()
     exec_as_root "$@"
     DEBUGER "$@"
 }
-
-DEBUG=true
 
 CHECK_ROOT "$@"
