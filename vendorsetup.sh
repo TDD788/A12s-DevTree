@@ -72,7 +72,7 @@ set +x
 
 export FOX_BUILD_TYPE="Stable"
 export FOX_VERSION="S12.1_64"
-export FOX_VARIANT="Vanilla"
+export FOX_VARIANT="AOSP"
 
 # Binary and tool settings
 export FOX_CUSTOM_BINS_TO_SDCARD=2
