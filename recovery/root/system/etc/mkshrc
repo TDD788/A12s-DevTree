@@ -113,8 +113,9 @@ $PS1> "
 InitRecovery
 
 if [ -f /sbin/from_fox_sd.sh ]; then
-   source /sbin/from_fox_sd.sh >/dev/null 2>&1
+   source /sbin/from_fox_sd.sh >/dev/null 2>&1 || echo "Failed to source /sbin/from_fox_sd.sh"
 fi
+
 if [ -f /system/bin/termux-sync.sh ]; then
-   source /system/bin/termux-sync.sh >/dev/null 2>&1
+   source /system/bin/termux-sync.sh >/dev/null 2>&1 || echo "Failed to source /system/bin/termux-sync.sh"
 fi
